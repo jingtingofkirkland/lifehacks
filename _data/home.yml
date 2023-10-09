@@ -21,13 +21,14 @@ old_project_entries:
 
 footer_entries:
 
-  - title: Shares
+  - title: Deals 
     url: share
-
+  - title: Recommendations 
+    url: business 
+  - title: Investment 
+    url: https://investment.zeey.foundation/ 
   - title: Facebook 
     url: https://www.facebook.com/profile.php?id=61551909728667 
-  - title: Feed
-    url: feed.xml
   - title: Subscribe
     url: subscribe
 
