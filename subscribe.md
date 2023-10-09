@@ -2,6 +2,11 @@
 layout: post
 title: subscribe
 ---
+
+<script>
+window.fbq('track', 'ViewContent', {"page": "Subscrib"});
+</script>
+
 Please enter your email and click "Submit" to finish. 
 
 

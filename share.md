@@ -4,8 +4,11 @@ title: Product Shares
 ---
 This page include great product  we would like to share with you too. 
 
+<script>
+window.fbq('track', 'ViewContent', {"page": "products share"});
+</script>
 
-###Great Deals 
+### Great Deals 
 
 * [Great Vent Cleaner for only 8.99 -- 40% OFF](https://www.amazon.com/dp/B08SBQBF2R?tag=zeeyproducts-20&th=1)
 
