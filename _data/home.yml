@@ -10,12 +10,12 @@ project_entries:
   - title: Deals 
     url: share 
     desc: Great Deals that we would like to share 
-  - title: Products 
-    url: share 
-    desc: Great Products that we would like to share 
   - title: Recommendations 
     url: business 
     desc: Great local business or services we like to share 
+  - title: Investment Story & Tips 
+    url: https://investment.zeey.foundation/ 
+    desc: Great Story and Tips share for Investment 
 
 old_project_entries:
 
