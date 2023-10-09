@@ -14,7 +14,7 @@ project_entries:
     url: share 
     desc: Great Products that we would like to share 
   - title: Recommendations 
-    url: share 
+    url: business 
     desc: Great local business or services we like to share 
 
 old_project_entries:
