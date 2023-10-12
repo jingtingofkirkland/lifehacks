@@ -10,6 +10,8 @@ window.fbq('track', 'ViewContent', {"page": "products share"});
 
 ### Great Deals 
 
+* <a target="_blank" href="https://www.amazon.com/Amazon-Basics-Battery-Powered-Toothbrush/dp/B08QWYFP2R/?&_encoding=UTF8&tag=zeeyproducts-20&linkCode=ur2&linkId=91bd6cfc55d151b39571691e81dcf9f3&camp=1789&creative=9325">Protect Teeth of your loved ones: Kids Electric Brush $8.79 for 2!!</a>
+
 * [Great Vent Cleaner for only 8.99 -- 40% OFF](https://www.amazon.com/dp/B08SBQBF2R?tag=zeeyproducts-20&th=1)
 
 
