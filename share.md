@@ -9,6 +9,7 @@ window.fbq('track', 'ViewContent', {"page": "products share"});
 </script>
 
 ### Great Deals 
+* [JONATHAN Y  5 X 8 Area-Rug  Easy-Cleaning Bedroom Kitchen Living Room Non Shedding, -47% Off with only $29.5.](https://www.amazon.com/dp/B081D85TH9?tag=zeeyproducts-20)
 
 * <a target="_blank" href="https://www.amazon.com/Amazon-Basics-Battery-Powered-Toothbrush/dp/B08QWYFP2R/?&_encoding=UTF8&tag=zeeyproducts-20&linkCode=ur2&linkId=91bd6cfc55d151b39571691e81dcf9f3&camp=1789&creative=9325">Protect Teeth of your loved ones: Kids Electric Brush $8.79 for 2!!</a>
 
