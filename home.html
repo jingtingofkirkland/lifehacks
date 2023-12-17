@@ -14,7 +14,24 @@
     fbq('init', '337570375319394');
     fbq('track', 'PageView');
     </script>
-    <noscript><img height="1" width="1" style="display:none"
+      <script>
+        // Function for automatic redirection after 5 seconds
+        function autoRedirect() {
+            //setTimeout(function() {
+            window.fbq("track", "AutoRedirect", {});
+            window.location.href = 'https://www.airbnb.com/rooms/997881180371315098'; 
+             //   }, 5);
+
+        }
+
+        // Function for manual redirection
+        function manualRedirect() {
+            window.fbq("track", "ManualRedirect", {});
+            window.location.href = 'https://www.airbnb.com/rooms/997881180371315098'; // Change this URL to the desired destination
+        }
+       autoRedirect();
+    </script>
+  <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=337570375319394&ev=NoScriptView&noscript=1"
     />
     <p>Check Our Kirkland Home Detail and Book Security on AirBnB  <a href="https://www.airbnb.com/rooms/997881180371315098" class="redirect-link">Click to Redirect</a>.</p>
@@ -70,24 +87,8 @@
             background-color: #45a049;
         }
     </style>
-    <script>
-        // Function for automatic redirection after 5 seconds
-        function autoRedirect() {
-            //setTimeout(function() {
-            window.fbq("track", "AutoRedirect", {});
-            window.location.href = 'https://www.airbnb.com/rooms/997881180371315098'; 
-             //   }, 5);
-
-        }
-
-        // Function for manual redirection
-        function manualRedirect() {
-            window.fbq("track", "ManualRedirect", {});
-            window.location.href = 'https://www.airbnb.com/rooms/997881180371315098'; // Change this URL to the desired destination
-        }
-    </script>
 </head>
-<body onload="autoRedirect()">
+<body>
     <h1>Redirecting...</h1>
     <p>Check Our Kirkland Home Detail and Book Security on AirBnB. </p>
     <button onclick="manualRedirect()">Click to Redirect</button>
