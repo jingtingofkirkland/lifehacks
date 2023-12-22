@@ -14,7 +14,7 @@ project_entries:
     url: business 
     desc: Great local business or services we like to share 
   - title: Investment Story & Tips 
-    url: https://investment.zeey.foundation/ 
+    url: https://investment.zeey-app.net/
     desc: Great Story and Tips share for Investment 
   - title: Book a Home in Seattle 
     url: home 
