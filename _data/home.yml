@@ -1,37 +1,42 @@
 navbar_entries:
   - title: About
     url: about
-  - title: Facebook 
-    url: https://www.facebook.com/profile.php?id=61551909728667 
+  - title: Facebook
+    url: https://www.facebook.com/profile.php?id=61551909728667
   - title: Subscribe
     url: subscribe
 
 project_entries:
-  - title: Deals 
-    url: share 
-    desc: Great Deals that we would like to share 
-  - title: Recommendations 
-    url: business 
-    desc: Great local business or services we like to share 
-  - title: Investment Story & Tips 
+  - title: AI Tech
+    url: tech
+    desc: Sharing latest tech articals for Gen AI.
+  - title: Deals
+    url: share
+    desc: Great Deals that we would like to share
+  - title: Recommendations
+    url: business
+    desc: Great local business or services we like to share
+  - title: Investment Story & Tips
     url: https://investment.zeey-app.net/
-    desc: Great Story and Tips share for Investment 
-  - title: Book a Home in Seattle 
-    url: home 
-    desc: Having a Trip to Seattle? Check our own lovely home on AirBnb 
+    desc: Great Story and Tips share for Investment
+  - title: Book a Home in Seattle
+    url: home
+    desc: Having a Trip to Seattle? Check our own lovely home on AirBnb
 
 old_project_entries:
 
 footer_entries:
 
-  - title: Deals 
+  - title: AI Tech
+    url: tech
+  - title: Deals
     url: share
-  - title: Recommendations 
-    url: business 
-  - title: Investment 
-    url: https://investment.zeey-app.net/ 
-  - title: Facebook 
-    url: https://www.facebook.com/profile.php?id=61551909728667 
+  - title: Recommendations
+    url: business
+  - title: Investment
+    url: https://investment.zeey-app.net/
+  - title: Facebook
+    url: https://www.facebook.com/profile.php?id=61551909728667
   - title: Subscribe
     url: subscribe
 
@@ -66,5 +71,3 @@ misc_entries:
 
           - title: it is easy to use, see _data/home.yml to see how to configure it.
             url: false
-
-
