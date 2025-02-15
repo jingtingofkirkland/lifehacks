@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Business Shares
+title: AI Tech
 ---
 <script>
 window.fbq('track', 'ViewContent', {"content_ids": "tech"});
