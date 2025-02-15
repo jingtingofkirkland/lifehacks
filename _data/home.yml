@@ -7,9 +7,9 @@ navbar_entries:
     url: subscribe
 
 project_entries:
-  - title: AI Tech
+  - title: Latest Techs
     url: tech
-    desc: Sharing latest tech articals for Gen AI.
+    desc: Sharing latest tech articals for everyday learning.
   - title: Deals
     url: share
     desc: Great Deals that we would like to share
@@ -27,7 +27,7 @@ old_project_entries:
 
 footer_entries:
 
-  - title: AI Tech
+  - title: Latest Techs
     url: tech
   - title: Deals
     url: share
