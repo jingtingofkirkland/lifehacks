@@ -8,6 +8,9 @@ window.fbq('track', 'ViewContent', {"content_ids": "tech"});
 
 
 This page sharing the latest articals about new tech, so you could understand what's happenning daily learn new techs everyday!
+
+## Space News
+[SpaceX Falcon 9 Resuse Status](/space)
 ## Signals Gateway
 [Signals Gateway](https://www.facebook.com/business/m/signalsgateway/) by Meta is a Customer Data Platform (CDP) designed to streamline the process of collecting, managing, and distributing first-party data. Here's a detailed look at it:
 
