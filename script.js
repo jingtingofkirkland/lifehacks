@@ -1,9 +1,18 @@
 // Global variable to store booster data
 let boosterData ;
 
-// Function to sort and return data
+// Function to sort and remove duplicate data
 function getSortedData() {
-    return boosterData.sort((a, b) => b.flights - a.flights);
+    const s = boosterData.sort((a, b) => b.flights - a.flights);
+    const seen = new Set();
+    return s.filter(x => {
+        if(seen.has(x.name)){
+            return false;
+        }
+        seen.add(x.name);
+        return true;
+    });
+
 }
 
 // Function to increment flights for a specific booster
@@ -28,6 +37,7 @@ function incrementBooster() {
 
 // Function to draw the horizontal bar chart with dynamic height
 function drawBarChart(data) {
+    //console.log(data);
     const canvas = document.getElementById('barChart');
     if (canvas.getContext) {
         const ctx = canvas.getContext('2d');
@@ -105,7 +115,7 @@ async function saveToJson() {
 // Function to load booster data from server
 async function loadFromJson() {
     try {
-        const response = await fetch('/booster.json', {
+        const response = await fetch('/launches.json', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -118,9 +128,10 @@ async function loadFromJson() {
 
         const loadedData = await response.json();
         // Validate the loaded data
-        if (Array.isArray(loadedData) && loadedData.every(item => 
-            typeof item.name === 'string' && typeof item.flights === 'number' && item.flights >= 0)) {
-            return loadedData;
+        if (Array.isArray(loadedData)) {
+            const mapped = loadedData.map(x => { r = x['rocket'].split('.'); return {name: r[0].trim(), flights: Number(r[1])}});
+            //console.log(mapped);
+            return mapped;
         } else {
             throw new Error('Invalid JSON format from server. Expected array of {name: string, flights: number}');
         }
