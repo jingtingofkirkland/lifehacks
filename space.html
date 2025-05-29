@@ -30,7 +30,7 @@ body {
     font-weight: bold;
 }
 
-#barChart {
+.canvas {
     border: 1px solid #ccc;
     background-color: white;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -81,14 +81,16 @@ body {
     background-color: #45a049;
 }
 </style>
-    <script src="script.js"></script>
+    <script src="rocket.js"></script>
 </head>
 <body>
 <div class="chart-container">
     <h2 class="chart-title">F9 Booster Flight Counts</h2>
-    <canvas id="barChart" width="600"></canvas>
+    <canvas id="barChart" width="800"></canvas>
+    <h2 class="chart-title">World Counts and Mass 2025</h2>
+    <canvas id="worldData" width="800"></canvas>
     <h2 class="chart-title">SpaceX Total Counts and Mass 2025</h2>
-    <canvas id="countAndMass" width="600"></canvas>
+    <canvas id="countAndMass" width="800"></canvas>
     <div class="control-panel">
         <h3>Booster Controls</h3>
         <div>
