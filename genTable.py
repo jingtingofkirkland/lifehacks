@@ -96,7 +96,8 @@ class GenTable:
         print(result)
 def req(code):
     # API endpoint (replace with your endpoint)
-    api_endpoint = f"https://query1.finance.yahoo.com/v7/finance/download/{code}?period1={one_day_ago}&period2={current_epoch}&interval=1d&events=history&includeAdjustedClose=true"
+    api_endpoint = f"https://query2.finance.yahoo.com/v8/finance/download/{code}?period1={one_day_ago}&period2={current_epoch}&interval=1d&events=history&includeAdjustedClose=true"
+    print(api_endpoint)
 
     custom_headers = {
         "User-Agent": ""

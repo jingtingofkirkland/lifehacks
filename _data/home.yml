@@ -10,6 +10,9 @@ project_entries:
   - title: Latest Techs
     url: tech
     desc: Sharing latest tech articals for everyday learning.
+  - title: Space News
+    url: space
+    desc: Latest Space Luanches Data
   - title: Deals
     url: share
     desc: Great Deals that we would like to share
@@ -19,9 +22,6 @@ project_entries:
   - title: Investment Story & Tips
     url: https://investment.zeey-app.net/
     desc: Great Story and Tips share for Investment
-  - title: Book a Home in Seattle
-    url: home
-    desc: Having a Trip to Seattle? Check our own lovely home on AirBnb
 
 old_project_entries:
 
@@ -57,17 +57,10 @@ misc_entries:
   - title: moonwalk on the Internet
     url: false
     entries:
-      - title: on Github
-        url: https://github.com/abhinavs/moonwalk
-
-      - title: originally built for abhinav's homepage
-        url: https://www.abhinav.co
-
       - title: this list is scalable and can be nested
         url: false
         entries:
           - title: this is nested inside a nested list
             url: false
-
           - title: it is easy to use, see _data/home.yml to see how to configure it.
             url: false
