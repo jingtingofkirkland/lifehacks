@@ -61,4 +61,13 @@
 {"flight":478,"time":"May 23, 2025 22:32","rocket":"B1075‑18","site":"Vandenberg, SLC‑4E","mission":"Starlink: Group 11-16","mass":"15500","orbit":"LEO"},
 {"flight":479,"time":"May 24, 2025 17:19","rocket":"B1069‑24","site":"Cape Canaveral, SLC‑40","mission":"Starlink: Group 12-22","mass":"17100","orbit":"LEO"},
 {"flight":480,"time":"May 27, 2025 16:57","rocket":"B1082‑13","site":"Vandenberg, SLC‑4E","mission":"Starlink: Group 17-1","mass":"17500","orbit":"SSO"},
-{"flight":481,"time":"May 28, 2025 13:30","rocket":"B1080‑19","site":"Kennedy, LC‑39A","mission":"Starlink: Group 10-32","mass":"15500","orbit":"LEO"}]
+{"flight":481,"time":"May 28, 2025 13:30","rocket":"B1080‑19","site":"Kennedy, LC‑39A","mission":"Starlink: Group 10-32","mass":"15500","orbit":"LEO"},
+{"flight":482,"time":"May 30, 2025 17:37","rocket":"B1092‑4","site":"Cape Canaveral, SLC‑40","mission":"GPS III-8","mass":"4350","orbit":"MEO"},
+{"flight":483,"time":"May 31, 2025 20:10","rocket":"B1071‑25","site":"Vandenberg, SLC‑4E","mission":"Starlink: Group 11-18","mass":"15500","orbit":"LEO"},
+{"flight":484,"time":"June 3, 2025 04:43","rocket":"B1077‑21","site":"Cape Canaveral, SLC‑40","mission":"Starlink: Group 12-19","mass":"17100","orbit":"LEO"},
+{"flight":485,"time":"June 4, 2025 23:40","rocket":"B1063‑26","site":"Vandenberg, SLC‑4E","mission":"Starlink: Group 11-22","mass":"15500","orbit":"LEO"},
+{"flight":486,"time":"June 7, 2025 04:54","rocket":"B1085‑8","site":"Cape Canaveral, SLC‑40","mission":"SXM-10","mass":"6400","orbit":"GTO"},
+{"flight":487,"time":"June 8, 2025 14:20","rocket":"B1088‑7","site":"Vandenberg, SLC‑4E","mission":"Starlink: Group 15-8","mass":"14950","orbit":"LEO"},
+{"flight":488,"time":"June 10, 2025 13:05","rocket":"B1083‑12","site":"Cape Canaveral, SLC‑40","mission":"Starlink: Group 12-24","mass":"17100","orbit":"LEO"},
+{"flight":489,"time":"June 13, 2025 01:54","rocket":"B1081‑15","site":"Vandenberg, SLC‑4E","mission":"Starlink: Group 15-6","mass":"14950","orbit":"LEO"},
+{"flight":490,"time":"June 13, 2025 15:29","rocket":"B1078‑21","site":"Cape Canaveral, SLC‑40","mission":"Starlink: Group 12-26","mass":"17100","orbit":"LEO"}]

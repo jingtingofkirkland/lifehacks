@@ -141,7 +141,7 @@ for(var i=startFlight25;;i++) {
   const link = document.createElement('a');
   const url = URL.createObjectURL(blob);
   link.setAttribute('href', url);
-  link.setAttribute('download', 'world_launches.json'); // File name
+  link.setAttribute('download', 'world_launches_q2.json'); // File name
   link.style.display = 'none';
 
   // Append link to body, trigger click, and remove
