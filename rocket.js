@@ -139,14 +139,14 @@ function drawBarChartWorld(data) {
     // Animation parameters
     const maxDataLength = Math.max(...dataToDraw.map(x => x.launches.length));
     const startTime = performance.now();
-    const msPerHours = 5; // how much ms will render for a Hours. 
+    const hoursPerRender = 3; // hours Per Render. 
     const startDate = new Date(2025, 0, 1);
     // variable for animation loop
     let cumulativeMass = 0;
     let cumulativeIndex = {};
     let progress ={};
     //console.log(currentDate);
-    let interplant = 5; // use 3 points to represent 1 data point, need less than 6
+    let interplant = 1; // use 3 points to represent 1 data point, need less than 6
     let hours = 0;
     
     
@@ -162,7 +162,7 @@ function drawBarChartWorld(data) {
 
         const currentDate = new Date(startDate.getTime());
         currentDate.setHours(startDate.getHours() + hours);
-        hours+=msPerHours;
+        hours+=hoursPerRender;
         //console.log(currentDate);
         // draw the date. 
         ctx.fillText(currentDate.toISOString().split('T')[0], chartWidth/2, barGap*2);
