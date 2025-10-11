@@ -119,7 +119,7 @@ function drawBarChartWorld(data) {
     // Calculate cumulative values
 
     const groupbyCountry = parsedData.reduce((acc, item) => {
-      const country  = item.org == 'SpaceX'? item.org : item.country;
+      const country  = item.org == 'SpaceX'? 'SpaceX(+Starship)' : item.country;
       acc[country] = acc[country] || []; // Initialize array if it doesn't exist
       acc[country].push(item);
       return acc;
@@ -139,19 +139,20 @@ function drawBarChartWorld(data) {
     // Animation parameters
     const maxDataLength = Math.max(...dataToDraw.map(x => x.launches.length));
     const startTime = performance.now();
-    const hoursPerRender = 3; // hours Per Render. 
+    const hoursPerRender = 10; // hours Per Render. 
     const startDate = new Date(2025, 0, 1);
     // variable for animation loop
     let cumulativeMass = 0;
     let cumulativeIndex = {};
     let progress ={};
     //console.log(currentDate);
-    let interplant = 1; // use 3 points to represent 1 data point, need less than 6
+    let interplant = 2; // use 3 points to represent 1 data point, need less than 6
     let hours = 0;
     
     
     // Clear canvas
     ctx.clearRect(0, 0, chartWidth, calculatedHeight);
+    console.log(dataToDraw);
 
     
 
@@ -171,7 +172,7 @@ function drawBarChartWorld(data) {
         // Draw bars
         dataToDraw.forEach((org, index) => {
             const d = org.launches
-            const finalBarWidth = (d.length / maxDataLength) * (chartWidth - 100);
+            const finalBarWidth = (d.length / maxDataLength) * (chartWidth-150);
             const luanchIdx = cumulativeIndex[org.name] ?? 0;
             const dataIdx = Math.floor(luanchIdx/interplant); // 0, 1 2 will represent the first data.
             const maxLen = d.length * interplant;
@@ -183,7 +184,7 @@ function drawBarChartWorld(data) {
             progress[org.name] = Math.min((luanchIdx+1) / maxLen, 1);
             minProgress = Math.min(minProgress, progress[org.name]);
             const currentBarWidth = finalBarWidth * progress[org.name];
-            const x = 50;
+            const x = 80;
             const y = (index+1) * (barHeight + barGap) + barGap;
 
             // Draw bar
