@@ -85,12 +85,13 @@ for(var i=startFlight25;;i++) {
         console.error('Table not found');
         return matchingRows;
     }
+    console.log(`Found ${$tables.length} tables`);
     // Iterate on each table
     // Iterate through each row
     let cnt =1;
-    
+    let upcomming = false;
     $tables.each(function() {
-      let upcomming = false;
+      
       let subOrbital = false;
       let hasNormalData = false;
       
@@ -100,27 +101,33 @@ for(var i=startFlight25;;i++) {
         const $row = $(this);
           // Check if any td in the row contains a date
           const $tds = $row.find('td');
-          upcomming = $tds.is(function() {
+          if(!upcomming) {
+            //once upcoming, ignore all the rest.
+            upcomming = $tds.is(function() {
               return $(this).text().includes('Upcoming launches');
-          });
-
+            });
+          } 
+          if(!subOrbital) {
           subOrbital = $tds.is(function() {
               return $(this).text().includes('Suborbital');
           });
+        }
           // normla data only from not upcoming or subortibal process
+          if(!hasNormalData) {
           hasNormalData = !upcomming && !subOrbital &&  $tds.length > 2 && $tds.first().is(function() {
               const textContent = this.innerText;
               //return monthes.some(m => $(this).text().includes('April'));
               return monthes.some(m => new RegExp(`\\b${m}\\b`).test(textContent));
           });
+        }
       });
       //early return for only subOrbital or upcoming
       if(!hasNormalData && (upcomming || subOrbital)) {
-            console.log('ignore upcommings or subOrbital:'+cnt);
+            console.log('ignore only upcommings or subOrbital:'+cnt);
             return false;
       }
-      upcomming = false;
       subOrbital = false;
+      upcomming = false;
       // process table (might still have mixed with upcoming or subOrbital)
       $table.find('tr').each(function() {
           const $row = $(this);
@@ -154,6 +161,7 @@ for(var i=startFlight25;;i++) {
               // Push an array of all td texts
               const tdTexts = $tds.map(function() {
                 const textContent = $(this).text().trim()
+                  console.log(this);
                   if(textContent.includes('img')) {
                     // img tag 
                     // Regex to match the alt attribute
@@ -172,17 +180,20 @@ for(var i=startFlight25;;i++) {
                   }
                   return textContent;
               }).get();
+
               matchingRows.push(tdTexts);
               const obj = {};
               obj['flight']=cnt; cnt++;
               for(var j =0;j<header.length;j++) {
                 obj[header[j]] = transform[j](tdTexts[j]);
+                if(header[j] =='org') {
+                  console.log(tdTexts[j]);
+                }
               }
               json.push(JSON.stringify(obj));
           }
       });
     });
-    console.log(json);
     // download
     const finalContent = `[${json.join(',\n')}]`;
 // Create a Blob with the CSV content
