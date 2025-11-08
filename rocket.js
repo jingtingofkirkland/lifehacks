@@ -546,7 +546,7 @@ async function loadFromJson(path) {
 
 // When the DOM is fully loaded, draw the initial chart
 document.addEventListener('DOMContentLoaded', async function() {
-    const spaceXJson = await loadFromJson('/launches.json');
+    const spaceXJson = await loadFromJson('/f9_launches.json');
     launchesData = spaceXJson;
     drawCountAndMassChart(launchesData);
     boosterData = launchesData.map(x => { r = x['rocket'].split(/[-\.‑]/); return {name: r[0].trim(), flights: Number(r[1])}});

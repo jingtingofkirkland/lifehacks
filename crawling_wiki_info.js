@@ -1,7 +1,8 @@
 // wiki url: https://en.m.wikipedia.org/wiki/List_of_Falcon_9_and_Falcon_Heavy_launches
+//jq -s '.[0] + .[1]' f9_launches_550.json launches.json.json > f9_launches.json
 (function () {
 const header = ['time', 'rocket', 'site', 'mission', 'mass', 'orbit']
-const startFlight25=418;
+const startFlight25=551;
 
 const noOp = x => x.replace('\xa0',' ');
 const timeTrans = t => {const cleanStr = t.replace(/\[\d+\]/g, ''); return cleanStr.replace(/(\d{4})(\d{2}:\d{2})/, '$1 $2');};
@@ -58,6 +59,7 @@ for(var i=startFlight25;;i++) {
 // {"flight":1,"time":"4 January 01:27","rocket":"Falcon 9 Block 5","mission":"F9-418","site":"Cape Canaveral SLC-40","org":{"country":"United States","info":"SpaceX"}}
 // jq -s '.[0] + .[1]' world_launches_all_3q.json world_launches_q4.json > world_launches.json
 (function findRowsWithDate(selector) {
+    const debug = false;
     const monthes = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     const header = ['time', 'rocket',  'mission', 'site', 'org'];
     const noOp = x => x;
@@ -157,12 +159,18 @@ for(var i=startFlight25;;i++) {
               //return monthes.some(m => $(this).text().includes('April'));
               return monthes.some(m => new RegExp(`\\b${m}\\b`).test(textContent));
           });
-          if (hasDate) {
+          if (hasDate) { // row has date, indicate a valid row 
               // Push an array of all td texts
               const tdTexts = $tds.map(function() {
                 const textContent = $(this).text().trim()
-                  console.log(this);
-                  if(textContent.includes('img')) {
+                  // there are multiple possible columns having flag icon
+                  const targetLink = $(this).find('span.flagicon a').first();
+                  
+                  if(targetLink && targetLink.length > 0) {
+                    //console.log({country: targetLink.attr('title') || targetLink.text(), info: textContent.trim()});
+                    return {country: targetLink.attr('title') || targetLink.text(), info: textContent.trim()};
+                  }
+                  else if(textContent.includes('img')) {
                     // img tag 
                     // Regex to match the alt attribute
                     const altRegex = /alt="([^"]*)"/;
@@ -178,17 +186,20 @@ for(var i=startFlight25;;i++) {
                     const text = textMatch ? textMatch[1].trim() : '';
                     return {country: alt, info: text};
                   }
-                  return textContent;
+                  return {info:textContent};
               }).get();
 
               matchingRows.push(tdTexts);
               const obj = {};
               obj['flight']=cnt; cnt++;
               for(var j =0;j<header.length;j++) {
-                obj[header[j]] = transform[j](tdTexts[j]);
+                let info;
                 if(header[j] =='org') {
-                  console.log(tdTexts[j]);
+                  info = tdTexts[j]
+                } else {
+                  info = tdTexts[j].info;
                 }
+                obj[header[j]] = transform[j](info);
               }
               json.push(JSON.stringify(obj));
           }
@@ -196,13 +207,18 @@ for(var i=startFlight25;;i++) {
     });
     // download
     const finalContent = `[${json.join(',\n')}]`;
+    if(debug) {
+      console.log(finalContent);
+    }
 // Create a Blob with the CSV content
   const blob = new Blob([finalContent], { type: 'application/json;charset=utf-8;' });
 
   // Create a temporary link to trigger download
   const link = document.createElement('a');
   const url = URL.createObjectURL(blob);
-  link.setAttribute('href', url);
+  if(!debug) {
+    link.setAttribute('href', url);
+  }
   link.setAttribute('download', 'world_launches_q4.json'); // File name
   link.style.display = 'none';
 

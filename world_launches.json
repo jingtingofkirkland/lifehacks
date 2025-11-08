@@ -2725,5 +2725,140 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 18,
+    "time": "25 October 14:20:50",
+    "mission": "Starlink Group 11-12",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 19,
+    "time": "26 October 00:00:15",
+    "mission": "F7",
+    "org": {
+      "country": "Japan",
+      "info": "JAXA"
+    }
+  },
+  {
+    "flight": 20,
+    "time": "26 October 03:55",
+    "mission": "",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 21,
+    "time": "26 October 15:00:40",
+    "mission": "Starlink Group 10-21",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 22,
+    "time": "28 October 00:43:49",
+    "mission": "Starlink Group 11-21",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 23,
+    "time": "29 October 16:35:20",
+    "mission": "Starlink Group 10-37",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 24,
+    "time": "31 October 15:44:00",
+    "mission": "2F-Y21",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 25,
+    "time": "31 October 23:30",
+    "mission": "Starlink Group 11-23",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 26,
+    "time": "2 November 05:00",
+    "mission": "Bandwagon-4[32]",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 27,
+    "time": "2 November 11:30",
+    "mission": "M5",
+    "org": {
+      "country": "India",
+      "info": "ISRO"
+    }
+  },
+  {
+    "flight": 28,
+    "time": "3 November 03:47",
+    "mission": "7A-Y13",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 29,
+    "time": "4 November 21:02",
+    "mission": "VA265",
+    "org": {
+      "country": "France",
+      "info": "Arianespace"
+    }
+  },
+  {
+    "flight": 30,
+    "time": "5 November 19:51",
+    "mission": "\"The Nation God Navigates\"",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
+  },
+  {
+    "flight": 31,
+    "time": "6 November 01:31",
+    "mission": "Starlink Group 6-81",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 32,
+    "time": "6 November 22:13:50",
+    "mission": "Starlink Group 11-14",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
