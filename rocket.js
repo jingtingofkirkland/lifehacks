@@ -96,9 +96,167 @@ function drawBarChart(data) {
   },
 */
 
-// Function to draw the horizontal bar chart For World Data
 function drawBarChartWorld(data) {
     const canvas = document.getElementById('worldData');
+    if (!canvas.getContext) return;
+
+    const ctx = canvas.getContext('2d');
+
+    // Chart parameters
+    const chartWidth = canvas.width;
+    const barHeight = 30;
+    const barGap = 10;
+    const currentYear = new Date().getFullYear(); // 2025
+
+    // Parse data
+    const parsedData = data.map((d) => ({
+        time: new Date(`${d.time} ${currentYear}`),
+        org: d.org.info,
+        country: d.org.country
+    }));
+    parsedData.sort((a, b) => a.time - b.time);
+
+    // Group by country/org
+    const groupbyCountry = parsedData.reduce((acc, item) => {
+        const key = item.org === 'SpaceX' ? 'SpaceX(+Starship)' : item.country;
+        acc[key] = acc[key] || [];
+        acc[key].push(item);
+        return acc;
+    }, {});
+
+    const dataToDraw = Object.keys(groupbyCountry).map(name => ({
+        name,
+        launches: groupbyCountry[name]
+    }));
+
+    // Sort by total launches (descending) — just for initial order
+    dataToDraw.sort((a, b) => b.launches.length - a.launches.length);
+
+    // Dynamic canvas height
+    const calculatedHeight = Math.max(400, (dataToDraw.length + 1) * (barHeight + barGap) + barGap);
+    canvas.height = calculatedHeight;
+
+    // Animation setup
+    const hoursPerRender = 10;
+    const startDate = new Date(2025, 0, 1);
+    let hours = 0;
+
+    const interplant = 2;
+    const cumulativeIndex = {}; // tracks progress per org
+    const currentCounts = {};   // current launch count per org at this time
+
+    // Initialize
+    dataToDraw.forEach(org => {
+        cumulativeIndex[org.name] = 0;
+        currentCounts[org.name] = 0;
+    });
+
+    function animate() {
+        ctx.clearRect(0, 0, chartWidth, canvas.height);
+
+        // Advance time
+        const currentDate = new Date(startDate);
+        currentDate.setHours(startDate.getHours() + hours);
+        hours += hoursPerRender;
+
+        // Update launch counts based on time
+        let maxCurrentLaunches = 0;
+        let leaderName = null;
+
+        dataToDraw.forEach(org => {
+            const launches = org.launches;
+            const stepsSoFar = cumulativeIndex[org.name] ?? 0;
+            const dataIdx = Math.floor(stepsSoFar / interplant);
+
+            // Advance if we passed a launch
+            if (dataIdx < launches.length && currentDate >= launches[dataIdx].time) {
+                cumulativeIndex[org.name] = stepsSoFar + 1;
+            }
+
+            const updatedIdx = Math.floor((cumulativeIndex[org.name] ?? 0) / interplant);
+            currentCounts[org.name] = Math.min(updatedIdx + 1, launches.length);
+
+            // Track current leader
+            if (currentCounts[org.name] > maxCurrentLaunches) {
+                maxCurrentLaunches = currentCounts[org.name];
+                leaderName = org.name;
+            }
+        });
+
+        // If no launches yet, skip drawing
+        if (maxCurrentLaunches === 0) {
+            ctx.fillStyle = '#000';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(currentDate.toISOString().split('T')[0], chartWidth / 2, barGap * 2);
+            requestAnimationFrame(animate);
+            return;
+        }
+
+        // Draw date
+        ctx.fillStyle = '#000';
+        ctx.font = '14px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(currentDate.toISOString().split('T')[0], chartWidth / 2, barGap * 2);
+
+        // Draw bars
+        dataToDraw.forEach((org, index) => {
+            const count = currentCounts[org.name];
+            const isLeader = org.name === leaderName;
+
+            // Full usable width for leader
+            const fullWidth = chartWidth - 150;
+
+            // Leader gets full bar, others are relative
+            const barLength = isLeader
+                ? fullWidth
+                : (count / maxCurrentLaunches) * fullWidth;
+
+            const x = 80;
+            const y = (index + 1) * (barHeight + barGap) + barGap;
+
+            // Draw full background (for non-leaders, shows potential)
+            ctx.fillStyle = '#e0e0e0';
+            ctx.fillRect(x, y, fullWidth, barHeight);
+
+            // Draw actual green bar (up to current relative length)
+            ctx.fillStyle = '#4CAF50';
+            ctx.fillRect(x, y, barLength, barHeight);
+
+            // Labels
+            ctx.fillStyle = '#000';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'left';
+            const displayName = org.name === 'United States' ? 'US' : org.name;
+            ctx.fillText(displayName, 5, y + barHeight / 2 + 5);
+            ctx.fillText(count, x + barLength + 5, y + barHeight / 2 + 5);
+
+            // Optional: highlight leader
+            if (isLeader) {
+                ctx.strokeStyle = '#ff9800';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(x, y, barLength, barHeight);
+            }
+        });
+
+        // Continue if any org has unprocessed launches
+        const anyLeft = dataToDraw.some(org => {
+            const steps = cumulativeIndex[org.name] ?? 0;
+            return Math.floor(steps / interplant) < org.launches.length;
+        });
+
+        if (anyLeft) {
+            requestAnimationFrame(animate);
+        }
+    }
+
+    // Start
+    requestAnimationFrame(animate);
+}
+
+// Function to draw the horizontal bar chart For World Data
+function drawBarChartWorldMass(data) {
+    const canvas = document.getElementById('worldDataMass');
     if (!canvas.getContext) return;
 
     const ctx = canvas.getContext('2d');
@@ -185,117 +343,6 @@ function drawBarChartWorld(data) {
             minProgress = Math.min(minProgress, progress[org.name]);
             const currentBarWidth = finalBarWidth * progress[org.name];
             const x = 80;
-            const y = (index+1) * (barHeight + barGap) + barGap;
-
-            // Draw bar
-            ctx.fillStyle = '#4CAF50';
-            ctx.fillRect(x, y, currentBarWidth, barHeight);
-
-            // Draw labels
-            ctx.fillStyle = '#000';
-            ctx.font = '12px Arial';
-            const name = org.name =='United States' ? 'US' : org.name;
-            ctx.fillText(name, 5, y + barHeight / 2 + 5);
-            ctx.fillText(dataIdx+1, x + currentBarWidth + 5, y + barHeight / 2 + 5);
-        });
-        if (minProgress < 1) {
-            //console.log(progress);
-            requestAnimationFrame(animate);
-        }
-    }
-
-    // Start animation
-    requestAnimationFrame(animate);
-}
-
-// Function to draw the horizontal bar chart For World Data
-function drawBarChartWorldMass(data) {
-    const canvas = document.getElementById('worldDataMass');
-    if (!canvas.getContext) return;
-
-    const ctx = canvas.getContext('2d');
-
-    // Chart parameters
-    const chartWidth = canvas.width;
-    const barHeight = 30;
-    const barGap = 10;
-    const currentYear = new Date().getFullYear(); // 2025
-
-    // Parse data
-    const parsedData = data.map((d) => ({
-        time: new Date(`${d.time} ${currentYear}`),
-        org: d.org.info,
-        country:d.org.country
-    }));
-    parsedData.sort((a, b) => a.time - b.time); // Sort by time
-    // Calculate cumulative values
-
-    const groupbyCountry = parsedData.reduce((acc, item) => {
-      const country  = item.org == 'SpaceX'? item.org : item.country;
-      acc[country] = acc[country] || []; // Initialize array if it doesn't exist
-      acc[country].push(item);
-      return acc;
-    }, {});
-    
-
-    // const dataToDraw = [{name:'SpaceX', launches: parsedData}]
-    const dataToDraw = Object.keys(groupbyCountry).map( x => ({name:x, launches:groupbyCountry[x]}));
-    
-    dataToDraw.sort((b, a) => a.launches.length - b.launches.length); // Sort by luanches
-    // Calculate dynamic height
-    const calculatedHeight = Math.max(400, (dataToDraw.length +1) * (barHeight + barGap) + barGap);
-    canvas.height = calculatedHeight;
-
-    
-    
-    // Animation parameters
-    const maxDataLength = Math.max(...dataToDraw.map(x => x.launches.length));
-    const startTime = performance.now();
-    const msPerHours = 4; // how much ms will render for a Hours. 
-    const startDate = new Date(2025, 0, 1);
-    // variable for animation loop
-    let cumulativeMass = 0;
-    let cumulativeIndex = {};
-    let progress ={};
-    //console.log(currentDate);
-    let interplant = 6; // use 3 points to represent 1 data point, need less than 6
-    let hours = 0;
-    
-    
-    // Clear canvas
-    ctx.clearRect(0, 0, chartWidth, calculatedHeight);
-
-    
-
-    function animate(currentTime) {
-        
-        // Clear canvas for each frame
-        ctx.clearRect(0, 0, chartWidth, calculatedHeight);
-
-        const currentDate = new Date(startDate.getTime());
-        currentDate.setHours(startDate.getHours() + hours);
-        hours+=msPerHours;
-        //console.log(currentDate);
-        // draw the date. 
-        ctx.fillText(currentDate.toISOString().split('T')[0], chartWidth/2, barGap*2);
-        
-        let minProgress = 1;
-        // Draw bars
-        dataToDraw.forEach((org, index) => {
-            const d = org.launches
-            const finalBarWidth = (d.length / maxDataLength) * (chartWidth - 100);
-            const luanchIdx = cumulativeIndex[org.name] ?? 0;
-            const dataIdx = Math.floor(luanchIdx/interplant); // 0, 1 2 will represent the first data.
-            const maxLen = d.length * interplant;
-            //console.log(luanchIdx, dataIdx, maxLen);
-            if(dataIdx < d.length && currentDate>=d[dataIdx].time) {
-                cumulativeMass+=d[dataIdx].mass;
-                cumulativeIndex[org.name] = luanchIdx+1;
-            }
-            progress[org.name] = Math.min((luanchIdx+1) / maxLen, 1);
-            minProgress = Math.min(minProgress, progress[org.name]);
-            const currentBarWidth = finalBarWidth * progress[org.name];
-            const x = 50;
             const y = (index+1) * (barHeight + barGap) + barGap;
 
             // Draw bar
@@ -553,6 +600,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     drawBarChart(getSortedData());
     const worldJson = await loadFromJson('/world_launches.json');
     drawBarChartWorld(worldJson);
-    drawBarChartWorldMass(worldJson);
+    //drawBarChartWorldMass(worldJson);
     
 });
