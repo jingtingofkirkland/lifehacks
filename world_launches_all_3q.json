@@ -121,17 +121,6 @@
     }
   },
   {
-    "flight": 12,
-    "time": "16 January 22:37",
-    "rocket": "Starship",
-    "mission": "Flight 7",
-    "site": "Starbase OLP-A",
-    "org": {
-      "country": "United States",
-      "info": "SpaceX"
-    }
-  },
-  {
     "flight": 13,
     "time": "17 January 04:07",
     "rocket": "Long March 2D",
@@ -514,17 +503,6 @@
     "org": {
       "country": "France",
       "info": "Arianespace"
-    }
-  },
-  {
-    "flight": 48,
-    "time": "6 March 23:30",
-    "rocket": "Starship",
-    "mission": "Flight 8",
-    "site": "Starbase OLP-A",
-    "org": {
-      "country": "United States",
-      "info": "SpaceX"
     }
   },
   {
@@ -1303,17 +1281,6 @@
     "rocket": "Falcon 9 Block 5",
     "mission": "Starlink Group 17-1",
     "site": "Vandenberg SLC-4E",
-    "org": {
-      "country": "United States",
-      "info": "SpaceX"
-    }
-  },
-  {
-    "flight": 50,
-    "time": "27 May 23:36:28",
-    "rocket": "Starship",
-    "mission": "Flight 9",
-    "site": "Starbase OLP-A",
     "org": {
       "country": "United States",
       "info": "SpaceX"
@@ -2172,17 +2139,6 @@
     "rocket": "Falcon 9 Block 5",
     "mission": "F9-521",
     "site": "Vandenberg SLC-4E",
-    "org": {
-      "country": "United States",
-      "info": "SpaceX"
-    }
-  },
-  {
-    "flight": 49,
-    "time": "26 August 23:30",
-    "rocket": "Starship",
-    "mission": "Flight 10",
-    "site": "Starbase OLP-A",
     "org": {
       "country": "United States",
       "info": "SpaceX"

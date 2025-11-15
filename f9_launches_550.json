@@ -130,5 +130,5 @@
 {"flight":547,"time":"October 16, 2025 09:27","rocket":"B1095‑3","site":"Cape Canaveral, SLC‑40","mission":"Starlink: Group 10-52","mass":"16100","orbit":"LEO"},
 {"flight":548,"time":"October 19, 2025 17:39","rocket":"B1067‑31","site":"Cape Canaveral, SLC‑40","mission":"Starlink: Group 10-17","mass":"16100","orbit":"LEO"},
 {"flight":549,"time":"October 19, 2025 19:24","rocket":"B1088‑11","site":"Vandenberg, SLC‑4E","mission":"Starlink: Group 11-19","mass":"16100","orbit":"LEO"},
-{"flight":550,"time":"October 22, 2025 14:16","rocket":"B1075‑21","site":"Vandenberg, SLC‑4E","mission":"Starlink: Group 11-5","mass":"16100","orbit":"LEO"},
-{"flight":551,"time":"October 24, 2025 01:30","rocket":"B1076‑22","site":"Cape Canaveral, SLC‑40","mission":"Spainsat NG II","mass":"6100","orbit":"GTO"}]
+{"flight":550,"time":"October 22, 2025 14:16","rocket":"B1075‑21","site":"Vandenberg, SLC‑4E","mission":"Starlink: Group 11-5","mass":"16100","orbit":"LEO"}
+]

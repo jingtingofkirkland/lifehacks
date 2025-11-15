@@ -122,7 +122,7 @@ function drawBarChartWorld(data) {
 
     // Group by country/org
     const groupbyCountry = parsedData.reduce((acc, item) => {
-        const key = item.org === 'SpaceX' ? 'SpaceX(+Starship)' : item.country;
+        const key = item.org === 'SpaceX' ? 'SpaceX' : item.country;
         acc[key] = acc[key] || [];
         acc[key].push(item);
         return acc;
@@ -266,7 +266,7 @@ function drawCountAndMassChart(data) {
 
     // Chart parameters
     const chartWidth = canvas.width;
-    const chartHeight = 400;
+    const chartHeight = 600;
     canvas.height = chartHeight;
     const margin = { top: 20, right: 80, bottom: 50, left: 60 };
     const plotWidth = chartWidth - margin.left - margin.right;
@@ -284,8 +284,11 @@ function drawCountAndMassChart(data) {
     const chartData = parsedData.map((d, i) => ({
         time: d.time,
         count: i + 1, // Cumulative count of events
-        mass: (cumulativeMass += d.mass) // Cumulative mass
+        mass: Math.floor((cumulativeMass += d.mass)/1000) // Cumulative mass (ton)
     }));
+    // Change Title spacex_title
+    document.getElementById('spacex_title').textContent = 
+    `SpaceX Lanuches and Mass 2025 (${parsedData.length}/${Math.floor(cumulativeMass/1000)} ton)`;
 
     // Scales
     const minTime = chartData[0].time;
@@ -339,7 +342,7 @@ function drawCountAndMassChart(data) {
         ctx.save();
         ctx.translate(chartWidth - margin.right + 40, chartHeight / 2);
         ctx.rotate(-Math.PI / 2);
-        ctx.fillText('Cumulative Mass (kg)', 0, 0);
+        ctx.fillText('Cumulative Mass (Ton)', 0, 0);
         ctx.restore();
 
         // Draw tick marks and labels
@@ -404,15 +407,15 @@ function drawCountAndMassChart(data) {
 
         // Draw legend
         ctx.fillStyle = '#1E90FF';
-        ctx.fillRect(chartWidth - margin.right + 20, margin.top, 10, 10);
+        ctx.fillRect(chartWidth - margin.right + 25, margin.top +10, 10, 10);
         ctx.fillStyle = '#000';
-        ctx.textAlign = 'left';
-        ctx.fillText('Event Count', chartWidth - margin.right + 35, margin.top + 10);
+        ctx.textAlign = 'left'; 
+        ctx.fillText('Count', chartWidth - margin.right + 25, margin.top + 30);
 
         ctx.fillStyle = '#FF4500';
-        ctx.fillRect(chartWidth - margin.right + 20, margin.top + 20, 10, 10);
+        ctx.fillRect(chartWidth - margin.right + 25, margin.top + 30, 10, 10);
         ctx.fillStyle = '#000';
-        ctx.fillText('Mass', chartWidth - margin.right + 35, margin.top + 30);
+        ctx.fillText('Mass', chartWidth - margin.right + 25, margin.top + 50);
 
         // Continue animation if not complete
         if (progress < 1) {

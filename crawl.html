@@ -1,63 +1,24 @@
-// wiki url: https://en.m.wikipedia.org/wiki/List_of_Falcon_9_and_Falcon_Heavy_launches
-//jq -s '.[0] + .[1]' f9_launches_550.json launches.json > f9_launches.json
-(function () {
-const header = ['time', 'rocket', 'site', 'mission', 'mass', 'orbit']
-const startFlight25=551;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>One-Click Crawl</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        button {padding:.8rem 1.5rem; font-size:1rem; margin:1rem;}
+    </style>
+</head>
+<body>
 
-const noOp = x => x.replace('\xa0',' ');
-const timeTrans = t => {const cleanStr = t.replace(/\[\d+\]/g, ''); return cleanStr.replace(/(\d{4})(\d{2}:\d{2})/, '$1 $2');};
-const rocketTrans = x => x.replace('F9\xa0B5','').replace(/\[\d+\]/, '');
-const massRegx = /^(.*)kg/
-const massTrans = (x) => {
-  const m = x.match(massRegx);
-  return m? m[1].replace(/[~,\s]/g,''): x;
-  }
-const transform = [timeTrans,rocketTrans, noOp, noOp, massTrans, noOp];
-let json = [];
-for(var i=startFlight25;;i++) {
-  let data = $$(`#F9-${i} td`).map(x => $(x).text().trim());
-  if(data.length ==0
-    break;
-  }
-  const obj = {};
-  obj['flight']=i;
-  for(var j =0;j<6;j++) {
-    obj[header[j]] = transform[j](data[j]);
-  }
-  // gen estimate mass
-  if(obj['mass'].startsWith('Unknown')) {
-    // provide an estimate based on the landing  
-    if(obj['orbit'].startsWith('LEO')) {
-      obj['mass'] = "163000";
-    } else if(obj['orbit'].startsWith('GTO')){
-      obj['mass'] = "6000";
-    } else {
-      obj['mass'] = "3000";
-    }
-  }
-  json.push(JSON.stringify(obj));
-}
- const finalContent = `[${json.join(',\n')}]`;
-// Create a Blob with the CSV content
-  const blob = new Blob([finalContent], { type: 'application/json;charset=utf-8;' });
+<button id="crawlBtn">Crawl Wikipedia Page(Q4 2025)</button>
+<pre id="output"></pre>
 
-  // Create a temporary link to trigger download
-  const link = document.createElement('a');
-  const url = URL.createObjectURL(blob);
-  link.setAttribute('href', url);
-  link.setAttribute('download', 'launches.json'); // File name
-  link.style.display = 'none';
-
-  // Append link to body, trigger click, and remove
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-})();
-
-// World launches https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_January%E2%80%93March_2025
-// Q4: https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_October%E2%80%93December_2025#October
-// {"flight":1,"time":"4 January 01:27","rocket":"Falcon 9 Block 5","mission":"F9-418","site":"Cape Canaveral SLC-40","org":{"country":"United States","info":"SpaceX"}}
-// jq -s '.[0] + .[1]' world_launches_all_3q.json world_launches_q4.json > world_launches.json
+<script>
+    
+/* --------------------------------------------------------------
+   1. Crawler function (stringified & injected)
+   -------------------------------------------------------------- */
+const CRAWLER_SRC = `
 (function findRowsWithDate(selector) {
     const debug = false;
     const monthes = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -71,7 +32,7 @@ for(var i=startFlight25;;i++) {
         //console.log('after:', cleanStr);
         return cleanStr.replace(/(\d{1,2}\s+[A-Za-z]+)(\d{2}:\d{2})/, '$1 $2');
       } catch (error) {
-        console.error(`could not prase time as: ${JSON.stringify(t)}`);
+        console.error("could not prase time as: " + JSON.stringify(t));
         return t;
       }
     };
@@ -82,7 +43,7 @@ for(var i=startFlight25;;i++) {
     const matchingRows = [];
     
     // Select table
-    const $tables = $(`${selector}`)
+    const $tables = $(`\\b${selector}\\b`)
     if (!$tables.length) {
         console.error('Table not found');
         return matchingRows;
@@ -227,3 +188,67 @@ for(var i=startFlight25;;i++) {
   link.click();
   document.body.removeChild(link);
 })('.wikitable')
+`;
+
+const dataUrl = (wikiUrl) =>  'data:text/html,' + encodeURIComponent(`
+            <!DOCTYPE html>
+            <html><head>
+              <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+              <script>${EXTRACTOR_SCRIPT}</script>
+            </head><body>
+              <h3>Loading Wikipedia...</h3>
+              <script>
+                setTimeout(() => location.href = "${wikiUrl}", 100000);
+              </script>
+            </body></html>
+        `);
+
+
+
+/* --------------------------------------------------------------
+   2. Main driver – reusable function
+   -------------------------------------------------------------- */
+    function crawlTarget(wikiUrl) {
+        $('#status').text('Opening secure tab...');
+
+        // Step 1: Open blank data: URL
+        
+        dataUrlStr = dataUrl(wikiUrl);
+        console.log(dataUrlStr);
+        const tab = window.open(dataUrlStr, '_blank');
+        if (!tab) {
+            alert('Pop-up blocked! Allow pop-ups for this site.');
+            return;
+        }
+
+        // Listen for completion
+        const listener = (e) => {
+            if (e.data && e.data.type === 'CRAWL_DONE') {
+                window.removeEventListener('message', listener);
+                $('#status').html(`<strong>Success!</strong> ${e.data.count} launches downloaded.`);
+            }
+        };
+        window.addEventListener('message', listener);
+
+        $('#status').text('Wikipedia loading...');
+    }
+
+/* --------------------------------------------------------------
+   3. Button wiring
+   -------------------------------------------------------------- */
+    $('#crawlBtn').on('click', () => {
+        const url = 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_October%E2%80%93December_2025#October'; // change as needed
+
+        crawlTarget(url, {
+            onResult: (data) => {
+                const out = data
+                    ? `href: ${data.href}\nTitle: ${data.title}\nCountry: ${data.countryName}`
+                    : 'No flag link found';
+                $('#output').text(out);
+            }
+        });
+});
+</script>
+
+</body>
+</html>

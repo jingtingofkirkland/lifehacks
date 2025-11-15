@@ -121,17 +121,6 @@
     }
   },
   {
-    "flight": 12,
-    "time": "16 January 22:37",
-    "rocket": "Starship",
-    "mission": "Flight 7",
-    "site": "Starbase OLP-A",
-    "org": {
-      "country": "United States",
-      "info": "SpaceX"
-    }
-  },
-  {
     "flight": 13,
     "time": "17 January 04:07",
     "rocket": "Long March 2D",
@@ -514,17 +503,6 @@
     "org": {
       "country": "France",
       "info": "Arianespace"
-    }
-  },
-  {
-    "flight": 48,
-    "time": "6 March 23:30",
-    "rocket": "Starship",
-    "mission": "Flight 8",
-    "site": "Starbase OLP-A",
-    "org": {
-      "country": "United States",
-      "info": "SpaceX"
     }
   },
   {
@@ -1303,17 +1281,6 @@
     "rocket": "Falcon 9 Block 5",
     "mission": "Starlink Group 17-1",
     "site": "Vandenberg SLC-4E",
-    "org": {
-      "country": "United States",
-      "info": "SpaceX"
-    }
-  },
-  {
-    "flight": 50,
-    "time": "27 May 23:36:28",
-    "rocket": "Starship",
-    "mission": "Flight 9",
-    "site": "Starbase OLP-A",
     "org": {
       "country": "United States",
       "info": "SpaceX"
@@ -2178,17 +2145,6 @@
     }
   },
   {
-    "flight": 49,
-    "time": "26 August 23:30",
-    "rocket": "Starship",
-    "mission": "Flight 10",
-    "site": "Starbase OLP-A",
-    "org": {
-      "country": "United States",
-      "info": "SpaceX"
-    }
-  },
-  {
     "flight": 50,
     "time": "27 August 10:50",
     "rocket": "Falcon 9 Block 5",
@@ -2800,7 +2756,7 @@
   },
   {
     "flight": 26,
-    "time": "2 November 05:00",
+    "time": "2 November 05:09:59",
     "mission": "Bandwagon-4[32]",
     "org": {
       "country": "United States",
@@ -2809,7 +2765,7 @@
   },
   {
     "flight": 27,
-    "time": "2 November 11:30",
+    "time": "2 November 11:56:00",
     "mission": "M5",
     "org": {
       "country": "India",
@@ -2818,7 +2774,7 @@
   },
   {
     "flight": 28,
-    "time": "3 November 03:47",
+    "time": "3 November 03:47:00",
     "mission": "7A-Y13",
     "org": {
       "country": "China",
@@ -2827,7 +2783,7 @@
   },
   {
     "flight": 29,
-    "time": "4 November 21:02",
+    "time": "4 November 21:02:17",
     "mission": "VA265",
     "org": {
       "country": "France",
@@ -2836,7 +2792,7 @@
   },
   {
     "flight": 30,
-    "time": "5 November 19:51",
+    "time": "5 November 19:51:00",
     "mission": "\"The Nation God Navigates\"",
     "org": {
       "country": "United States",
@@ -2845,7 +2801,7 @@
   },
   {
     "flight": 31,
-    "time": "6 November 01:31",
+    "time": "6 November 01:31:10",
     "mission": "Starlink Group 6-81",
     "org": {
       "country": "United States",
@@ -2856,6 +2812,96 @@
     "flight": 32,
     "time": "6 November 22:13:50",
     "mission": "Starlink Group 11-14",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 33,
+    "time": "8 November 22:01:00",
+    "mission": "HY6",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 34,
+    "time": "9 November 03:32:00",
+    "mission": "Y9",
+    "org": {
+      "country": "China",
+      "info": "CAS Space"
+    }
+  },
+  {
+    "flight": 35,
+    "time": "9 November 08:10:10",
+    "mission": "Starlink Group 10-51",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 36,
+    "time": "10 November 02:42:00",
+    "mission": "Y3 / SatNet LEO Group 13",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 37,
+    "time": "10 November 04:02",
+    "mission": "Y19",
+    "org": {
+      "country": "China",
+      "info": "Galactic Energy"
+    }
+  },
+  {
+    "flight": 38,
+    "time": "11 November 03:21:00",
+    "mission": "Starlink Group 6-87",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 39,
+    "time": "13 November 20:55:00",
+    "mission": "NG-2",
+    "org": {
+      "country": "United States",
+      "info": "Blue Origin"
+    }
+  },
+  {
+    "flight": 40,
+    "time": "14 November 03:04:00",
+    "mission": "AV-100",
+    "org": {
+      "country": "United States",
+      "info": "ULA"
+    }
+  },
+  {
+    "flight": 41,
+    "time": "15 November 03:08:10",
+    "mission": "Starlink Group 6-89",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 42,
+    "time": "15 November 03:55:00",
+    "mission": "Starlink Group 6-85",
     "org": {
       "country": "United States",
       "info": "SpaceX"
