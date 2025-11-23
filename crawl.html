@@ -1,254 +1,576 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>One-Click Crawl</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        button {padding:.8rem 1.5rem; font-size:1rem; margin:1rem;}
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wikipedia Launch Data Crawler</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    .crawl-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .crawl-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 1.2rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .crawl-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    .crawl-button:active {
+      transform: translateY(0);
+    }
+
+    .crawl-button .icon {
+      display: block;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .status-box {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      border-left: 4px solid #667eea;
+    }
+
+    .status-box h3 {
+      color: #333;
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    #status {
+      color: #666;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .status-box.success {
+      border-left-color: #10b981;
+      background: #ecfdf5;
+    }
+
+    .status-box.success #status {
+      color: #065f46;
+    }
+
+    .info-box {
+      background: #eff6ff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      border-left: 4px solid #3b82f6;
+    }
+
+    .info-box p {
+      color: #1e40af;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+    }
+
+    .info-box ol {
+      color: #1e40af;
+      font-size: 0.9rem;
+      margin-left: 1.5rem;
+      line-height: 1.8;
+    }
+
+    .button-label {
+      display: block;
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    .code-box {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+      max-height: 300px;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .copy-button {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .copy-button:hover {
+      background: #2563eb;
+    }
+
+    .copy-button.copied {
+      background: #10b981;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e5e7eb;
+      color: #6b7280;
+      font-size: 0.85rem;
+    }
+
+    .step-number {
+      display: inline-block;
+      background: #3b82f6;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 24px;
+      font-weight: bold;
+      margin-right: 0.5rem;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="container">
+    <h1>🚀 Wikipedia Launch Data Crawler</h1>
+    <p class="subtitle">One-click data extraction from Wikipedia launch tables</p>
 
-<button id="crawlBtn">Crawl Wikipedia Page(Q4 2025)</button>
-<pre id="output"></pre>
+    <div class="info-box">
+      <p><strong>ℹ️ How it works (3 simple steps):</strong></p>
+      <ol>
+        <li><strong>Click a button below</strong> - This will open Wikipedia and copy the script</li>
+        <li><strong>Open Browser Console</strong> - Press F12 (or Cmd+Option+J on Mac)</li>
+        <li><strong>Paste & Press Enter</strong> - The data will download automatically!</li>
+      </ol>
+    </div>
 
-<script>
-    
-/* --------------------------------------------------------------
-   1. Crawler function (stringified & injected)
-   -------------------------------------------------------------- */
-const CRAWLER_SRC = `
-(function findRowsWithDate(selector) {
-    const debug = false;
-    const monthes = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    const header = ['time', 'rocket',  'mission', 'site', 'org'];
-    const noOp = x => x;
-    const takeInfo = x => x ? x.info: x;
-    const timeTrans = t => {
-      try {
-        //console.log('Before:', t);
-        const cleanStr = t.replace(/\[\d+\]/g, ''); 
-        //console.log('after:', cleanStr);
-        return cleanStr.replace(/(\d{1,2}\s+[A-Za-z]+)(\d{2}:\d{2})/, '$1 $2');
-      } catch (error) {
-        console.error("could not prase time as: " + JSON.stringify(t));
-        return t;
+    <div class="crawl-grid">
+      <button class="crawl-button" data-target="falcon">
+        <span class="icon">🚀</span>
+        <strong>Falcon 9/Heavy</strong>
+        <span class="button-label">SpaceX Launches</span>
+      </button>
+
+      <button class="crawl-button" data-target="world-q1">
+        <span class="icon">🌍</span>
+        <strong>World Q1 2025</strong>
+        <span class="button-label">Jan-Mar Launches</span>
+      </button>
+
+      <button class="crawl-button" data-target="world-q2">
+        <span class="icon">🌍</span>
+        <strong>World Q2 2025</strong>
+        <span class="button-label">Apr-Jun Launches</span>
+      </button>
+
+      <button class="crawl-button" data-target="world-q3">
+        <span class="icon">🌍</span>
+        <strong>World Q3 2025</strong>
+        <span class="button-label">Jul-Sep Launches</span>
+      </button>
+
+      <button class="crawl-button" data-target="world-q4">
+        <span class="icon">🌍</span>
+        <strong>World Q4 2025</strong>
+        <span class="button-label">Oct-Dec Launches</span>
+      </button>
+
+      <button class="crawl-button" data-target="world-h1">
+        <span class="icon">🌏</span>
+        <strong>World H1 2025</strong>
+        <span class="button-label">First Half Year</span>
+      </button>
+    </div>
+
+    <div class="status-box" id="statusBox">
+      <h3>Status</h3>
+      <div id="status">Ready to crawl. Click a button above to start.</div>
+      <div class="code-box" id="codeBox" style="display: none;">
+        <button class="copy-button" id="copyButton">Copy Script</button>
+        <pre id="scriptContent"></pre>
+      </div>
+    </div>
+
+    <footer>
+      Made with ❤️ for space data enthusiasts
+    </footer>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="crawling_wiki_info.js"></script>
+
+  <script>
+    // Configuration for different crawl targets
+    const CRAWL_TARGETS = {
+      'falcon': {
+        url: 'https://en.m.wikipedia.org/wiki/List_of_Falcon_9_and_Falcon_Heavy_launches',
+        filename: 'launches.json',
+        scriptFile: 'falcon'
+      },
+      'world-q1': {
+        url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_January%E2%80%93March_2025',
+        filename: 'world_launches_q1.json',
+        scriptFile: 'world'
+      },
+      'world-q2': {
+        url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_April%E2%80%93June_2025',
+        filename: 'world_launches_q2.json',
+        scriptFile: 'world'
+      },
+      'world-q3': {
+        url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_July%E2%80%93September_2025',
+        filename: 'world_launches_q3.json',
+        scriptFile: 'world'
+      },
+      'world-q4': {
+        url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_October%E2%80%93December_2025',
+        filename: 'world_launches_q4.json',
+        scriptFile: 'world'
+      },
+      'world-h1': {
+        url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_January%E2%80%93June_2025',
+        filename: 'world_launches_h1.json',
+        scriptFile: 'world'
       }
     };
-    const transform = [timeTrans,takeInfo, noOp, takeInfo, noOp];
-    let json = [];
 
-    // Array to store matching rows
-    const matchingRows = [];
-    
-    // Select table
-    const $tables = $(`\\b${selector}\\b`)
-    if (!$tables.length) {
-        console.error('Table not found');
-        return matchingRows;
+    // Generate crawler scripts
+    function getFalconScript(filename) {
+      return `(function() {
+  const FALCON_CONFIG = {
+    START_FLIGHT: 551,
+    HEADERS: ['time', 'rocket', 'site', 'mission', 'mass', 'orbit'],
+    MASS_REGEX: /^(.*)kg/,
+    ESTIMATED_MASSES: { LEO: '163000', GTO: '6000', DEFAULT: '3000' }
+  };
+
+  const transformUtils = {
+    cleanNonBreakingSpace: (text) => text.replace('\\xa0', ' '),
+    cleanTime: (timeStr) => {
+      const cleaned = timeStr.replace(/\\[\\d+\\]/g, '');
+      return cleaned.replace(/(\\d{4})(\\d{2}:\\d{2})/, '$1 $2');
+    },
+    cleanRocket: (rocketStr) => rocketStr.replace('F9\\xa0B5', '').replace(/\\[\\d+\\]/, ''),
+    cleanMass: (massStr) => {
+      const match = massStr.match(FALCON_CONFIG.MASS_REGEX);
+      return match ? match[1].replace(/[~,\\s]/g, '') : massStr;
     }
-    console.log(`Found ${$tables.length} tables`);
-    // Iterate on each table
-    // Iterate through each row
-    let cnt =1;
-    let upcomming = false;
-    $tables.each(function() {
-      
-      let subOrbital = false;
-      let hasNormalData = false;
-      
-      let $table = $(this);
-      // check if its upcoming or suborbital table
-      $table.find('tr').each(function() {
-        const $row = $(this);
-          // Check if any td in the row contains a date
-          const $tds = $row.find('td');
-          if(!upcomming) {
-            //once upcoming, ignore all the rest.
-            upcomming = $tds.is(function() {
-              return $(this).text().includes('Upcoming launches');
-            });
-          } 
-          if(!subOrbital) {
-          subOrbital = $tds.is(function() {
-              return $(this).text().includes('Suborbital');
-          });
-        }
-          // normla data only from not upcoming or subortibal process
-          if(!hasNormalData) {
-          hasNormalData = !upcomming && !subOrbital &&  $tds.length > 2 && $tds.first().is(function() {
-              const textContent = this.innerText;
-              //return monthes.some(m => $(this).text().includes('April'));
-              return monthes.some(m => new RegExp(`\\b${m}\\b`).test(textContent));
-          });
-        }
-      });
-      //early return for only subOrbital or upcoming
-      if(!hasNormalData && (upcomming || subOrbital)) {
-            console.log('ignore only upcommings or subOrbital:'+cnt);
-            return false;
-      }
-      subOrbital = false;
-      upcomming = false;
-      // process table (might still have mixed with upcoming or subOrbital)
-      $table.find('tr').each(function() {
-          const $row = $(this);
-          // Check if any td in the row contains a date
-          const $tds = $row.find('td');
-          // eager return if processed to upcoming or suborbital
-          if((upcomming || subOrbital)) {
-            console.log('ignore upcommings or subOrbital inner:'+cnt);
-            return false;
-          }
+  };
 
-          upcomming = $tds.is(function() {
-              return $(this).text().includes('Upcoming launches');
-          });
+  const getTransformers = () => [
+    transformUtils.cleanTime, transformUtils.cleanRocket,
+    transformUtils.cleanNonBreakingSpace, transformUtils.cleanNonBreakingSpace,
+    transformUtils.cleanMass, transformUtils.cleanNonBreakingSpace
+  ];
 
-          subOrbital = $tds.is(function() {
-              return $(this).text().includes('Suborbital');
-          });
-
-          if((upcomming || subOrbital)) {
-            console.log('ignore upcommings or subOrbital:'+cnt);
-            return false;
-          }
-          
-          const hasDate = $tds.length > 2 && $tds.first().is(function() {
-              const textContent = this.innerText;
-              //return monthes.some(m => $(this).text().includes('April'));
-              return monthes.some(m => new RegExp(`\\b${m}\\b`).test(textContent));
-          });
-          if (hasDate) { // row has date, indicate a valid row 
-              // Push an array of all td texts
-              const tdTexts = $tds.map(function() {
-                const textContent = $(this).text().trim()
-                  // there are multiple possible columns having flag icon
-                  const targetLink = $(this).find('span.flagicon a').first();
-                  
-                  if(targetLink && targetLink.length > 0) {
-                    //console.log({country: targetLink.attr('title') || targetLink.text(), info: textContent.trim()});
-                    return {country: targetLink.attr('title') || targetLink.text(), info: textContent.trim()};
-                  }
-                  else if(textContent.includes('img')) {
-                    // img tag 
-                    // Regex to match the alt attribute
-                    const altRegex = /alt="([^"]*)"/;
-                    // Regex to match the text after the closing img tag
-                    const textRegex = />([^<]+)$/;
-
-                    // Extract alt
-                    const altMatch = textContent.match(altRegex);
-                    const alt = altMatch ? altMatch[1] : '';
-
-                    // Extract text
-                    const textMatch = textContent.match(textRegex);
-                    const text = textMatch ? textMatch[1].trim() : '';
-                    return {country: alt, info: text};
-                  }
-                  return {info:textContent};
-              }).get();
-
-              matchingRows.push(tdTexts);
-              const obj = {};
-              obj['flight']=cnt; cnt++;
-              for(var j =0;j<header.length;j++) {
-                let info;
-                if(header[j] =='org') {
-                  info = tdTexts[j]
-                } else {
-                  info = tdTexts[j].info;
-                }
-                obj[header[j]] = transform[j](info);
-              }
-              json.push(JSON.stringify(obj));
-          }
-      });
-    });
-    // download
-    const finalContent = `[${json.join(',\n')}]`;
-    if(debug) {
-      console.log(finalContent);
-    }
-// Create a Blob with the CSV content
-  const blob = new Blob([finalContent], { type: 'application/json;charset=utf-8;' });
-
-  // Create a temporary link to trigger download
-  const link = document.createElement('a');
-  const url = URL.createObjectURL(blob);
-  if(!debug) {
-    link.setAttribute('href', url);
+  function estimateMass(mass, orbit) {
+    if (!mass.startsWith('Unknown')) return mass;
+    if (orbit.startsWith('LEO')) return FALCON_CONFIG.ESTIMATED_MASSES.LEO;
+    if (orbit.startsWith('GTO')) return FALCON_CONFIG.ESTIMATED_MASSES.GTO;
+    return FALCON_CONFIG.ESTIMATED_MASSES.DEFAULT;
   }
-  link.setAttribute('download', 'world_launches_q4.json'); // File name
-  link.style.display = 'none';
 
-  // Append link to body, trigger click, and remove
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-})('.wikitable')
-`;
+  function downloadJSON(data, filename) {
+    const blob = new Blob([data], { type: 'application/json;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
 
-const dataUrl = (wikiUrl) =>  'data:text/html,' + encodeURIComponent(`
-            <!DOCTYPE html>
-            <html><head>
-              <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-              <script>${EXTRACTOR_SCRIPT}</script>
-            </head><body>
-              <h3>Loading Wikipedia...</h3>
-              <script>
-                setTimeout(() => location.href = "${wikiUrl}", 100000);
-              </script>
-            </body></html>
+  const transformers = getTransformers();
+  const json = [];
+
+  for (let i = FALCON_CONFIG.START_FLIGHT; ; i++) {
+    const data = Array.from(document.querySelectorAll('#F9-' + i + ' td')).map(x => x.textContent.trim());
+    if (data.length === 0) break;
+
+    const obj = { flight: i };
+    for (let j = 0; j < FALCON_CONFIG.HEADERS.length; j++) {
+      obj[FALCON_CONFIG.HEADERS[j]] = transformers[j](data[j]);
+    }
+    obj['mass'] = estimateMass(obj['mass'], obj['orbit']);
+    json.push(obj);
+  }
+
+  const finalContent = JSON.stringify(json, null, 2);
+  downloadJSON(finalContent, '${filename}');
+  console.log('✅ Extracted ' + json.length + ' launches!');
+  alert('✅ Success! Extracted ' + json.length + ' launches. Check your Downloads folder for ${filename}');
+})();`;
+    }
+
+    function getWorldScript(filename) {
+      return `(function() {
+  const jq = window.jQuery || window.$;
+  if (!jq) {
+    alert('jQuery not found! Loading...');
+    const script = document.createElement('script');
+    script.src = 'https://code.jquery.com/jquery-3.6.0.min.js';
+    script.onload = function() { alert('jQuery loaded! Please run the script again.'); };
+    document.head.appendChild(script);
+    return;
+  }
+
+  const monthes = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const header = ['time', 'rocket', 'mission', 'site', 'org'];
+  const noOp = x => x;
+  const takeInfo = x => x ? x.info : x;
+  const timeTrans = t => {
+    try {
+      const cleanStr = t.replace(/\\[\\d+\\]/g, '');
+      return cleanStr.replace(/(\\d{1,2}\\s+[A-Za-z]+)(\\d{2}:\\d{2})/, '$1 $2');
+    } catch (error) {
+      console.error('Could not parse time:', t);
+      return t;
+    }
+  };
+  const transform = [timeTrans, takeInfo, noOp, takeInfo, noOp];
+  const json = [];
+
+  const $tables = jq('.wikitable');
+  if (!$tables.length) {
+    alert('❌ No tables found!');
+    return;
+  }
+
+  let cnt = 1;
+  let upcomming = false;
+
+  $tables.each(function() {
+    let subOrbital = false;
+    let hasNormalData = false;
+    const $table = jq(this);
+
+    $table.find('tr').each(function() {
+      const $tds = jq(this).find('td');
+      if (!upcomming) {
+        upcomming = $tds.is(function() {
+          return jq(this).text().includes('Upcoming launches');
+        });
+      }
+      if (!subOrbital) {
+        subOrbital = $tds.is(function() {
+          return jq(this).text().includes('Suborbital');
+        });
+      }
+      if (!hasNormalData) {
+        hasNormalData = !upcomming && !subOrbital && $tds.length > 2 && $tds.first().is(function() {
+          const textContent = this.innerText;
+          return monthes.some(m => new RegExp('\\\\b' + m + '\\\\b').test(textContent));
+        });
+      }
+    });
+
+    if (!hasNormalData && (upcomming || subOrbital)) return false;
+
+    subOrbital = false;
+    upcomming = false;
+
+    $table.find('tr').each(function() {
+      const $tds = jq(this).find('td');
+      if (upcomming || subOrbital) return false;
+
+      upcomming = $tds.is(function() {
+        return jq(this).text().includes('Upcoming launches');
+      });
+      subOrbital = $tds.is(function() {
+        return jq(this).text().includes('Suborbital');
+      });
+
+      if (upcomming || subOrbital) return false;
+
+      const hasDate = $tds.length > 2 && $tds.first().is(function() {
+        const textContent = this.innerText;
+        return monthes.some(m => new RegExp('\\\\b' + m + '\\\\b').test(textContent));
+      });
+
+      if (hasDate) {
+        const tdTexts = $tds.map(function() {
+          const textContent = jq(this).text().trim();
+          const targetLink = jq(this).find('span.flagicon a').first();
+
+          if (targetLink && targetLink.length > 0) {
+            return {country: targetLink.attr('title') || targetLink.text(), info: textContent.trim()};
+          } else if (textContent.includes('img')) {
+            const altMatch = textContent.match(/alt="([^"]*)"/);
+            const textMatch = textContent.match(/>([^<]+)$/);
+            return {country: altMatch ? altMatch[1] : '', info: textMatch ? textMatch[1].trim() : ''};
+          }
+          return {info: textContent};
+        }).get();
+
+        const obj = { flight: cnt++ };
+        for (let j = 0; j < header.length; j++) {
+          let info;
+          if (header[j] === 'org') {
+            info = tdTexts[j];
+          } else {
+            info = tdTexts[j].info;
+          }
+          obj[header[j]] = transform[j](info);
+        }
+        json.push(obj);
+      }
+    });
+  });
+
+  function downloadJSON(data, filename) {
+    const blob = new Blob([data], { type: 'application/json;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  const finalContent = JSON.stringify(json, null, 2);
+  downloadJSON(finalContent, '${filename}');
+  console.log('✅ Extracted ' + json.length + ' launches!');
+  alert('✅ Success! Extracted ' + json.length + ' launches. Check your Downloads folder for ${filename}');
+})();`;
+    }
+
+    // Main crawl function
+    function crawlTarget(target, config) {
+      const statusBox = $('#statusBox');
+      const status = $('#status');
+      const codeBox = $('#codeBox');
+      const scriptContent = $('#scriptContent');
+      const copyButton = $('#copyButton');
+
+      // Generate appropriate script
+      const script = config.scriptFile === 'falcon'
+        ? getFalconScript(config.filename)
+        : getWorldScript(config.filename);
+
+      // Copy to clipboard
+      navigator.clipboard.writeText(script).then(() => {
+        // Update status
+        statusBox.removeClass('success').addClass('success');
+        status.html(`
+          <strong>✅ Step 1: Wikipedia opened!</strong><br><br>
+          <strong>📋 Step 2: Script copied to clipboard!</strong><br><br>
+          <strong>🔧 Step 3: Now do this:</strong><br>
+          1. Go to the Wikipedia tab<br>
+          2. Press <kbd>F12</kbd> (or <kbd>Cmd+Option+J</kbd> on Mac) to open Console<br>
+          3. Paste (Ctrl+V / Cmd+V) and press <kbd>Enter</kbd><br>
+          4. Download will start automatically!
         `);
 
+        // Show code box
+        scriptContent.text(script);
+        codeBox.show();
 
+        // Open Wikipedia
+        window.open(config.url, '_blank');
 
-/* --------------------------------------------------------------
-   2. Main driver – reusable function
-   -------------------------------------------------------------- */
-    function crawlTarget(wikiUrl) {
-        $('#status').text('Opening secure tab...');
+        // Setup copy button
+        copyButton.text('Copy Script');
+        copyButton.off('click').on('click', function () {
+          navigator.clipboard.writeText(script);
+          copyButton.text('✓ Copied!').addClass('copied');
+          setTimeout(() => {
+            copyButton.text('Copy Script').removeClass('copied');
+          }, 2000);
+        });
 
-        // Step 1: Open blank data: URL
-        
-        dataUrlStr = dataUrl(wikiUrl);
-        console.log(dataUrlStr);
-        const tab = window.open(dataUrlStr, '_blank');
-        if (!tab) {
-            alert('Pop-up blocked! Allow pop-ups for this site.');
-            return;
-        }
-
-        // Listen for completion
-        const listener = (e) => {
-            if (e.data && e.data.type === 'CRAWL_DONE') {
-                window.removeEventListener('message', listener);
-                $('#status').html(`<strong>Success!</strong> ${e.data.count} launches downloaded.`);
-            }
-        };
-        window.addEventListener('message', listener);
-
-        $('#status').text('Wikipedia loading...');
+      }).catch(err => {
+        status.html('❌ Could not copy to clipboard. Please copy the script manually from below.');
+        scriptContent.text(script);
+        codeBox.show();
+        window.open(config.url, '_blank');
+      });
     }
 
-/* --------------------------------------------------------------
-   3. Button wiring
-   -------------------------------------------------------------- */
-    $('#crawlBtn').on('click', () => {
-        const url = 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_October%E2%80%93December_2025#October'; // change as needed
+    // Button click handlers
+    $(document).ready(function () {
+      $('.crawl-button').on('click', function () {
+        const target = $(this).data('target');
+        const config = CRAWL_TARGETS[target];
 
-        crawlTarget(url, {
-            onResult: (data) => {
-                const out = data
-                    ? `href: ${data.href}\nTitle: ${data.title}\nCountry: ${data.countryName}`
-                    : 'No flag link found';
-                $('#output').text(out);
-            }
-        });
-});
-</script>
+        if (!config) {
+          alert('Invalid target configuration!');
+          return;
+        }
 
+        crawlTarget(target, config);
+      });
+    });
+  </script>
 </body>
+
 </html>

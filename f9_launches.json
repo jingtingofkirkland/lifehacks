@@ -1312,5 +1312,50 @@
     "mission": "Starlink: Group 6-85",
     "mass": "16675",
     "orbit": "LEO"
+  },
+  {
+    "flight": 564,
+    "time": "November 17, 2025 05:21",
+    "rocket": "B1097‑3",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Sentinel-6B[450]",
+    "mass": "1440",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 565,
+    "time": "November 19, 2025 00:12",
+    "rocket": "B1085‑12",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Starlink: Group 6-94",
+    "mass": "16675",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 566,
+    "time": "November 21, 2025 03:39",
+    "rocket": "B1080‑23",
+    "site": "Kennedy, LC‑39A",
+    "mission": "Starlink: Group 6-78",
+    "mass": "16675",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 567,
+    "time": "November 22, 2025 07:53",
+    "rocket": "B1090‑9",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Starlink: Group 6-79",
+    "mass": "16675",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 568,
+    "time": "November 23, 2025 08:48",
+    "rocket": "B1100‑1",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 11-30",
+    "mass": "16100",
+    "orbit": "LEO"
   }
 ]

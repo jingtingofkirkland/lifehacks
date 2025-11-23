@@ -1,57 +1,115 @@
 // wiki url: https://en.m.wikipedia.org/wiki/List_of_Falcon_9_and_Falcon_Heavy_launches
-//jq -s '.[0] + .[1]' f9_launches_550.json launches.json > f9_launches.json
-(function () {
-const header = ['time', 'rocket', 'site', 'mission', 'mass', 'orbit']
-const startFlight25=551;
+// jq -s '.[0] + .[1]' f9_launches_550.json launches.json > f9_launches.json
 
-const noOp = x => x.replace('\xa0',' ');
-const timeTrans = t => {const cleanStr = t.replace(/\[\d+\]/g, ''); return cleanStr.replace(/(\d{4})(\d{2}:\d{2})/, '$1 $2');};
-const rocketTrans = x => x.replace('F9\xa0B5','').replace(/\[\d+\]/, '');
-const massRegx = /^(.*)kg/
-const massTrans = (x) => {
-  const m = x.match(massRegx);
-  return m? m[1].replace(/[~,\s]/g,''): x;
-  }
-const transform = [timeTrans,rocketTrans, noOp, noOp, massTrans, noOp];
-let json = [];
-for(var i=startFlight25;;i++) {
-  let data = $$(`#F9-${i} td`).map(x => $(x).text().trim());
-  if(data.length ==0
-    break;
-  }
-  const obj = {};
-  obj['flight']=i;
-  for(var j =0;j<6;j++) {
-    obj[header[j]] = transform[j](data[j]);
-  }
-  // gen estimate mass
-  if(obj['mass'].startsWith('Unknown')) {
-    // provide an estimate based on the landing  
-    if(obj['orbit'].startsWith('LEO')) {
-      obj['mass'] = "163000";
-    } else if(obj['orbit'].startsWith('GTO')){
-      obj['mass'] = "6000";
-    } else {
-      obj['mass'] = "3000";
+// Configuration
+const FALCON_CONFIG = {
+    START_FLIGHT: 551,
+    HEADERS: ['time', 'rocket', 'site', 'mission', 'mass', 'orbit'],
+    MASS_REGEX: /^(.*)kg/,
+    ESTIMATED_MASSES: {
+        LEO: '163000',
+        GTO: '6000',
+        DEFAULT: '3000'
     }
-  }
-  json.push(JSON.stringify(obj));
+};
+
+// Data transformation utilities
+const transformUtils = {
+    cleanNonBreakingSpace: (text) => text.replace('\xa0', ' '),
+
+    cleanTime: (timeStr) => {
+        const cleaned = timeStr.replace(/\[\d+\]/g, '');
+        return cleaned.replace(/(\d{4})(\d{2}:\d{2})/, '$1 $2');
+    },
+
+    cleanRocket: (rocketStr) => rocketStr
+        .replace('F9\xa0B5', '')
+        .replace(/\[\d+\]/, ''),
+
+    cleanMass: (massStr) => {
+        const match = massStr.match(FALCON_CONFIG.MASS_REGEX);
+        return match ? match[1].replace(/[~,\s]/g, '') : massStr;
+    }
+};
+
+// Get transformers array
+const getTransformers = () => [
+    transformUtils.cleanTime,
+    transformUtils.cleanRocket,
+    transformUtils.cleanNonBreakingSpace,
+    transformUtils.cleanNonBreakingSpace,
+    transformUtils.cleanMass,
+    transformUtils.cleanNonBreakingSpace
+];
+
+// Function to estimate mass based on orbit
+function estimateMass(mass, orbit) {
+    if (!mass.startsWith('Unknown')) {
+        return mass;
+    }
+
+    if (orbit.startsWith('LEO')) {
+        return FALCON_CONFIG.ESTIMATED_MASSES.LEO;
+    } else if (orbit.startsWith('GTO')) {
+        return FALCON_CONFIG.ESTIMATED_MASSES.GTO;
+    }
+    return FALCON_CONFIG.ESTIMATED_MASSES.DEFAULT;
 }
- const finalContent = `[${json.join(',\n')}]`;
-// Create a Blob with the CSV content
-  const blob = new Blob([finalContent], { type: 'application/json;charset=utf-8;' });
 
-  // Create a temporary link to trigger download
-  const link = document.createElement('a');
-  const url = URL.createObjectURL(blob);
-  link.setAttribute('href', url);
-  link.setAttribute('download', 'launches.json'); // File name
-  link.style.display = 'none';
+// Function to create launch object
+function createLaunchObject(flightNumber, data, headers, transformers) {
+    const obj = { flight: flightNumber };
 
-  // Append link to body, trigger click, and remove
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+    for (let j = 0; j < headers.length; j++) {
+        obj[headers[j]] = transformers[j](data[j]);
+    }
+
+    // Estimate mass if unknown
+    obj['mass'] = estimateMass(obj['mass'], obj['orbit']);
+
+    return obj;
+}
+
+// Function to download JSON data
+function downloadJSON(data, filename) {
+    const blob = new Blob([data], { type: 'application/json;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.display = 'none';
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+}
+
+// Main function to scrape Falcon launches
+(function scrapeFalconLaunches() {
+    const transformers = getTransformers();
+    const json = [];
+
+    for (let i = FALCON_CONFIG.START_FLIGHT; ; i++) {
+        const data = $$(`#F9-${i} td`).map(x => $(x).text().trim());
+
+        if (data.length === 0) {
+            break;
+        }
+
+        const launchObj = createLaunchObject(
+            i,
+            data,
+            FALCON_CONFIG.HEADERS,
+            transformers
+        );
+        json.push(JSON.stringify(launchObj));
+    }
+
+    const finalContent = `[${json.join(',\n')}]`;
+    downloadJSON(finalContent, 'launches.json');
 })();
 
 // World launches https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_January%E2%80%93March_2025
@@ -67,7 +125,7 @@ for(var i=startFlight25;;i++) {
     const timeTrans = t => {
       try {
         //console.log('Before:', t);
-        const cleanStr = t.replace(/\[\d+\]/g, ''); 
+        const cleanStr = t.replace(/\[\d+\]/g, '');
         //console.log('after:', cleanStr);
         return cleanStr.replace(/(\d{1,2}\s+[A-Za-z]+)(\d{2}:\d{2})/, '$1 $2');
       } catch (error) {
@@ -80,7 +138,7 @@ for(var i=startFlight25;;i++) {
 
     // Array to store matching rows
     const matchingRows = [];
-    
+
     // Select table
     const $tables = $(`${selector}`)
     if (!$tables.length) {
@@ -93,10 +151,10 @@ for(var i=startFlight25;;i++) {
     let cnt =1;
     let upcomming = false;
     $tables.each(function() {
-      
+
       let subOrbital = false;
       let hasNormalData = false;
-      
+
       let $table = $(this);
       // check if its upcoming or suborbital table
       $table.find('tr').each(function() {
@@ -108,7 +166,7 @@ for(var i=startFlight25;;i++) {
             upcomming = $tds.is(function() {
               return $(this).text().includes('Upcoming launches');
             });
-          } 
+          }
           if(!subOrbital) {
           subOrbital = $tds.is(function() {
               return $(this).text().includes('Suborbital');
@@ -153,25 +211,25 @@ for(var i=startFlight25;;i++) {
             console.log('ignore upcommings or subOrbital:'+cnt);
             return false;
           }
-          
+
           const hasDate = $tds.length > 2 && $tds.first().is(function() {
               const textContent = this.innerText;
               //return monthes.some(m => $(this).text().includes('April'));
               return monthes.some(m => new RegExp(`\\b${m}\\b`).test(textContent));
           });
-          if (hasDate) { // row has date, indicate a valid row 
+          if (hasDate) { // row has date, indicate a valid row
               // Push an array of all td texts
               const tdTexts = $tds.map(function() {
                 const textContent = $(this).text().trim()
                   // there are multiple possible columns having flag icon
                   const targetLink = $(this).find('span.flagicon a').first();
-                  
+
                   if(targetLink && targetLink.length > 0) {
                     //console.log({country: targetLink.attr('title') || targetLink.text(), info: textContent.trim()});
                     return {country: targetLink.attr('title') || targetLink.text(), info: textContent.trim()};
                   }
                   else if(textContent.includes('img')) {
-                    // img tag 
+                    // img tag
                     // Regex to match the alt attribute
                     const altRegex = /alt="([^"]*)"/;
                     // Regex to match the text after the closing img tag

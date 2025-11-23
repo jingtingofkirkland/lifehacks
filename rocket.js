@@ -1,100 +1,236 @@
-// Global variable to store booster data
-let boosterData ;
+// Chart configuration constants
+const CHART_CONFIG = {
+    BAR_HEIGHT: 30,
+    BAR_GAP: 10,
+    ANIMATION_DURATION: 1000,
+    WORLD_ANIMATION_HOURS_PER_RENDER: 10,
+    WORLD_ANIMATION_INTERPOLATION: 2,
+    MIN_CANVAS_HEIGHT: 400,
+    CHART_MARGINS: { top: 20, right: 80, bottom: 50, left: 60 },
+    COLORS: {
+        PRIMARY_BAR: '#00ff88',        // Neon green for bars
+        BACKGROUND_BAR: '#3a4156',     // Dark gray background
+        TEXT: '#e0e6ed',               // Light text
+        COUNT_LINE: '#00d9ff',         // Neon cyan for count line
+        MASS_LINE: '#ff2e97',          // Neon pink for mass line
+        LEADER_HIGHLIGHT: '#ffd700',   // Gold for leader
+        AXIS_COLOR: '#8b95a8',         // Light gray for axes
+        DATE_TEXT: '#00d9ff'           // Cyan for dates
+    }
+};
 
-let launchesData ;
+const DATA_PATHS = {
+    SPACEX: '/f9_launches.json',
+    WORLD: '/world_launches.json'
+};
 
-// Function to sort and remove duplicate data
-function getSortedData() {
-    const s = boosterData.sort((a, b) => b.flights - a.flights);
-    const seen = new Set();
-    return s.filter(x => {
-        if(seen.has(x.name)){
+// Global data storage
+let boosterData = null;
+let launchesData = null;
+
+// Utility function to sort and remove duplicate data
+function getSortedUniqueData(data) {
+    const sortedData = [...data].sort((a, b) => b.flights - a.flights);
+    const uniqueNames = new Set();
+
+    return sortedData.filter(item => {
+        if (uniqueNames.has(item.name)) {
             return false;
         }
-        seen.add(x.name);
+        uniqueNames.add(item.name);
         return true;
     });
+}
 
+// Utility function to format dates
+function formatDate(date) {
+    return date.toISOString().split('T')[0];
+}
+
+// Utility function to calculate dynamic canvas height
+function calculateCanvasHeight(dataLength, barHeight, barGap, minHeight = CHART_CONFIG.MIN_CANVAS_HEIGHT) {
+    return Math.max(minHeight, dataLength * (barHeight + barGap) + barGap);
+}
+
+// Validate canvas and context
+function getCanvasContext(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) {
+        console.error(`Canvas element with id "${canvasId}" not found`);
+        return null;
+    }
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+        console.error(`Cannot get 2D context for canvas "${canvasId}"`);
+        return null;
+    }
+
+    return { canvas, ctx };
+}
+
+// Validate data before processing
+function validateData(data, requiredFields = []) {
+    if (!Array.isArray(data) || data.length === 0) {
+        console.error('Data must be a non-empty array');
+        return false;
+    }
+
+    if (requiredFields.length > 0) {
+        const hasRequiredFields = data.every(item =>
+            requiredFields.every(field => field in item)
+        );
+        if (!hasRequiredFields) {
+            console.error(`Data items must contain fields: ${requiredFields.join(', ')}`);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// Draw single bar with labels
+function drawBar(ctx, config) {
+    const { x, y, width, height, color, name, value, showValue } = config;
+
+    // Draw bar
+    ctx.fillStyle = color || CHART_CONFIG.COLORS.PRIMARY_BAR;
+    ctx.fillRect(x, y, width, height);
+
+    // Draw labels
+    ctx.fillStyle = CHART_CONFIG.COLORS.TEXT;
+    ctx.font = '12px Arial';
+    ctx.fillText(name, 5, y + height / 2 + 5);
+
+    if (showValue) {
+        ctx.fillText(value, x + width + 5, y + height / 2 + 5);
+    }
 }
 
 // Function to draw the horizontal bar chart with dynamic height
 function drawBarChart(data) {
-    const canvas = document.getElementById('barChart');
-    if (!canvas.getContext) return;
+    if (!validateData(data, ['name', 'flights'])) {
+        console.error('Invalid data for bar chart');
+        return;
+    }
 
-    const ctx = canvas.getContext('2d');
+    const canvasInfo = getCanvasContext('barChart');
+    if (!canvasInfo) return;
 
-    // Chart parameters
+    const { canvas, ctx } = canvasInfo;
     const chartWidth = canvas.width;
-    const barHeight = 30;
-    const barGap = 10;
-    
+
     // Calculate dynamic height
-    const calculatedHeight = Math.max(400, data.length * (barHeight + barGap) + barGap);
+    const calculatedHeight = calculateCanvasHeight(
+        data.length,
+        CHART_CONFIG.BAR_HEIGHT,
+        CHART_CONFIG.BAR_GAP
+    );
     canvas.height = calculatedHeight;
 
     const maxFlights = Math.max(...data.map(booster => booster.flights));
-    
-    // Animation parameters
-    const animationDuration = 1000; // 1 second
     const startTime = performance.now();
-    
-    // Clear canvas
-    ctx.clearRect(0, 0, chartWidth, calculatedHeight);
 
     function animate(currentTime) {
-        // Clear canvas for each frame
         ctx.clearRect(0, 0, chartWidth, calculatedHeight);
 
-        // Calculate progress (0 to 1)
         const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / animationDuration, 1);
+        const progress = Math.min(elapsed / CHART_CONFIG.ANIMATION_DURATION, 1);
 
         // Draw bars
         data.forEach((booster, index) => {
             const finalBarWidth = (booster.flights / maxFlights) * (chartWidth - 100);
             const currentBarWidth = finalBarWidth * progress;
             const x = 50;
-            const y = index * (barHeight + barGap) + barGap;
+            const y = index * (CHART_CONFIG.BAR_HEIGHT + CHART_CONFIG.BAR_GAP) + CHART_CONFIG.BAR_GAP;
 
-            // Draw bar
-            ctx.fillStyle = '#4CAF50';
-            ctx.fillRect(x, y, currentBarWidth, barHeight);
-
-            // Draw labels
-            ctx.fillStyle = '#000';
-            ctx.font = '12px Arial';
-            ctx.fillText(booster.name, 5, y + barHeight / 2 + 5);
-            
-            // Show flight numbers only when animation is complete
-            if (progress === 1) {
-                ctx.fillText(booster.flights, x + currentBarWidth + 5, y + barHeight / 2 + 5);
-            }
+            drawBar(ctx, {
+                x,
+                y,
+                width: currentBarWidth,
+                height: CHART_CONFIG.BAR_HEIGHT,
+                name: booster.name,
+                value: booster.flights,
+                showValue: progress === 1
+            });
         });
 
-        // Continue animation if not complete
         if (progress < 1) {
             requestAnimationFrame(animate);
         }
     }
 
-    // Start animation
     requestAnimationFrame(animate);
 }
 
-/*
- * {
-    "flight": 1,
-    "time": "4 January 01:27",
-    "rocket": "Falcon 9 Block 5",
-    "mission": "F9-418",
-    "site": "Cape Canaveral SLC-40",
-    "org": {
-      "country": "United States",
-      "info": "SpaceX"
-    }
-  },
-*/
+// Helper function to draw axis lines
+function drawAxes(ctx, dimensions, margins) {
+    const { width, height } = dimensions;
+
+    ctx.beginPath();
+    ctx.strokeStyle = CHART_CONFIG.COLORS.TEXT;
+    ctx.lineWidth = 1;
+
+    // X-axis (time)
+    ctx.moveTo(margins.left, height - margins.bottom);
+    ctx.lineTo(width - margins.right, height - margins.bottom);
+    ctx.stroke();
+
+    // Y-axis left
+    ctx.moveTo(margins.left, height - margins.bottom);
+    ctx.lineTo(margins.left, margins.top);
+    ctx.stroke();
+
+    // Y-axis right
+    ctx.moveTo(width - margins.right, height - margins.bottom);
+    ctx.lineTo(width - margins.right, margins.top);
+    ctx.stroke();
+}
+
+// Helper function to draw axis labels
+function drawAxisLabels(ctx, config) {
+    const { dimensions, margins, xLabel, yLeftLabel, yRightLabel } = config;
+    const { width, height } = dimensions;
+
+    ctx.fillStyle = CHART_CONFIG.COLORS.TEXT;
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+
+    // X-axis label
+    ctx.fillText(xLabel, width / 2, height - 10);
+
+    // Y-axis left label
+    ctx.save();
+    ctx.translate(margins.left - 40, height / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText(yLeftLabel, 0, 0);
+    ctx.restore();
+
+    // Y-axis right label
+    ctx.save();
+    ctx.translate(width - margins.right + 40, height / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText(yRightLabel, 0, 0);
+    ctx.restore();
+}
+
+// Helper function to draw legend
+function drawLegend(ctx, legendItems, position) {
+    const { x, y } = position;
+
+    legendItems.forEach((item, index) => {
+        const yOffset = index * 20;
+
+        // Draw color box
+        ctx.fillStyle = item.color;
+        ctx.fillRect(x, y + yOffset, 10, 10);
+
+        // Draw label
+        ctx.fillStyle = CHART_CONFIG.COLORS.TEXT;
+        ctx.textAlign = 'left';
+        ctx.fillText(item.label, x, y + yOffset + 20);
+    });
+}
 
 function drawBarChartWorld(data) {
     const canvas = document.getElementById('worldData');
@@ -115,7 +251,7 @@ function drawBarChartWorld(data) {
         country: d.org.country
     }));
     //Change title
-    document.getElementById('word_launch_title').textContent = 
+    document.getElementById('word_launch_title').textContent =
     `World Counts 2025 (Total: ${parsedData.length})`;
 
     parsedData.sort((a, b) => a.time - b.time);
@@ -198,7 +334,7 @@ function drawBarChartWorld(data) {
         }
 
         // Draw date
-        ctx.fillStyle = '#000';
+        ctx.fillStyle = CHART_CONFIG.COLORS.DATE_TEXT;
         ctx.font = '14px Arial';
         ctx.textAlign = 'center';
         ctx.fillText(currentDate.toISOString().split('T')[0], chartWidth / 2, barGap * 2);
@@ -220,15 +356,15 @@ function drawBarChartWorld(data) {
             const y = (index + 1) * (barHeight + barGap) + barGap;
 
             // Draw full background (for non-leaders, shows potential)
-            ctx.fillStyle = '#e0e0e0';
+            ctx.fillStyle = CHART_CONFIG.COLORS.BACKGROUND_BAR;
             ctx.fillRect(x, y, fullWidth, barHeight);
 
-            // Draw actual green bar (up to current relative length)
-            ctx.fillStyle = '#4CAF50';
+            // Draw actual bar (up to current relative length)
+            ctx.fillStyle = CHART_CONFIG.COLORS.PRIMARY_BAR;
             ctx.fillRect(x, y, barLength, barHeight);
 
             // Labels
-            ctx.fillStyle = '#000';
+            ctx.fillStyle = CHART_CONFIG.COLORS.TEXT;
             ctx.font = '12px Arial';
             ctx.textAlign = 'left';
             const displayName = org.name === 'United States' ? 'US' : org.name;
@@ -237,7 +373,7 @@ function drawBarChartWorld(data) {
 
             // Optional: highlight leader
             if (isLeader) {
-                ctx.strokeStyle = '#ff9800';
+                ctx.strokeStyle = CHART_CONFIG.COLORS.LEADER_HIGHLIGHT;
                 ctx.lineWidth = 2;
                 ctx.strokeRect(x, y, barLength, barHeight);
             }
@@ -287,7 +423,7 @@ function drawCountAndMassChart(data) {
         mass: Math.floor((cumulativeMass += d.mass)/1000) // Cumulative mass (ton)
     }));
     // Change Title spacex_title
-    document.getElementById('spacex_title').textContent = 
+    document.getElementById('spacex_title').textContent =
     `SpaceX Lanuches and Mass 2025 (${parsedData.length}/${Math.floor(cumulativeMass/1000)} ton)`;
 
     // Scales
@@ -311,7 +447,7 @@ function drawCountAndMassChart(data) {
 
         // Draw axes
         ctx.beginPath();
-        ctx.strokeStyle = '#000';
+        ctx.strokeStyle = CHART_CONFIG.COLORS.AXIS_COLOR;
         ctx.lineWidth = 1;
 
         // X-axis (time)
@@ -330,7 +466,7 @@ function drawCountAndMassChart(data) {
         ctx.stroke();
 
         // Draw axis labels
-        ctx.fillStyle = '#000';
+        ctx.fillStyle = CHART_CONFIG.COLORS.TEXT;
         ctx.font = '12px Arial';
         ctx.textAlign = 'center';
         ctx.fillText('Time', chartWidth / 2, chartHeight - 10);
@@ -358,6 +494,7 @@ function drawCountAndMassChart(data) {
             const y = chartHeight - margin.bottom - (i / maxCount) * plotHeight;
             ctx.fillText(i, margin.left - 10, y + 5);
             ctx.beginPath();
+            ctx.strokeStyle = CHART_CONFIG.COLORS.AXIS_COLOR;
             ctx.moveTo(margin.left - 5, y);
             ctx.lineTo(margin.left, y);
             ctx.stroke();
@@ -369,6 +506,7 @@ function drawCountAndMassChart(data) {
             const y = chartHeight - margin.bottom - (i / maxMass) * plotHeight;
             ctx.fillText(i.toLocaleString(), chartWidth - margin.right + 10, y + 5);
             ctx.beginPath();
+            ctx.strokeStyle = CHART_CONFIG.COLORS.AXIS_COLOR;
             ctx.moveTo(chartWidth - margin.right, y);
             ctx.lineTo(chartWidth - margin.right + 5, y);
             ctx.stroke();
@@ -377,7 +515,7 @@ function drawCountAndMassChart(data) {
         // Draw lines (up to visiblePoints)
         // Count line (blue)
         ctx.beginPath();
-        ctx.strokeStyle = '#1E90FF'; // Blue for count
+        ctx.strokeStyle = CHART_CONFIG.COLORS.COUNT_LINE;
         ctx.lineWidth = 2;
         for (let i = 0; i < visiblePoints; i++) {
             const x = margin.left + (chartData[i].time - minTime) / (maxTime - minTime) * plotWidth;
@@ -392,7 +530,7 @@ function drawCountAndMassChart(data) {
 
         // Mass line (red)
         ctx.beginPath();
-        ctx.strokeStyle = '#FF4500'; // Red for mass
+        ctx.strokeStyle = CHART_CONFIG.COLORS.MASS_LINE;
         ctx.lineWidth = 2;
         for (let i = 0; i < visiblePoints; i++) {
             const x = margin.left + (chartData[i].time - minTime) / (maxTime - minTime) * plotWidth;
@@ -406,15 +544,15 @@ function drawCountAndMassChart(data) {
         ctx.stroke();
 
         // Draw legend
-        ctx.fillStyle = '#1E90FF';
+        ctx.fillStyle = CHART_CONFIG.COLORS.COUNT_LINE;
         ctx.fillRect(chartWidth - margin.right + 25, margin.top +10, 10, 10);
-        ctx.fillStyle = '#000';
-        ctx.textAlign = 'left'; 
+        ctx.fillStyle = CHART_CONFIG.COLORS.TEXT;
+        ctx.textAlign = 'left';
         ctx.fillText('Count', chartWidth - margin.right + 25, margin.top + 30);
 
-        ctx.fillStyle = '#FF4500';
+        ctx.fillStyle = CHART_CONFIG.COLORS.MASS_LINE;
         ctx.fillRect(chartWidth - margin.right + 25, margin.top + 30, 10, 10);
-        ctx.fillStyle = '#000';
+        ctx.fillStyle = CHART_CONFIG.COLORS.TEXT;
         ctx.fillText('Mass', chartWidth - margin.right + 25, margin.top + 50);
 
         // Continue animation if not complete
@@ -432,7 +570,7 @@ async function saveToJson() {
     try {
         const jsonData = JSON.stringify(boosterData, null, 2);
         const blob = new Blob([jsonData], { type: 'application/json' });
-        
+
         // Use File System Access API if available (modern browsers)
         if ('showSaveFilePicker' in window) {
             const handle = await window.showSaveFilePicker({
@@ -479,7 +617,7 @@ async function loadFromJson(path) {
         }
 
         return await response.json();
-        
+
     } catch (error) {
         console.error('Error loading from server:', error);
         return null;
@@ -492,8 +630,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     launchesData = spaceXJson;
     drawCountAndMassChart(launchesData);
     boosterData = launchesData.map(x => { r = x['rocket'].split(/[-\.‑]/); return {name: r[0].trim(), flights: Number(r[1])}});
-    drawBarChart(getSortedData());
+    drawBarChart(getSortedUniqueData(boosterData));
     const worldJson = await loadFromJson('/world_launches.json');
     drawBarChartWorld(worldJson);
-    
+
 });

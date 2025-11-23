@@ -1,0 +1,37 @@
+{
+  "name": "lifehacks-crawler",
+  "version": "1.0.0",
+  "description": "Wikipedia Launch Data Crawler - Automates extraction of launch data from Wikipedia pages",
+  "main": "crawl-cli.js",
+  "scripts": {
+    "crawl": "node crawl-cli.js",
+    "crawl:falcon": "node crawl-cli.js falcon",
+    "crawl:world-q1": "node crawl-cli.js world-q1",
+    "crawl:world-q2": "node crawl-cli.js world-q2",
+    "crawl:world-q3": "node crawl-cli.js world-q3",
+    "crawl:world-q4": "node crawl-cli.js world-q4",
+    "crawl:world-h1": "node crawl-cli.js world-h1",
+    "crawl:all": "node crawl-cli.js all",
+    "help": "node crawl-cli.js --help"
+  },
+  "keywords": [
+    "wikipedia",
+    "crawler",
+    "scraper",
+    "spacex",
+    "launches",
+    "data-extraction"
+  ],
+  "author": "LifeHacker",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^21.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/lifehacks.git"
+  }
+}

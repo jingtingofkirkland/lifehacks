@@ -1,25 +1,51 @@
 {% comment %}
-  Placeholder to allow defining custom head. You can put favicons and other custom header fields here
+  Custom head section for Meta Pixel tracking code.
+  Multiple pixel IDs are initialized for different tracking purposes.
 {% endcomment %}
+
 <!-- Meta Pixel Code -->
 <script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js?v=next');
-fbq('init', '337570375319394');
-fbq('init', '1664405884221714');
-fbq('init', '432612622948726',{madid:'0', ln:'', ga:'hey'});
-  fbq('init', '351326572297903', {madid:'0', ln:'',ga:'hey'});
-  fbq('init', '830130942529912',{madid:'0', ln:'',ga:'hey'});
-  fbq('init', '1664405884221714',{madid:'0', ln:'',ga:'hey'});
-fbq('track', 'PageView');
+  // Facebook Pixel initialization
+  !function(f, b, e, v, n, t, s) {
+    if (f.fbq) return;
+    n = f.fbq = function() {
+      n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+    };
+    if (!f._fbq) f._fbq = n;
+    n.push = n;
+    n.loaded = !0;
+    n.version = '2.0';
+    n.queue = [];
+    t = b.createElement(e);
+    t.async = !0;
+    t.src = v;
+    s = b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t, s);
+  }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js?v=next');
+
+  // Configuration object for pixel IDs
+  const pixelConfig = {
+    basic: ['337570375319394', '1664405884221714'],
+    advanced: [
+      { id: '432612622948726', options: { madid: '0', ln: '', ga: 'hey' } },
+      { id: '351326572297903', options: { madid: '0', ln: '', ga: 'hey' } },
+      { id: '830130942529912', options: { madid: '0', ln: '', ga: 'hey' } },
+      { id: '1664405884221714', options: { madid: '0', ln: '', ga: 'hey' } }
+    ]
+  };
+
+  // Initialize basic pixels
+  pixelConfig.basic.forEach(id => fbq('init', id));
+
+  // Initialize advanced pixels with options
+  pixelConfig.advanced.forEach(pixel => fbq('init', pixel.id, pixel.options));
+
+  // Track page view
+  fbq('track', 'PageView');
 </script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=337570375319394&ev=PageView&noscript=1"
-/></noscript>
+
+<noscript>
+  <img height="1" width="1" style="display:none"
+       src="https://www.facebook.com/tr?id=337570375319394&ev=PageView&noscript=1" />
+</noscript>
 <!-- End Meta Pixel Code -->
