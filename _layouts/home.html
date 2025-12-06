@@ -2,44 +2,81 @@
 layout: default
 ---
 
-<header>
+<header class="hero-header">
 {% if site.theme_config.show_navbar == true %}
-  {% include horizontal_list.html collection=site.data.home.navbar_entries %}
-  <div class="dashed"></div>
+  <nav class="fancy-nav">
+    {% include horizontal_list.html collection=site.data.home.navbar_entries %}
+  </nav>
 {% endif %}
 
-  <h1>{{ site.title }}</h1>
-  {% if site.theme_config.show_description == true %}
-    <p>{{ site.description }}</p>
-  {% endif %}
+  <div class="hero-content">
+    <div class="hero-icon">🌟</div>
+    <h1 class="hero-title">{{ site.title }}</h1>
+    {% if site.theme_config.show_description == true %}
+      <div class="hero-description">{{ site.description }}</div>
+    {% endif %}
+  </div>
+  <div class="hero-wave">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"></path>
+    </svg>
+  </div>
 </header>
 
 {{ content }}
 
 {% if site.theme_config.show_projects == true %}
-  <h2>{{ site.theme_config.home.title_projects }}</h2>
-  {% include card_list.html collection=site.data.home.project_entries %}
+  <section class="projects-section">
+    <h2 class="section-title">
+      <span class="title-icon">✨</span>
+      {{ site.theme_config.home.title_projects }}
+    </h2>
+    <div class="cards-container">
+      {% include card_list.html collection=site.data.home.project_entries %}
+    </div>
+  </section>
 {% endif %}
 
 {% if site.theme_config.show_misc_list == true %}
-  <h2>{{ site.theme_config.home.title_misc_list }}</h2>
-  {% include vertical_list.html collection=site.data.home.misc_entries %}
+  <section class="misc-section">
+    <h2 class="section-title">
+      <span class="title-icon">📋</span>
+      {{ site.theme_config.home.title_misc_list }}
+    </h2>
+    {% include vertical_list.html collection=site.data.home.misc_entries %}
+  </section>
 {% endif %}
 
 {% if site.theme_config.show_blog == true %}
-  <h2>{{ site.theme_config.home.title_blog }}</h2>
-  {% include post_list.html %}
+  <section class="blog-section">
+    <h2 class="section-title">
+      <span class="title-icon">📝</span>
+      {{ site.theme_config.home.title_blog }}
+    </h2>
+    {% include post_list.html %}
+  </section>
 {% endif %}
 
 {% if site.theme_config.show_old_projects == true %}
-  <h2>{{ site.theme_config.home.title_old_projects }}</h2>
-  {% include card_list.html collection=site.data.home.old_project_entries %}
+  <section class="old-projects-section">
+    <h2 class="section-title">
+      <span class="title-icon">📦</span>
+      {{ site.theme_config.home.title_old_projects }}
+    </h2>
+    {% include card_list.html collection=site.data.home.old_project_entries %}
+  </section>
 {% endif %}
 
 
 {% if site.theme_config.show_footer == true %}
-  <footer>
-    <div class="dashed"></div>
-    {% include horizontal_list.html collection=site.data.home.footer_entries %}
+  <footer class="fancy-footer">
+    <div class="footer-wave">
+      <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"></path>
+      </svg>
+    </div>
+    <div class="footer-content">
+      {% include horizontal_list.html collection=site.data.home.footer_entries %}
+    </div>
   </footer>
 {% endif %}
