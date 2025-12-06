@@ -1,34 +1,58 @@
 {
-  "name": "lifehacks-crawler",
-  "version": "1.0.0",
-  "description": "Wikipedia Launch Data Crawler - Automates extraction of launch data from Wikipedia pages",
-  "main": "crawl-cli.js",
+  "name": "lifehacks",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Great Seattle Life Hacks - Next.js website with Wikipedia Launch Data Crawler",
   "scripts": {
-    "crawl": "node crawl-cli.js",
-    "crawl:falcon": "node crawl-cli.js falcon",
-    "crawl:world-q1": "node crawl-cli.js world-q1",
-    "crawl:world-q2": "node crawl-cli.js world-q2",
-    "crawl:world-q3": "node crawl-cli.js world-q3",
-    "crawl:world-q4": "node crawl-cli.js world-q4",
-    "crawl:world-h1": "node crawl-cli.js world-h1",
-    "crawl:all": "node crawl-cli.js all",
-    "help": "node crawl-cli.js --help"
+    "dev": "npm run sync-data && next dev",
+    "build": "npm run sync-data && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "sync-data": "node scripts/sync-data.js",
+    "crawl": "node scripts/bin/crawl-cli.js",
+    "crawl:falcon": "node scripts/bin/crawl-cli.js falcon",
+    "crawl:world-q1": "node scripts/bin/crawl-cli.js world-q1",
+    "crawl:world-q2": "node scripts/bin/crawl-cli.js world-q2",
+    "crawl:world-q3": "node scripts/bin/crawl-cli.js world-q3",
+    "crawl:world-q4": "node scripts/bin/crawl-cli.js world-q4",
+    "crawl:world-h1": "node scripts/bin/crawl-cli.js world-h1",
+    "crawl:all": "node scripts/bin/crawl-cli.js all",
+    "crawl:help": "node scripts/bin/crawl-cli.js --help"
   },
   "keywords": [
-    "wikipedia",
-    "crawler",
-    "scraper",
+    "seattle",
+    "lifehacks",
+    "nextjs",
     "spacex",
     "launches",
-    "data-extraction"
+    "crawler"
   ],
   "author": "LifeHacker",
   "license": "MIT",
   "dependencies": {
-    "puppeteer": "^21.0.0"
+    "@radix-ui/react-slot": "^1.2.4",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "lucide-react": "^0.294.0",
+    "next": "^14.2.0",
+    "next-themes": "^0.2.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^2.2.0",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "puppeteer": "^21.0.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.0.0"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   },
   "repository": {
     "type": "git",
