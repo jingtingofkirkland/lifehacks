@@ -14,39 +14,106 @@ const puppeteer = require('puppeteer');
 const fs = require('fs').promises;
 const path = require('path');
 
+// Constants
+const PAGE_CONFIG = {
+    viewport: { width: 1280, height: 800 },
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+    timeout: 60000
+};
+
+const DATA_DIR = 'data';
+
 // Configuration for crawl targets
 const CRAWL_TARGETS = {
     'falcon': {
         url: 'https://en.m.wikipedia.org/wiki/List_of_Falcon_9_and_Falcon_Heavy_launches',
-        filename: 'launches.json',
-        description: 'SpaceX Falcon 9/Heavy launches'
+        filename: 'f9_launches.json',
+        description: 'SpaceX Falcon 9/Heavy launches',
+        scraper: 'falcon'
     },
     'world-q1': {
         url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_January%E2%80%93March_2025',
         filename: 'world_launches_q1.json',
-        description: 'World launches Q1 2025 (Jan-Mar)'
+        description: 'World launches Q1 2025 (Jan-Mar)',
+        scraper: 'world'
     },
     'world-q2': {
         url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_April%E2%80%93June_2025',
         filename: 'world_launches_q2.json',
-        description: 'World launches Q2 2025 (Apr-Jun)'
+        description: 'World launches Q2 2025 (Apr-Jun)',
+        scraper: 'world'
     },
     'world-q3': {
         url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_July%E2%80%93September_2025',
         filename: 'world_launches_q3.json',
-        description: 'World launches Q3 2025 (Jul-Sep)'
+        description: 'World launches Q3 2025 (Jul-Sep)',
+        scraper: 'world'
     },
     'world-q4': {
         url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_October%E2%80%93December_2025',
         filename: 'world_launches_q4.json',
-        description: 'World launches Q4 2025 (Oct-Dec)'
+        description: 'World launches Q4 2025 (Oct-Dec)',
+        scraper: 'world'
     },
     'world-h1': {
         url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_January%E2%80%93June_2025',
         filename: 'world_launches_h1.json',
-        description: 'World launches H1 2025 (Jan-Jun)'
+        description: 'World launches H1 2025 (Jan-Jun)',
+        scraper: 'world'
     }
 };
+
+/**
+ * Create and configure a new browser page
+ */
+async function createPage(browser) {
+    const page = await browser.newPage();
+    await page.setViewport(PAGE_CONFIG.viewport);
+    await page.setUserAgent(PAGE_CONFIG.userAgent);
+    return page;
+}
+
+/**
+ * Navigate to URL and wait for page load
+ */
+async function navigateTo(page, url) {
+    await page.goto(url, {
+        waitUntil: 'networkidle2',
+        timeout: PAGE_CONFIG.timeout
+    });
+}
+
+/**
+ * Fetch and scrape data from a URL
+ */
+async function fetchData(browser, url, scraperType) {
+    const page = await createPage(browser);
+    await navigateTo(page, url);
+
+    const scraper = scraperType === 'falcon' ? scrapeFalconLaunches : scrapeWorldLaunches;
+    const data = await scraper(page);
+
+    await page.close();
+    return data;
+}
+
+/**
+ * Save data to JSON file
+ */
+async function saveJson(filename, data) {
+    const outputPath = path.join(process.cwd(), DATA_DIR, filename);
+    await fs.writeFile(outputPath, JSON.stringify(data, null, 2), 'utf-8');
+    return outputPath;
+}
+
+/**
+ * Read JSON file
+ */
+async function readJson(filename) {
+    const filePath = path.join(process.cwd(), DATA_DIR, filename);
+    const content = await fs.readFile(filePath, 'utf-8');
+    return JSON.parse(content);
+}
 
 /**
  * Falcon 9/Heavy crawler implementation
@@ -54,64 +121,51 @@ const CRAWL_TARGETS = {
 async function scrapeFalconLaunches(page) {
     console.log('   Executing Falcon crawler...');
 
-    const data = await page.evaluate(() => {
-        const FALCON_CONFIG = {
-            START_FLIGHT: 551,
+    return await page.evaluate(() => {
+        const CONFIG = {
+            START_FLIGHT: 418,
             HEADERS: ['time', 'rocket', 'site', 'mission', 'mass', 'orbit'],
             MASS_REGEX: /^(.*)kg/,
             ESTIMATED_MASSES: { LEO: '163000', GTO: '6000', DEFAULT: '3000' }
         };
 
-        const transformUtils = {
-            cleanNonBreakingSpace: (text) => text.replace('\xa0', ' '),
-            cleanTime: (timeStr) => {
-                const cleaned = timeStr.replace(/\[\d+\]/g, '');
-                return cleaned.replace(/(\d{4})(\d{2}:\d{2})/, '$1 $2');
-            },
-            cleanRocket: (rocketStr) => rocketStr.replace('F9\xa0B5', '').replace(/\[\d+\]/, ''),
-            cleanMass: (massStr) => {
-                const match = massStr.match(FALCON_CONFIG.MASS_REGEX);
-                return match ? match[1].replace(/[~,\s]/g, '') : massStr;
+        const clean = {
+            space: (t) => t.replace('\xa0', ' '),
+            time: (t) => t.replace(/\[\d+\]/g, '').replace(/(\d{4})(\d{2}:\d{2})/, '$1 $2'),
+            rocket: (t) => t.replace('F9\xa0B5', '').replace(/\[\d+\]/, ''),
+            mass: (t) => {
+                const match = t.match(CONFIG.MASS_REGEX);
+                return match ? match[1].replace(/[~,\s]/g, '') : t;
             }
         };
 
-        const getTransformers = () => [
-            transformUtils.cleanTime, transformUtils.cleanRocket,
-            transformUtils.cleanNonBreakingSpace, transformUtils.cleanNonBreakingSpace,
-            transformUtils.cleanMass, transformUtils.cleanNonBreakingSpace
-        ];
+        const transformers = [clean.time, clean.rocket, clean.space, clean.space, clean.mass, clean.space];
 
-        function estimateMass(mass, orbit) {
+        const estimateMass = (mass, orbit) => {
             if (!mass.startsWith('Unknown')) return mass;
-            if (orbit.startsWith('LEO')) return FALCON_CONFIG.ESTIMATED_MASSES.LEO;
-            if (orbit.startsWith('GTO')) return FALCON_CONFIG.ESTIMATED_MASSES.GTO;
-            return FALCON_CONFIG.ESTIMATED_MASSES.DEFAULT;
-        }
+            if (orbit.startsWith('LEO')) return CONFIG.ESTIMATED_MASSES.LEO;
+            if (orbit.startsWith('GTO')) return CONFIG.ESTIMATED_MASSES.GTO;
+            return CONFIG.ESTIMATED_MASSES.DEFAULT;
+        };
 
-        const transformers = getTransformers();
         const json = [];
-
-        for (let i = FALCON_CONFIG.START_FLIGHT; ; i++) {
-            const selector = `#F9-${i} td`;
-            const cells = Array.from(document.querySelectorAll(selector));
-
+        for (let i = CONFIG.START_FLIGHT; ; i++) {
+            const cells = Array.from(document.querySelectorAll(`#F9-${i} td`));
             if (cells.length === 0) break;
 
             const data = cells.map(x => x.textContent.trim());
             const obj = { flight: i };
 
-            for (let j = 0; j < FALCON_CONFIG.HEADERS.length; j++) {
-                obj[FALCON_CONFIG.HEADERS[j]] = transformers[j](data[j]);
-            }
+            CONFIG.HEADERS.forEach((header, j) => {
+                obj[header] = transformers[j](data[j]);
+            });
 
-            obj['mass'] = estimateMass(obj['mass'], obj['orbit']);
+            obj.mass = estimateMass(obj.mass, obj.orbit);
             json.push(obj);
         }
 
         return json;
     });
-
-    return data;
 }
 
 /**
@@ -120,113 +174,90 @@ async function scrapeFalconLaunches(page) {
 async function scrapeWorldLaunches(page) {
     console.log('   Executing World launches crawler...');
 
-    // Inject jQuery
     await page.addScriptTag({ url: 'https://code.jquery.com/jquery-3.6.0.min.js' });
-
-    // Wait for jQuery to load
     await page.waitForFunction('typeof jQuery !== "undefined"');
 
-    const data = await page.evaluate(() => {
-        const monthes = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-        const header = ['time', 'rocket', 'mission', 'site', 'org'];
-        const noOp = x => x;
-        const takeInfo = x => x ? x.info : x;
-        const timeTrans = t => {
-            try {
-                const cleanStr = t.replace(/\[\d+\]/g, '');
-                return cleanStr.replace(/(\d{1,2}\s+[A-Za-z]+)(\d{2}:\d{2})/, '$1 $2');
-            } catch (error) {
-                console.error('Could not parse time:', t);
-                return t;
-            }
+    return await page.evaluate(() => {
+        const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        const HEADERS = ['time', 'rocket', 'mission', 'site', 'org'];
+
+        const transform = {
+            time: (t) => {
+                try {
+                    return t.replace(/\[\d+\]/g, '').replace(/(\d{1,2}\s+[A-Za-z]+)(\d{2}:\d{2})/, '$1 $2');
+                } catch {
+                    return t;
+                }
+            },
+            info: (x) => x?.info ?? x,
+            noop: (x) => x
         };
-        const transform = [timeTrans, takeInfo, noOp, takeInfo, noOp];
+
+        const transformers = [transform.time, transform.info, transform.noop, transform.info, transform.noop];
+
+        const hasMonth = (text) => MONTHS.some(m => new RegExp(`\\b${m}\\b`).test(text));
+
+        const checkCondition = ($tds, text) => $tds.is(function() {
+            return jQuery(this).text().includes(text);
+        });
+
         const json = [];
-
-        const $tables = jQuery('.wikitable');
-        if (!$tables.length) {
-            console.error('Table not found');
-            return [];
-        }
-
         let cnt = 1;
-        let upcomming = false;
+        let upcoming = false;
 
-        $tables.each(function() {
+        jQuery('.wikitable').each(function() {
             let subOrbital = false;
             let hasNormalData = false;
             const $table = jQuery(this);
 
             $table.find('tr').each(function() {
                 const $tds = jQuery(this).find('td');
-                if (!upcomming) {
-                    upcomming = $tds.is(function() {
-                        return jQuery(this).text().includes('Upcoming launches');
-                    });
-                }
-                if (!subOrbital) {
-                    subOrbital = $tds.is(function() {
-                        return jQuery(this).text().includes('Suborbital');
-                    });
-                }
+                if (!upcoming) upcoming = checkCondition($tds, 'Upcoming launches');
+                if (!subOrbital) subOrbital = checkCondition($tds, 'Suborbital');
                 if (!hasNormalData) {
-                    hasNormalData = !upcomming && !subOrbital && $tds.length > 2 && $tds.first().is(function() {
-                        const textContent = this.innerText;
-                        return monthes.some(m => new RegExp(`\\b${m}\\b`).test(textContent));
-                    });
+                    hasNormalData = !upcoming && !subOrbital && $tds.length > 2 &&
+                        $tds.first().is(function() { return hasMonth(this.innerText); });
                 }
             });
 
-            if (!hasNormalData && (upcomming || subOrbital)) {
-                return false;
-            }
+            if (!hasNormalData && (upcoming || subOrbital)) return false;
 
             subOrbital = false;
-            upcomming = false;
+            upcoming = false;
 
             $table.find('tr').each(function() {
                 const $tds = jQuery(this).find('td');
-                if (upcomming || subOrbital) return false;
+                if (upcoming || subOrbital) return false;
 
-                upcomming = $tds.is(function() {
-                    return jQuery(this).text().includes('Upcoming launches');
-                });
-                subOrbital = $tds.is(function() {
-                    return jQuery(this).text().includes('Suborbital');
-                });
-
-                if (upcomming || subOrbital) return false;
+                upcoming = checkCondition($tds, 'Upcoming launches');
+                subOrbital = checkCondition($tds, 'Suborbital');
+                if (upcoming || subOrbital) return false;
 
                 const hasDate = $tds.length > 2 && $tds.first().is(function() {
-                    const textContent = this.innerText;
-                    return monthes.some(m => new RegExp(`\\b${m}\\b`).test(textContent));
+                    return hasMonth(this.innerText);
                 });
 
                 if (hasDate) {
                     const tdTexts = $tds.map(function() {
-                        const textContent = jQuery(this).text().trim();
-                        const targetLink = jQuery(this).find('span.flagicon a').first();
+                        const text = jQuery(this).text().trim();
+                        const link = jQuery(this).find('span.flagicon a').first();
 
-                        if (targetLink && targetLink.length > 0) {
-                            return {country: targetLink.attr('title') || targetLink.text(), info: textContent.trim()};
-                        } else if (textContent.includes('img')) {
-                            const altMatch = textContent.match(/alt="([^"]*)"/);
-                            const textMatch = textContent.match(/>([^<]+)$/);
-                            return {country: altMatch ? altMatch[1] : '', info: textMatch ? textMatch[1].trim() : ''};
+                        if (link?.length) {
+                            return { country: link.attr('title') || link.text(), info: text };
                         }
-                        return {info: textContent};
+                        if (text.includes('img')) {
+                            const alt = text.match(/alt="([^"]*)"/);
+                            const txt = text.match(/>([^<]+)$/);
+                            return { country: alt?.[1] ?? '', info: txt?.[1]?.trim() ?? '' };
+                        }
+                        return { info: text };
                     }).get();
 
                     const obj = { flight: cnt++ };
-                    for (let j = 0; j < header.length; j++) {
-                        let info;
-                        if (header[j] === 'org') {
-                            info = tdTexts[j];
-                        } else {
-                            info = tdTexts[j].info;
-                        }
-                        obj[header[j]] = transform[j](info);
-                    }
+                    HEADERS.forEach((header, j) => {
+                        const val = header === 'org' ? tdTexts[j] : tdTexts[j].info;
+                        obj[header] = transformers[j](val);
+                    });
                     json.push(obj);
                 }
             });
@@ -234,16 +265,13 @@ async function scrapeWorldLaunches(page) {
 
         return json;
     });
-
-    return data;
 }
 
 /**
- * Main crawl function for a single target
+ * Crawl a single target
  */
 async function crawlTarget(browser, targetKey) {
     const config = CRAWL_TARGETS[targetKey];
-
     if (!config) {
         console.error(`❌ Unknown target: ${targetKey}`);
         return false;
@@ -253,42 +281,17 @@ async function crawlTarget(browser, targetKey) {
     console.log(`   URL: ${config.url}`);
 
     try {
-        const page = await browser.newPage();
-
-        // Set viewport and user agent
-        await page.setViewport({ width: 1280, height: 800 });
-        await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36');
-
         console.log('   Loading page...');
-        await page.goto(config.url, {
-            waitUntil: 'networkidle2',
-            timeout: 60000
-        });
+        const data = await fetchData(browser, config.url, config.scraper);
 
-        console.log('   Page loaded, extracting data...');
-
-        // Choose crawler based on target
-        let data;
-        if (targetKey === 'falcon') {
-            data = await scrapeFalconLaunches(page);
-        } else {
-            data = await scrapeWorldLaunches(page);
-        }
-
-        await page.close();
-
-        if (!data || data.length === 0) {
+        if (!data?.length) {
             console.error('   ⚠️  No data extracted!');
             return false;
         }
 
-        // Save to file
-        const outputPath = path.join(process.cwd(), config.filename);
-        await fs.writeFile(outputPath, JSON.stringify(data, null, 2), 'utf-8');
-
+        await saveJson(config.filename, data);
         console.log(`   ✅ Success! Extracted ${data.length} launches`);
-        console.log(`   📁 Saved to: ${config.filename}`);
-
+        console.log(`   📁 Saved to: ${path.join(DATA_DIR, config.filename)}`);
         return true;
     } catch (error) {
         console.error(`   ❌ Error: ${error.message}`);
@@ -297,9 +300,142 @@ async function crawlTarget(browser, targetKey) {
 }
 
 /**
+ * Fetch Q4 data and merge with existing 3Q data to create full year dataset
+ */
+async function fetchAndMergeFullYear(browser) {
+    console.log('\n📊 Fetching Q4 data and merging with 3Q data...\n');
+
+    const q4Config = CRAWL_TARGETS['world-q4'];
+    const threeQFile = 'world_launches_all_3q.json';
+    const outputFile = 'world_launches.json';
+
+    try {
+        // Read existing 3Q data
+        console.log('   📁 Reading existing 3Q data...');
+        let threeQData;
+        try {
+            threeQData = await readJson(threeQFile);
+            console.log(`   ✅ Found ${threeQData.length} launches in 3Q data`);
+        } catch (error) {
+            console.error(`   ❌ Error reading 3Q data: ${error.message}`);
+            console.error(`   Please ensure ${path.join(DATA_DIR, threeQFile)} exists`);
+            return false;
+        }
+
+        // Fetch Q4 data
+        console.log(`\n   📡 Fetching Q4 data from Wikipedia...`);
+        console.log(`   URL: ${q4Config.url}`);
+        console.log('   Loading page...');
+
+        const q4Data = await fetchData(browser, q4Config.url, 'world');
+
+        if (!q4Data?.length) {
+            console.error('   ⚠️  No Q4 data extracted!');
+            return false;
+        }
+        console.log(`   ✅ Extracted ${q4Data.length} launches from Q4`);
+
+        // Merge the data
+        console.log('\n   🔄 Merging Q4 data with 3Q data...');
+        const maxFlight = Math.max(...threeQData.map(item => item.flight));
+        console.log(`   Max flight number in 3Q: ${maxFlight}`);
+
+        const renumberedQ4 = q4Data.map((item, i) => ({ ...item, flight: maxFlight + i + 1 }));
+        const fullYearData = [...threeQData, ...renumberedQ4];
+
+        // Save merged data
+        console.log(`\n   💾 Saving full year data...`);
+        await saveJson(outputFile, fullYearData);
+
+        console.log(`\n   ✅ Success! Full year data created`);
+        console.log(`   📊 Total launches: ${fullYearData.length}`);
+        console.log(`      - Q1-Q3: ${threeQData.length} launches`);
+        console.log(`      - Q4: ${q4Data.length} launches`);
+        console.log(`   📁 Saved to: ${path.join(DATA_DIR, outputFile)}`);
+        return true;
+    } catch (error) {
+        console.error(`   ❌ Error: ${error.message}`);
+        return false;
+    }
+}
+
+/**
+ * Fetch all 4 quarters and merge into full year dataset
+ */
+async function fetchAllAndMerge(browser) {
+    console.log('\n📊 Fetching all quarters and merging into full year data...\n');
+
+    const quarters = ['world-q1', 'world-q2', 'world-q3', 'world-q4'];
+    const outputFile = 'world_launches.json';
+    const allData = [];
+
+    try {
+        // Fetch each quarter
+        for (const quarter of quarters) {
+            const config = CRAWL_TARGETS[quarter];
+            console.log(`\n📡 Fetching ${config.description}...`);
+            console.log(`   URL: ${config.url}`);
+            console.log('   Loading page...');
+
+            const data = await fetchData(browser, config.url, 'world');
+
+            if (!data?.length) {
+                console.error(`   ⚠️  No data extracted for ${quarter}!`);
+                continue;
+            }
+
+            console.log(`   ✅ Extracted ${data.length} launches`);
+
+            // Save individual quarter file
+            await saveJson(config.filename, data);
+            console.log(`   📁 Saved to: ${path.join(DATA_DIR, config.filename)}`);
+
+            allData.push({ quarter, data });
+        }
+
+        if (allData.length === 0) {
+            console.error('\n❌ No data extracted from any quarter!');
+            return false;
+        }
+
+        // Merge all quarters with continuous flight numbering
+        console.log('\n🔄 Merging all quarters...');
+        let flightNumber = 1;
+        const fullYearData = [];
+
+        for (const { quarter, data } of allData) {
+            const renumbered = data.map(item => ({ ...item, flight: flightNumber++ }));
+            fullYearData.push(...renumbered);
+            console.log(`   ${quarter}: ${data.length} launches (flights ${flightNumber - data.length}-${flightNumber - 1})`);
+        }
+
+        // Save merged data
+        console.log(`\n💾 Saving full year data...`);
+        await saveJson(outputFile, fullYearData);
+
+        console.log(`\n✅ Success! Full year data created`);
+        console.log(`📊 Total launches: ${fullYearData.length}`);
+        for (const { quarter, data } of allData) {
+            const config = CRAWL_TARGETS[quarter];
+            console.log(`   - ${config.description}: ${data.length} launches`);
+        }
+        console.log(`📁 Saved to: ${path.join(DATA_DIR, outputFile)}`);
+
+        return true;
+    } catch (error) {
+        console.error(`❌ Error: ${error.message}`);
+        return false;
+    }
+}
+
+/**
  * Display help message
  */
 function showHelp() {
+    const targets = Object.entries(CRAWL_TARGETS)
+        .map(([key, val]) => `  ${key.padEnd(16)} - ${val.description}`)
+        .join('\n');
+
     console.log(`
 🚀 Wikipedia Launch Data Crawler - CLI
 
@@ -308,20 +444,15 @@ Usage:
   npm run crawl <target>
 
 Available targets:
-  falcon      - SpaceX Falcon 9/Heavy launches
-  world-q1    - World launches Q1 2025 (Jan-Mar)
-  world-q2    - World launches Q2 2025 (Apr-Jun)
-  world-q3    - World launches Q3 2025 (Jul-Sep)
-  world-q4    - World launches Q4 2025 (Oct-Dec)
-  world-h1    - World launches H1 2025 (Jan-Jun)
-  all         - Crawl all targets
+${targets}
+  world-full-inc   - Fetch Q4 and merge with existing 3Q data (incremental)
+  all              - Fetch all Q1-Q4 and merge into full year data
 
 Examples:
   node crawl-cli.js falcon
   node crawl-cli.js world-q1
+  node crawl-cli.js world-full-inc
   node crawl-cli.js all
-  npm run crawl falcon
-  npm run crawl:all
 `);
 }
 
@@ -350,22 +481,12 @@ async function main() {
         });
 
         if (target === 'all') {
-            console.log('\n📊 Crawling all targets...\n');
-            let successCount = 0;
-            let failCount = 0;
-
-            for (const key of Object.keys(CRAWL_TARGETS)) {
-                const success = await crawlTarget(browser, key);
-                if (success) successCount++;
-                else failCount++;
-            }
-
-            console.log('\n' + '='.repeat(50));
-            console.log(`✅ Completed: ${successCount} successful, ${failCount} failed`);
+            await fetchAllAndMerge(browser);
+        } else if (target === 'world-full-inc') {
+            await fetchAndMergeFullYear(browser);
         } else {
             await crawlTarget(browser, target);
         }
-
     } catch (error) {
         console.error(`\n❌ Fatal error: ${error.message}`);
         process.exit(1);
@@ -379,7 +500,6 @@ async function main() {
     console.log('\n✨ Done!\n');
 }
 
-// Run if called directly
 if (require.main === module) {
     main().catch(error => {
         console.error('Fatal error:', error);
@@ -387,4 +507,4 @@ if (require.main === module) {
     });
 }
 
-module.exports = { crawlTarget, CRAWL_TARGETS };
+module.exports = { crawlTarget, fetchAndMergeFullYear, CRAWL_TARGETS };

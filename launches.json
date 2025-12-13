@@ -205,5 +205,50 @@
     "mission": "Starlink: Group 11-25",
     "mass": "16100",
     "orbit": "LEO"
+  },
+  {
+    "flight": 574,
+    "time": "December 7, 2025 17:58",
+    "rocket": "B1088‑12",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 11-15",
+    "mass": "16100",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 575,
+    "time": "December 8, 2025 22:26",
+    "rocket": "B1067‑32",
+    "site": "Kennedy, LC‑39A",
+    "mission": "Starlink: Group 6-92",
+    "mass": "16675",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 576,
+    "time": "December 9, 2025 19:16",
+    "rocket": "B1096‑4",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "NROL-77[237][238]",
+    "mass": "163000",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 577,
+    "time": "December 10, 2025 11:40",
+    "rocket": "B1082‑18",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 15-11",
+    "mass": "15525",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 578,
+    "time": "December 11, 2025 22:01",
+    "rocket": "B1083‑16",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Starlink: Group 6-90",
+    "mass": "16675",
+    "orbit": "LEO"
   }
 ]

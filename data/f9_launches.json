@@ -31,7 +31,7 @@
     "time": "January 10, 2025 03:53",
     "rocket": "B1071‑22",
     "site": "Vandenberg, SLC‑4E",
-    "mission": "NROL-153 (22 Starshield satellites)[259]",
+    "mission": "NROL-153 (22 Starshield satellites)[260]",
     "mass": "163000",
     "orbit": "LEO"
   },
@@ -210,8 +210,8 @@
     "flight": 441,
     "time": "February 27, 2025 00:16",
     "rocket": "B1083‑9",
-    "site": "Kennedy, LC‑39A[291]",
-    "mission": "IM-2 Nova-C \"Athena\" lunar landerLunar TrailblazerBrokkr-2 Odin[292]Chimera-1TBD",
+    "site": "Kennedy, LC‑39A[292]",
+    "mission": "IM-2 Nova-C \"Athena\" lunar landerLunar TrailblazerBrokkr-2 Odin[293]Chimera-1TBD",
     "mass": "3000",
     "orbit": "TLI"
   },
@@ -238,7 +238,7 @@
     "time": "March 12, 2025 03:10",
     "rocket": "B1088‑3",
     "site": "Vandenberg, SLC‑4E",
-    "mission": "SPHERExPUNCH[301]",
+    "mission": "SPHERExPUNCH[302]",
     "mass": "758",
     "orbit": "SSO"
   },
@@ -409,7 +409,7 @@
     "time": "April 22, 2025 00:48",
     "rocket": "B1090‑3",
     "site": "Cape Canaveral, SLC‑40",
-    "mission": "Bandwagon-3 (425Sat-3,[325] Tomorrow-S7, PHOENIX)",
+    "mission": "Bandwagon-3 (425Sat-3,[326] Tomorrow-S7, PHOENIX)",
     "mass": "163000",
     "orbit": "LEO"
   },
@@ -733,7 +733,7 @@
     "time": "July 1, 2025 21:04",
     "rocket": "B1085‑9",
     "site": "Kennedy, LC‑39A",
-    "mission": "MTG-S1 / Sentinel-4A[363]",
+    "mission": "MTG-S1 / Sentinel-4A[364]",
     "mass": "3800",
     "orbit": "GTO"
   },
@@ -778,7 +778,7 @@
     "time": "July 16, 2025 06:30",
     "rocket": "B1096‑1",
     "site": "Cape Canaveral, SLC‑40",
-    "mission": "KuiperSat × 24 (KF-01)",
+    "mission": "LeoSat × 24 (KF-01)",
     "mass": "14784",
     "orbit": "LEO"
   },
@@ -841,7 +841,7 @@
     "time": "July 31, 2025 18:35",
     "rocket": "B1071‑27",
     "site": "Vandenberg, SLC‑4E",
-    "mission": "Starlink: Group 13-4 + 2 Starshield satellites)[380]",
+    "mission": "Starlink: Group 13-4 + 2 Starshield satellites[381]",
     "mass": "14060",
     "orbit": "SSO"
   },
@@ -868,7 +868,7 @@
     "time": "August 11, 2025 12:35",
     "rocket": "B1091‑1",
     "site": "Cape Canaveral, SLC‑40",
-    "mission": "KuiperSat × 24 (KF-02)",
+    "mission": "LeoSat × 24 (KF-02)",
     "mass": "14784",
     "orbit": "LEO"
   },
@@ -931,7 +931,7 @@
     "time": "August 26, 2025 18:53",
     "rocket": "B1063‑27",
     "site": "Vandenberg, SLC‑4E",
-    "mission": "NAOS + 7 rideshares[397]",
+    "mission": "NAOS + 7 rideshares[398]",
     "mass": "1370",
     "orbit": "SSO"
   },
@@ -1084,7 +1084,7 @@
     "time": "September 24, 2025 11:30",
     "rocket": "B1096‑2",
     "site": "Kennedy, LC‑39A",
-    "mission": "Interstellar Mapping and Acceleration Probe (IMAP)[420]",
+    "mission": "Interstellar Mapping and Acceleration Probe (IMAP)[421]",
     "mass": "1477",
     "orbit": "Sun–Earth L1"
   },
@@ -1147,7 +1147,7 @@
     "time": "October 14, 2025 01:58",
     "rocket": "B1091‑2",
     "site": "Cape Canaveral, SLC‑40",
-    "mission": "KuiperSat × 24 (KF-03)",
+    "mission": "LeoSat × 24 (KF-03)",
     "mass": "14784",
     "orbit": "LEO"
   },
@@ -1401,6 +1401,51 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 11-25",
     "mass": "16100",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 574,
+    "time": "December 7, 2025 17:58",
+    "rocket": "B1088‑12",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 11-15",
+    "mass": "16100",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 575,
+    "time": "December 8, 2025 22:26",
+    "rocket": "B1067‑32",
+    "site": "Kennedy, LC‑39A",
+    "mission": "Starlink: Group 6-92",
+    "mass": "16675",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 576,
+    "time": "December 9, 2025 19:16",
+    "rocket": "B1096‑4",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "NROL-77[237][238]",
+    "mass": "163000",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 577,
+    "time": "December 10, 2025 11:40",
+    "rocket": "B1082‑18",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 15-11",
+    "mass": "15525",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 578,
+    "time": "December 11, 2025 22:01",
+    "rocket": "B1083‑16",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Starlink: Group 6-90",
+    "mass": "16675",
     "orbit": "LEO"
   }
 ]

@@ -9,15 +9,15 @@
     "start": "next start",
     "lint": "next lint",
     "sync-data": "node scripts/sync-data.js",
-    "crawl": "node scripts/bin/crawl-cli.js",
-    "crawl:falcon": "node scripts/bin/crawl-cli.js falcon",
-    "crawl:world-q1": "node scripts/bin/crawl-cli.js world-q1",
-    "crawl:world-q2": "node scripts/bin/crawl-cli.js world-q2",
-    "crawl:world-q3": "node scripts/bin/crawl-cli.js world-q3",
-    "crawl:world-q4": "node scripts/bin/crawl-cli.js world-q4",
-    "crawl:world-h1": "node scripts/bin/crawl-cli.js world-h1",
-    "crawl:all": "node scripts/bin/crawl-cli.js all",
-    "crawl:help": "node scripts/bin/crawl-cli.js --help"
+    "crawl": "node scripts/crawl-cli.js",
+    "crawl:falcon": "node scripts/crawl-cli.js falcon",
+    "crawl:world-q1": "node scripts/crawl-cli.js world-q1",
+    "crawl:world-q2": "node scripts/crawl-cli.js world-q2",
+    "crawl:world-q3": "node scripts/crawl-cli.js world-q3",
+    "crawl:world-q4": "node scripts/crawl-cli.js world-q4",
+    "crawl:world-full-inc": "node scripts/crawl-cli.js world-full",
+    "crawl:all": "node scripts/crawl-cli.js all",
+    "crawl:help": "node scripts/crawl-cli.js --help"
   },
   "keywords": [
     "seattle",
@@ -47,7 +47,7 @@
     "@types/react-dom": "^18.2.0",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.32",
-    "puppeteer": "^21.0.0",
+    "puppeteer": "^24.15.0",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.0.0"
   },
