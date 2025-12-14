@@ -126,7 +126,7 @@ async function scrapeFalconLaunches(page) {
             START_FLIGHT: 418,
             HEADERS: ['time', 'rocket', 'site', 'mission', 'mass', 'orbit'],
             MASS_REGEX: /^(.*)kg/,
-            ESTIMATED_MASSES: { LEO: '163000', GTO: '6000', DEFAULT: '3000' }
+            ESTIMATED_MASSES: { LEO: '16300', GTO: '6000', DEFAULT: '3000' }
         };
 
         const clean = {

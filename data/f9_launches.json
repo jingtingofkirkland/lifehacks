@@ -32,7 +32,7 @@
     "rocket": "B1071‑22",
     "site": "Vandenberg, SLC‑4E",
     "mission": "NROL-153 (22 Starshield satellites)[260]",
-    "mass": "163000",
+    "mass": "16300",
     "orbit": "LEO"
   },
   {
@@ -293,7 +293,7 @@
     "rocket": "B1088‑4",
     "site": "Vandenberg, SLC‑4E",
     "mission": "NROL-57 (~11 Starshield satellites)",
-    "mass": "163000",
+    "mass": "16300",
     "orbit": "LEO"
   },
   {
@@ -302,7 +302,7 @@
     "rocket": "B1092‑2",
     "site": "Cape Canaveral, SLC‑40",
     "mission": "NROL-69",
-    "mass": "163000",
+    "mass": "16300",
     "orbit": "LEO"
   },
   {
@@ -365,7 +365,7 @@
     "rocket": "B1071‑24",
     "site": "Vandenberg, SLC‑4E",
     "mission": "NROL-192 (22 Starshield satellites)",
-    "mass": "163000",
+    "mass": "16300",
     "orbit": "LEO"
   },
   {
@@ -392,7 +392,7 @@
     "rocket": "B1082‑12",
     "site": "Vandenberg, SLC‑4E",
     "mission": "NROL-145 (22 Starshield satellites)",
-    "mass": "163000",
+    "mass": "16300",
     "orbit": "LEO"
   },
   {
@@ -410,7 +410,7 @@
     "rocket": "B1090‑3",
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Bandwagon-3 (425Sat-3,[326] Tomorrow-S7, PHOENIX)",
-    "mass": "163000",
+    "mass": "16300",
     "orbit": "LEO"
   },
   {
@@ -1076,7 +1076,7 @@
     "rocket": "B1081‑18",
     "site": "Vandenberg, SLC‑4E",
     "mission": "NROL-48 (~11 Starshield satellites)",
-    "mass": "163000",
+    "mass": "16300",
     "orbit": "LEO"
   },
   {
@@ -1256,7 +1256,7 @@
     "rocket": "B1091‑3",
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Bandwagon-4 (18 payloads smallsat rideshare)[67][87]",
-    "mass": "163000",
+    "mass": "16300",
     "orbit": "LEO"
   },
   {
@@ -1427,7 +1427,7 @@
     "rocket": "B1096‑4",
     "site": "Cape Canaveral, SLC‑40",
     "mission": "NROL-77[237][238]",
-    "mass": "163000",
+    "mass": "16300",
     "orbit": "LEO"
   },
   {

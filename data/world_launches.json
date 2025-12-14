@@ -3353,5 +3353,27 @@
       "country": "China",
       "info": "ExPace"
     }
+  },
+  {
+    "flight": 160,
+    "time": "14 December 03:09:00",
+    "rocket": "Electron",
+    "mission": "\"RAISE And Shine\"",
+    "site": "Mahia LC-1B",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
+  },
+  {
+    "flight": 161,
+    "time": "14 December 05:49:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 15-12",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
