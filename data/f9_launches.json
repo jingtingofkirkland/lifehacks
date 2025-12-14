@@ -760,7 +760,7 @@
     "time": "July 13, 2025 05:04",
     "rocket": "B1083‑13",
     "site": "Cape Canaveral, SLC‑40",
-    "mission": "Dror-1 [he]",
+    "mission": "Dror-1 (he)",
     "mass": "4000",
     "orbit": "GTO"
   },
@@ -778,7 +778,7 @@
     "time": "July 16, 2025 06:30",
     "rocket": "B1096‑1",
     "site": "Cape Canaveral, SLC‑40",
-    "mission": "LeoSat × 24 (KF-01)",
+    "mission": "KuiperSat × 24 (KF-01)",
     "mass": "14784",
     "orbit": "LEO"
   },
@@ -868,7 +868,7 @@
     "time": "August 11, 2025 12:35",
     "rocket": "B1091‑1",
     "site": "Cape Canaveral, SLC‑40",
-    "mission": "LeoSat × 24 (KF-02)",
+    "mission": "KuiperSat × 24 (KF-02)",
     "mass": "14784",
     "orbit": "LEO"
   },
@@ -1147,7 +1147,7 @@
     "time": "October 14, 2025 01:58",
     "rocket": "B1091‑2",
     "site": "Cape Canaveral, SLC‑40",
-    "mission": "LeoSat × 24 (KF-03)",
+    "mission": "KuiperSat × 24 (KF-03)",
     "mass": "14784",
     "orbit": "LEO"
   },
@@ -1446,6 +1446,15 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 6-90",
     "mass": "16675",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 579,
+    "time": "December 14, 2025 05:49",
+    "rocket": "B1093‑9",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 15-12",
+    "mass": "15525",
     "orbit": "LEO"
   }
 ]
