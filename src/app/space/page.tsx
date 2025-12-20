@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Home, Rocket } from 'lucide-react';
+import { Home, Rocket, Video, Download, Loader2, RotateCcw, Square } from 'lucide-react';
 import {
   getAllLaunchData,
   type SpaceXLaunch,
@@ -21,10 +21,12 @@ const CHART_CONFIG = {
   BAR_GAP: 10,
   ANIMATION_DURATION: 1000,
   MIN_CANVAS_HEIGHT: 400,
+  SCALE_FACTOR: 2, // 2x resolution for crisp text
   COLORS: {
     PRIMARY_BAR: '#00ff88',
     BACKGROUND_BAR: '#3a4156',
     TEXT: '#e0e6ed',
+    TEXT_EXPENDED: '#ff4444', // Red color for expended boosters
     COUNT_LINE: '#00d9ff',
     MASS_LINE: '#ff2e97',
     LEADER_HIGHLIGHT: '#ffd700',
@@ -32,6 +34,36 @@ const CHART_CONFIG = {
     DATE_TEXT: '#00d9ff'
   }
 };
+
+// List of expended boosters (no longer in service)
+const EXPENDED_BOOSTERS = new Set([
+  'B1076', // Expended in 2025
+]);
+
+// Helper to setup high-resolution canvas
+function setupHighResCanvas(
+  canvas: HTMLCanvasElement,
+  logicalWidth: number,
+  logicalHeight: number
+): CanvasRenderingContext2D | null {
+  const scale = CHART_CONFIG.SCALE_FACTOR;
+
+  // Set actual size in memory (scaled up)
+  canvas.width = logicalWidth * scale;
+  canvas.height = logicalHeight * scale;
+
+  // Set display size (CSS pixels)
+  canvas.style.width = `${logicalWidth}px`;
+  canvas.style.height = `${logicalHeight}px`;
+
+  const ctx = canvas.getContext('2d');
+  if (ctx) {
+    // Scale all drawing operations
+    ctx.scale(scale, scale);
+  }
+
+  return ctx;
+}
 
 function getSortedUniqueData(data: BoosterData[]): BoosterData[] {
   const sortedData = [...data].sort((a, b) => b.flights - a.flights);
@@ -41,6 +73,173 @@ function getSortedUniqueData(data: BoosterData[]): BoosterData[] {
     uniqueNames.add(item.name);
     return true;
   });
+}
+
+interface RecordingState {
+  isRecording: boolean;
+  isProcessing: boolean;
+  downloadUrl: string | null;
+  fileExtension: string;
+}
+
+function useChartRecorder() {
+  const [state, setState] = useState<RecordingState>({
+    isRecording: false,
+    isProcessing: false,
+    downloadUrl: null,
+    fileExtension: 'mp4',
+  });
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+
+  const startRecording = useCallback((canvas: HTMLCanvasElement) => {
+    if (state.downloadUrl) {
+      URL.revokeObjectURL(state.downloadUrl);
+    }
+
+    chunksRef.current = [];
+    const stream = canvas.captureStream(30);
+
+    // Prioritize MP4 for better compatibility (Safari, iOS, social media)
+    const mimeTypes = [
+      { type: 'video/mp4;codecs=avc1', ext: 'mp4' },
+      { type: 'video/mp4', ext: 'mp4' },
+      { type: 'video/webm;codecs=vp9', ext: 'webm' },
+      { type: 'video/webm;codecs=vp8', ext: 'webm' },
+      { type: 'video/webm', ext: 'webm' },
+    ];
+
+    let selectedMimeType = '';
+    let selectedExtension = 'mp4';
+    for (const { type, ext } of mimeTypes) {
+      if (MediaRecorder.isTypeSupported(type)) {
+        selectedMimeType = type;
+        selectedExtension = ext;
+        break;
+      }
+    }
+
+    if (!selectedMimeType) {
+      console.error('No supported MIME type found');
+      return;
+    }
+
+    const mediaRecorder = new MediaRecorder(stream, {
+      mimeType: selectedMimeType,
+      videoBitsPerSecond: 5000000,
+    });
+
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) chunksRef.current.push(e.data);
+    };
+
+    mediaRecorder.onstop = () => {
+      setState(s => ({ ...s, isProcessing: true }));
+      const blob = new Blob(chunksRef.current, { type: selectedMimeType });
+      const url = URL.createObjectURL(blob);
+      setState({ isRecording: false, isProcessing: false, downloadUrl: url, fileExtension: selectedExtension });
+    };
+
+    mediaRecorderRef.current = mediaRecorder;
+    mediaRecorder.start(100);
+    setState(s => ({ ...s, isRecording: true, downloadUrl: null, fileExtension: selectedExtension }));
+  }, [state.downloadUrl]);
+
+  const stopRecording = useCallback(() => {
+    if (mediaRecorderRef.current && state.isRecording) {
+      mediaRecorderRef.current.stop();
+    }
+  }, [state.isRecording]);
+
+  const reset = useCallback(() => {
+    if (state.downloadUrl) {
+      URL.revokeObjectURL(state.downloadUrl);
+    }
+    setState({ isRecording: false, isProcessing: false, downloadUrl: null, fileExtension: 'mp4' });
+  }, [state.downloadUrl]);
+
+  return { ...state, startRecording, stopRecording, reset };
+}
+
+function RecordButton({
+  recorder,
+  onRecord,
+  filename,
+}: {
+  recorder: ReturnType<typeof useChartRecorder>;
+  onRecord: () => void;
+  filename: string;
+}) {
+  const handleDownload = () => {
+    if (!recorder.downloadUrl) return;
+    const a = document.createElement('a');
+    a.href = recorder.downloadUrl;
+    a.download = `${filename}.${recorder.fileExtension}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  return (
+    <div className="flex gap-2 mt-3 justify-center flex-wrap">
+      {!recorder.isRecording && !recorder.downloadUrl && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onRecord}
+          className="bg-slate-700/50 border-cyan-500/30 hover:bg-cyan-500/20 text-cyan-400"
+        >
+          <Video className="h-4 w-4 mr-2" />
+          Record Animation
+        </Button>
+      )}
+
+      {recorder.isRecording && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={recorder.stopRecording}
+          className="bg-red-500/20 border-red-500/50 hover:bg-red-500/30 text-red-400"
+        >
+          <Square className="h-4 w-4 mr-2" />
+          Stop Recording
+        </Button>
+      )}
+
+      {recorder.isProcessing && (
+        <Button variant="outline" size="sm" disabled className="bg-slate-700/50">
+          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          Processing...
+        </Button>
+      )}
+
+      {recorder.downloadUrl && (
+        <>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleDownload}
+            className="bg-green-500/20 border-green-500/50 hover:bg-green-500/30 text-green-400"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Download Video
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              recorder.reset();
+              onRecord();
+            }}
+            className="bg-slate-700/50 border-cyan-500/30 hover:bg-cyan-500/20 text-cyan-400"
+          >
+            <RotateCcw className="h-4 w-4 mr-2" />
+            Re-record
+          </Button>
+        </>
+      )}
+    </div>
+  );
 }
 
 export default function SpacePage() {
@@ -54,6 +253,16 @@ export default function SpacePage() {
   const countMassCanvasRef = useRef<HTMLCanvasElement>(null);
   const barChartCanvasRef = useRef<HTMLCanvasElement>(null);
 
+  // Animation key states for triggering replays
+  const [worldAnimKey, setWorldAnimKey] = useState(0);
+  const [spaceXAnimKey, setSpaceXAnimKey] = useState(0);
+  const [f9AnimKey, setF9AnimKey] = useState(0);
+
+  // Recording states
+  const worldRecorder = useChartRecorder();
+  const spaceXRecorder = useChartRecorder();
+  const f9Recorder = useChartRecorder();
+
   useEffect(() => {
     getAllLaunchData()
       .then(({ spaceX, world }) => {
@@ -63,17 +272,15 @@ export default function SpacePage() {
       .catch(console.error);
   }, []);
 
+  // World Launches Animation
   useEffect(() => {
     if (!worldData || !worldCanvasRef.current) return;
     const canvas = worldCanvasRef.current;
-    const context = canvas.getContext('2d');
-    if (!context) return;
-    const ctx = context;
 
-    const chartWidth = canvas.width;
     const barHeight = CHART_CONFIG.BAR_HEIGHT;
     const barGap = CHART_CONFIG.BAR_GAP;
     const currentYear = new Date().getFullYear();
+    const logicalWidth = 800;
 
     const parsedData = worldData.map(d => ({
       time: new Date(`${d.time} ${currentYear}`),
@@ -96,8 +303,12 @@ export default function SpacePage() {
       launches: groupbyCountry[name]
     })).sort((a, b) => b.launches.length - a.launches.length);
 
-    const calculatedHeight = Math.max(400, (dataToDraw.length + 1) * (barHeight + barGap) + barGap);
-    canvas.height = calculatedHeight;
+    const logicalHeight = Math.max(400, (dataToDraw.length + 1) * (barHeight + barGap) + barGap);
+    const ctx = setupHighResCanvas(canvas, logicalWidth, logicalHeight);
+    if (!ctx) return;
+
+    const chartWidth = logicalWidth;
+    const chartHeight = logicalHeight;
 
     const hoursPerRender = 10;
     const startDate = new Date(2025, 0, 1);
@@ -112,8 +323,13 @@ export default function SpacePage() {
     });
 
     let animationId: number;
+    let animationComplete = false;
+
     function animate() {
-      ctx.clearRect(0, 0, chartWidth, canvas.height);
+      ctx.save();
+      ctx.setTransform(CHART_CONFIG.SCALE_FACTOR, 0, 0, CHART_CONFIG.SCALE_FACTOR, 0, 0);
+      ctx.clearRect(0, 0, chartWidth, chartHeight);
+
       const currentDate = new Date(startDate);
       currentDate.setHours(startDate.getHours() + hours);
       hours += hoursPerRender;
@@ -141,15 +357,16 @@ export default function SpacePage() {
 
       if (maxCurrentLaunches === 0) {
         ctx.fillStyle = CHART_CONFIG.COLORS.DATE_TEXT;
-        ctx.font = '14px Arial';
+        ctx.font = 'bold 16px Arial';
         ctx.textAlign = 'center';
         ctx.fillText(currentDate.toISOString().split('T')[0], chartWidth / 2, barGap * 2);
+        ctx.restore();
         animationId = requestAnimationFrame(animate);
         return;
       }
 
       ctx.fillStyle = CHART_CONFIG.COLORS.DATE_TEXT;
-      ctx.font = '14px Arial';
+      ctx.font = 'bold 16px Arial';
       ctx.textAlign = 'center';
       ctx.fillText(currentDate.toISOString().split('T')[0], chartWidth / 2, barGap * 2);
 
@@ -168,7 +385,7 @@ export default function SpacePage() {
         ctx.fillRect(x, y, barLength, barHeight);
 
         ctx.fillStyle = CHART_CONFIG.COLORS.TEXT;
-        ctx.font = '12px Arial';
+        ctx.font = 'bold 14px Arial';
         ctx.textAlign = 'left';
         const displayName = org.name === 'United States' ? 'US' : org.name;
         ctx.fillText(displayName, 5, y + barHeight / 2 + 5);
@@ -181,6 +398,8 @@ export default function SpacePage() {
         }
       });
 
+      ctx.restore();
+
       const anyLeft = dataToDraw.some(org => {
         const steps = cumulativeIndex[org.name] ?? 0;
         return Math.floor(steps / interplant) < org.launches.length;
@@ -188,23 +407,30 @@ export default function SpacePage() {
 
       if (anyLeft) {
         animationId = requestAnimationFrame(animate);
+      } else if (!animationComplete) {
+        animationComplete = true;
+        if (worldRecorder.isRecording) {
+          setTimeout(() => worldRecorder.stopRecording(), 500);
+        }
       }
     }
 
     animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
-  }, [worldData]);
+  }, [worldData, worldAnimKey]);
 
+  // SpaceX Chart Animation
   useEffect(() => {
     if (!spaceXData || !countMassCanvasRef.current) return;
     const canvas = countMassCanvasRef.current;
-    const context = canvas.getContext('2d');
-    if (!context) return;
-    const ctx = context;
 
-    const chartWidth = canvas.width;
-    const chartHeight = 600;
-    canvas.height = chartHeight;
+    const logicalWidth = 800;
+    const logicalHeight = 600;
+    const ctx = setupHighResCanvas(canvas, logicalWidth, logicalHeight);
+    if (!ctx) return;
+
+    const chartWidth = logicalWidth;
+    const chartHeight = logicalHeight;
     const margin = { top: 20, right: 80, bottom: 50, left: 60 };
     const plotWidth = chartWidth - margin.left - margin.right;
     const plotHeight = chartHeight - margin.top - margin.bottom;
@@ -230,9 +456,12 @@ export default function SpacePage() {
 
     const animationDuration = 10000;
     const startTime = performance.now();
+    let animationComplete = false;
 
     let animationId: number;
     function animate(currentTime: number) {
+      ctx.save();
+      ctx.setTransform(CHART_CONFIG.SCALE_FACTOR, 0, 0, CHART_CONFIG.SCALE_FACTOR, 0, 0);
       ctx.clearRect(0, 0, chartWidth, chartHeight);
 
       const elapsed = currentTime - startTime;
@@ -255,7 +484,7 @@ export default function SpacePage() {
       ctx.stroke();
 
       ctx.fillStyle = CHART_CONFIG.COLORS.TEXT;
-      ctx.font = '12px Arial';
+      ctx.font = 'bold 14px Arial';
       ctx.textAlign = 'center';
       ctx.fillText('Time', chartWidth / 2, chartHeight - 10);
 
@@ -266,12 +495,13 @@ export default function SpacePage() {
       ctx.restore();
 
       ctx.save();
-      ctx.translate(chartWidth - margin.right + 40, chartHeight / 2);
+      ctx.translate(chartWidth - margin.right + 50, chartHeight / 2);
       ctx.rotate(-Math.PI / 2);
       ctx.fillText('Cumulative Mass (Ton)', 0, 0);
       ctx.restore();
 
       const formatDate = (date: Date) => date.toISOString().split('T')[0];
+      ctx.font = 'bold 12px Arial';
       ctx.fillText(formatDate(chartData[0].time), margin.left, chartHeight - margin.bottom + 20);
       ctx.fillText(formatDate(chartData[chartData.length - 1].time), chartWidth - margin.right, chartHeight - margin.bottom + 20);
 
@@ -313,28 +543,34 @@ export default function SpacePage() {
       ctx.fillRect(chartWidth - margin.right + 25, margin.top + 10, 10, 10);
       ctx.fillStyle = CHART_CONFIG.COLORS.TEXT;
       ctx.textAlign = 'left';
-      ctx.fillText('Count', chartWidth - margin.right + 25, margin.top + 30);
+      ctx.font = 'bold 12px Arial';
+      ctx.fillText('Count', chartWidth - margin.right + 40, margin.top + 20);
 
       ctx.fillStyle = CHART_CONFIG.COLORS.MASS_LINE;
       ctx.fillRect(chartWidth - margin.right + 25, margin.top + 30, 10, 10);
       ctx.fillStyle = CHART_CONFIG.COLORS.TEXT;
-      ctx.fillText('Mass', chartWidth - margin.right + 25, margin.top + 50);
+      ctx.fillText('Mass', chartWidth - margin.right + 40, margin.top + 40);
+
+      ctx.restore();
 
       if (progress < 1) {
         animationId = requestAnimationFrame(animate);
+      } else if (!animationComplete) {
+        animationComplete = true;
+        if (spaceXRecorder.isRecording) {
+          setTimeout(() => spaceXRecorder.stopRecording(), 500);
+        }
       }
     }
 
     animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
-  }, [spaceXData]);
+  }, [spaceXData, spaceXAnimKey]);
 
+  // F9 Boosters Animation
   useEffect(() => {
     if (!spaceXData || !barChartCanvasRef.current) return;
     const canvas = barChartCanvasRef.current;
-    const context = canvas.getContext('2d');
-    if (!context) return;
-    const ctx = context;
 
     const boosterData: BoosterData[] = spaceXData.map(x => {
       const r = x.rocket.split(/[-\.‑]/);
@@ -342,18 +578,27 @@ export default function SpacePage() {
     });
 
     const data = getSortedUniqueData(boosterData);
-    setF9Title(`F9 Boosters Flight Counts (${data.length} boosters)`);
+    const expendedCount = data.filter(b => EXPENDED_BOOSTERS.has(b.name)).length;
+    setF9Title(`F9 Boosters Flight Counts (${data.length} boosters, ${expendedCount} expended)`);
 
-    const chartWidth = canvas.width;
-    const calculatedHeight = Math.max(CHART_CONFIG.MIN_CANVAS_HEIGHT, data.length * (CHART_CONFIG.BAR_HEIGHT + CHART_CONFIG.BAR_GAP) + CHART_CONFIG.BAR_GAP);
-    canvas.height = calculatedHeight;
+    const logicalWidth = 800;
+    const logicalHeight = Math.max(CHART_CONFIG.MIN_CANVAS_HEIGHT, data.length * (CHART_CONFIG.BAR_HEIGHT + CHART_CONFIG.BAR_GAP) + CHART_CONFIG.BAR_GAP);
+    const ctx = setupHighResCanvas(canvas, logicalWidth, logicalHeight);
+    if (!ctx) return;
+
+    const chartWidth = logicalWidth;
+    const chartHeight = logicalHeight;
 
     const maxFlights = Math.max(...data.map(b => b.flights));
     const startTime = performance.now();
+    let animationComplete = false;
 
     let animationId: number;
     function animate(currentTime: number) {
-      ctx.clearRect(0, 0, chartWidth, calculatedHeight);
+      ctx.save();
+      ctx.setTransform(CHART_CONFIG.SCALE_FACTOR, 0, 0, CHART_CONFIG.SCALE_FACTOR, 0, 0);
+      ctx.clearRect(0, 0, chartWidth, chartHeight);
+
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / CHART_CONFIG.ANIMATION_DURATION, 1);
 
@@ -362,12 +607,14 @@ export default function SpacePage() {
         const currentBarWidth = finalBarWidth * progress;
         const x = 50;
         const y = index * (CHART_CONFIG.BAR_HEIGHT + CHART_CONFIG.BAR_GAP) + CHART_CONFIG.BAR_GAP;
+        const isExpended = EXPENDED_BOOSTERS.has(booster.name);
 
         ctx.fillStyle = CHART_CONFIG.COLORS.PRIMARY_BAR;
         ctx.fillRect(x, y, currentBarWidth, CHART_CONFIG.BAR_HEIGHT);
 
-        ctx.fillStyle = CHART_CONFIG.COLORS.TEXT;
-        ctx.font = '12px Arial';
+        // Use red color for expended boosters
+        ctx.fillStyle = isExpended ? CHART_CONFIG.COLORS.TEXT_EXPENDED : CHART_CONFIG.COLORS.TEXT;
+        ctx.font = 'bold 14px Arial';
         ctx.fillText(booster.name, 5, y + CHART_CONFIG.BAR_HEIGHT / 2 + 5);
 
         if (progress === 1) {
@@ -375,14 +622,49 @@ export default function SpacePage() {
         }
       });
 
+      ctx.restore();
+
       if (progress < 1) {
         animationId = requestAnimationFrame(animate);
+      } else if (!animationComplete) {
+        animationComplete = true;
+        if (f9Recorder.isRecording) {
+          setTimeout(() => f9Recorder.stopRecording(), 500);
+        }
       }
     }
 
     animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
-  }, [spaceXData]);
+  }, [spaceXData, f9AnimKey]);
+
+  // Record handlers
+  const handleWorldRecord = useCallback(() => {
+    setWorldAnimKey(k => k + 1);
+    setTimeout(() => {
+      if (worldCanvasRef.current) {
+        worldRecorder.startRecording(worldCanvasRef.current);
+      }
+    }, 100);
+  }, [worldRecorder]);
+
+  const handleSpaceXRecord = useCallback(() => {
+    setSpaceXAnimKey(k => k + 1);
+    setTimeout(() => {
+      if (countMassCanvasRef.current) {
+        spaceXRecorder.startRecording(countMassCanvasRef.current);
+      }
+    }, 100);
+  }, [spaceXRecorder]);
+
+  const handleF9Record = useCallback(() => {
+    setF9AnimKey(k => k + 1);
+    setTimeout(() => {
+      if (barChartCanvasRef.current) {
+        f9Recorder.startRecording(barChartCanvasRef.current);
+      }
+    }, 100);
+  }, [f9Recorder]);
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100">
@@ -412,7 +694,14 @@ export default function SpacePage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <canvas ref={worldCanvasRef} width={800} className="w-full rounded-lg bg-slate-900/50" />
+              <div className="flex flex-col items-center">
+                <canvas ref={worldCanvasRef} width={800} className="rounded-lg bg-slate-900/50" />
+                <RecordButton
+                  recorder={worldRecorder}
+                  onRecord={handleWorldRecord}
+                  filename="world-launches-2025"
+                />
+              </div>
             </CardContent>
           </Card>
 
@@ -425,16 +714,23 @@ export default function SpacePage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <canvas ref={countMassCanvasRef} width={800} className="w-full rounded-lg bg-slate-900/50" />
-              <div className="flex justify-center gap-8 mt-4 text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-1 bg-cyan-400 rounded" />
-                  <span className="text-slate-400">Launch Count</span>
+              <div className="flex flex-col items-center">
+                <canvas ref={countMassCanvasRef} width={800} className="rounded-lg bg-slate-900/50" />
+                <div className="flex justify-center gap-8 mt-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-1 bg-cyan-400 rounded" />
+                    <span className="text-slate-400">Launch Count</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-1 bg-pink-500 rounded" />
+                    <span className="text-slate-400">Cumulative Mass (Tons)</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-1 bg-pink-500 rounded" />
-                  <span className="text-slate-400">Cumulative Mass (Tons)</span>
-                </div>
+                <RecordButton
+                  recorder={spaceXRecorder}
+                  onRecord={handleSpaceXRecord}
+                  filename="spacex-launches-2025"
+                />
               </div>
             </CardContent>
           </Card>
@@ -448,7 +744,14 @@ export default function SpacePage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <canvas ref={barChartCanvasRef} width={800} className="w-full rounded-lg bg-slate-900/50" />
+              <div className="flex flex-col items-center">
+                <canvas ref={barChartCanvasRef} width={800} className="rounded-lg bg-slate-900/50" />
+                <RecordButton
+                  recorder={f9Recorder}
+                  onRecord={handleF9Record}
+                  filename="f9-boosters-2025"
+                />
+              </div>
             </CardContent>
           </Card>
         </div>
