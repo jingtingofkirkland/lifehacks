@@ -3375,5 +3375,82 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 162,
+    "time": "15 December 05:25:10",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 6-82",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 163,
+    "time": "16 December 03:17:00",
+    "rocket": "Long March 4B",
+    "mission": "4B-Y61",
+    "site": "Taiyuan LA-9",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 164,
+    "time": "16 December 08:28:00",
+    "rocket": "Atlas V 551",
+    "mission": "LA-04/Leo-4",
+    "site": "Cape Canaveral SLC-41",
+    "org": {
+      "country": "United States",
+      "info": "ULA"
+    }
+  },
+  {
+    "flight": 165,
+    "time": "17 December 05:01:58",
+    "rocket": "Ariane 62",
+    "mission": "VA266",
+    "site": "Kourou ELA-4",
+    "org": {
+      "country": "France",
+      "info": "Arianespace"
+    }
+  },
+  {
+    "flight": 166,
+    "time": "17 December 12:42:10",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 6-99",
+    "site": "Kennedy LC-39A",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 167,
+    "time": "17 December 15:27:50",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 15-13",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 168,
+    "time": "18 December 05:03:00",
+    "rocket": "Electron",
+    "mission": "\"Don't Be Such A Square\"",
+    "site": "MARS LC-2",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
   }
 ]

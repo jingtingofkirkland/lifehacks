@@ -15,7 +15,7 @@
     "crawl:world-q2": "node scripts/crawl-cli.js world-q2",
     "crawl:world-q3": "node scripts/crawl-cli.js world-q3",
     "crawl:world-q4": "node scripts/crawl-cli.js world-q4",
-    "crawl:world-full-inc": "node scripts/crawl-cli.js world-full-inc",
+    "crawl:world-inc": "node scripts/crawl-cli.js world-full-inc",
     "crawl:all": "node scripts/crawl-cli.js all",
     "crawl:help": "node scripts/crawl-cli.js --help"
   },
