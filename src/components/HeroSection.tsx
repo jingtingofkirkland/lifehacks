@@ -55,16 +55,19 @@ export function HeroSections({ sections }: HeroSectionsProps) {
     const container = containerRef.current;
     if (!container) return;
 
-    container.scrollTo({
-      top: index * window.innerHeight,
-      behavior: 'smooth',
-    });
+    const targetSection = container.querySelector(`#${sections[index]?.id}`) as HTMLElement;
+    if (targetSection) {
+      targetSection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const scrollToId = (id: string) => {
-    const index = sections.findIndex(s => s.id === id);
-    if (index !== -1) {
-      scrollToSection(index);
+    const container = containerRef.current;
+    if (!container) return;
+
+    const targetSection = container.querySelector(`#${id}`) as HTMLElement;
+    if (targetSection) {
+      targetSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
 

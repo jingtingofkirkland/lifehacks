@@ -1,60 +1,103 @@
 import Link from 'next/link';
-import { Metadata } from 'next';
+import { ArrowLeft, ExternalLink, ChevronRight } from 'lucide-react';
+import { techPosts, techCategories } from '@/config/techPosts';
+import { getAllPostContents } from '@/lib/posts';
+import { PostCard } from './PostCard';
 
-export const metadata: Metadata = {
-  title: 'Latest Techs - Great Seattle Life Hacks',
+export const metadata = {
+  title: 'AI Techs - Great Seattle Life Hacks',
 };
 
-export default function TechPage() {
+export default async function TechPage() {
+  // Load all MD file contents at build/request time
+  const contentPaths = techPosts
+    .filter(post => post.contentPath)
+    .map(post => post.contentPath!);
+
+  const postContents = await getAllPostContents(contentPaths);
+
   return (
-    <article className="container max-w-3xl mx-auto px-4 py-8">
-      <Link href="/" className="text-sm text-muted-foreground hover:text-primary">
-        ← Back to Home
-      </Link>
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-slate-900">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        {/* Background particles */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(15)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-white/20 rounded-full animate-twinkle"
+              style={{
+                left: `${(i * 7) % 100}%`,
+                top: `${(i * 11) % 100}%`,
+              }}
+            />
+          ))}
+        </div>
 
-      <h1 className="text-3xl font-bold mt-6 mb-8">Learn New Techs Everyday!</h1>
-
-      <div className="space-y-8">
-        <p className="text-muted-foreground">
-          Sharing the latest articles about new tech, so you could understand what&apos;s happening daily.
-        </p>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4 pb-2 border-b">Space News</h2>
-          <Link href="/space" className="text-primary hover:underline">
-            SpaceX Falcon 9 Reuse Status →
+        <div className="relative z-10 container max-w-6xl mx-auto px-6 pt-8 pb-16">
+          {/* Back Link */}
+          <Link
+            href="/"
+            className="inline-flex items-center text-white/60 hover:text-white transition-colors mb-12"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Home
           </Link>
-        </section>
 
-        <section>
-          <h2 className="text-2xl font-semibold mb-4 pb-2 border-b">Signals Gateway</h2>
-          <p className="text-muted-foreground mb-4">
-            <a href="https://www.facebook.com/business/m/signalsgateway/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-              Signals Gateway
-            </a>{' '}
-            by Meta is a Customer Data Platform (CDP) for collecting, managing, and distributing first-party data.
-          </p>
-          <ul className="list-disc list-inside space-y-1 text-muted-foreground text-sm">
-            <li>Centralized Data Management</li>
-            <li>First-Party Data Tracking</li>
-            <li>Easy Setup without coding</li>
-            <li>GDPR Compliance built-in</li>
-            <li>AI and Automation Support</li>
-          </ul>
-        </section>
+          {/* Header */}
+          <div className="text-center mb-16">
+            <h1 className="text-5xl sm:text-6xl font-bold text-white mb-4 tracking-tight">
+              AI Techs
+            </h1>
+            <p className="text-xl text-white/60 max-w-2xl mx-auto">
+              Explore cutting-edge technology articles, tutorials, and insights for everyday learning and professional growth.
+            </p>
+          </div>
 
-        <section>
-          <h2 className="text-2xl font-semibold mb-4 pb-2 border-b">Gen AI</h2>
-          <p className="text-muted-foreground mb-4">
-            Generative AI creates new content including text, images, music, or video.
-          </p>
-          <h3 className="font-medium mb-2">Learning Resources:</h3>
-          <ul className="list-disc list-inside space-y-1">
-            <li><a href="https://www.youtube.com/watch?v=T-D1OfcDW1M" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">What is RAG?</a></li>
-            <li><a href="https://www.youtube.com/watch?v=JpQC0W91E6k" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Setup Your Own Offline AI</a></li>
-          </ul>
-        </section>
+          {/* Category Filter */}
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            {techCategories.map((category) => (
+              <button
+                key={category}
+                className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-300
+                  ${category === 'All'
+                    ? 'bg-white text-slate-900'
+                    : 'bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10'
+                  }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+
+          {/* Posts Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {techPosts.map((post) => (
+              <PostCard
+                key={post.id}
+                post={post}
+                content={post.contentPath ? postContents[post.contentPath] : undefined}
+              />
+            ))}
+          </div>
+
+          {/* Empty State for future */}
+          {techPosts.length === 0 && (
+            <div className="text-center py-20">
+              <p className="text-white/40 text-lg">No posts yet. Check back soon!</p>
+            </div>
+          )}
+        </div>
       </div>
-    </article>
+
+      {/* Footer */}
+      <footer className="border-t border-white/10 py-8">
+        <div className="container max-w-6xl mx-auto px-6 text-center">
+          <p className="text-white/40 text-sm">
+            © {new Date().getFullYear()} Great Seattle Life Hacks
+          </p>
+        </div>
+      </footer>
+    </div>
   );
 }
