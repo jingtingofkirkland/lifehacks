@@ -326,6 +326,7 @@ export default function SpacePage() {
     let animationComplete = false;
 
     function animate() {
+      if (!ctx) return;
       ctx.save();
       ctx.setTransform(CHART_CONFIG.SCALE_FACTOR, 0, 0, CHART_CONFIG.SCALE_FACTOR, 0, 0);
       ctx.clearRect(0, 0, chartWidth, chartHeight);
@@ -460,6 +461,7 @@ export default function SpacePage() {
 
     let animationId: number;
     function animate(currentTime: number) {
+      if (!ctx) return;
       ctx.save();
       ctx.setTransform(CHART_CONFIG.SCALE_FACTOR, 0, 0, CHART_CONFIG.SCALE_FACTOR, 0, 0);
       ctx.clearRect(0, 0, chartWidth, chartHeight);
@@ -595,6 +597,7 @@ export default function SpacePage() {
 
     let animationId: number;
     function animate(currentTime: number) {
+      if (!ctx) return;
       ctx.save();
       ctx.setTransform(CHART_CONFIG.SCALE_FACTOR, 0, 0, CHART_CONFIG.SCALE_FACTOR, 0, 0);
       ctx.clearRect(0, 0, chartWidth, chartHeight);

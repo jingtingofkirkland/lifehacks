@@ -1,13 +1,13 @@
 """
 Stock portfolio table generator and visualizer.
 Fetches current stock prices from Yahoo Finance and generates HTML tables
-displaying portfolio performance with initial investments, current values, 
+displaying portfolio performance with initial investments, current values,
 dividends, and gains/losses.
 """
 
 import time
 from datetime import date
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 import requests
 
@@ -182,19 +182,19 @@ class HTMLTableGenerator:
     def __init__(self, indent: str = "  "):
         self.indent = indent
 
-    def _create_tag(self, tag: str, content: str, is_header: bool = False) -> str:
-        """Create an HTML tag with content."""
+    def _create_cell(self, content: str, is_header: bool = False) -> str:
+        """Create an HTML table cell with content."""
         tag_name = "th" if is_header else "td"
         return f"{self.indent}{self.indent}<{tag_name}> {content} </{tag_name}>\n"
 
     def _create_row(self, record: Record) -> str:
         """Create an HTML table row from a Record."""
         row = [f"{self.indent}<tr>\n"]
-        row.append(self._create_tag("td", record.name, record.is_header))
-        row.append(self._create_tag("td", record.initial_amount, record.is_header))
-        row.append(self._create_tag("td", record.current_amount, record.is_header))
-        row.append(self._create_tag("td", record.dividend_ytd, record.is_header))
-        row.append(self._create_tag("td", record.gain_loss, record.is_header))
+        row.append(self._create_cell(record.name, record.is_header))
+        row.append(self._create_cell(record.initial_amount, record.is_header))
+        row.append(self._create_cell(record.current_amount, record.is_header))
+        row.append(self._create_cell(record.dividend_ytd, record.is_header))
+        row.append(self._create_cell(record.gain_loss, record.is_header))
         row.append(f"{self.indent}</tr>\n")
         return "".join(row)
 
