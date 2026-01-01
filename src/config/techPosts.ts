@@ -15,6 +15,20 @@ export interface TechPost {
 
 export const techPosts: TechPost[] = [
   {
+    id: "4680-cell-cn",
+    title: "特斯拉4680电池：五年追梦路，干电极仍荆棘满途",
+    description: "自2020年Battery Day高调亮相以来，4680圆柱电池一直是特斯拉垂直整合与成本革命的核心寄托。更大尺寸、更低成本、干电极工艺曾被宣传为「电池圣杯」，然而进入2026年，这项技术仍深陷「难产」泥沼。",
+    category: "Tech",
+    date: "2026-01-01",
+    contentPath: "4086-cell-cn.md",
+    highlights: [
+      "干阳极已实现100%量产",
+      "全干电极量产比例仍为0%",
+      "德州工厂良率稳定在95%以上",
+      "2026年有望推出四种变体",
+    ],
+  },
+  {
     id: "transformer-architecture",
     title: "From Attention to Intelligence: A Deep Dive into Transformer Architecture",
     description: "The Transformer architecture has fundamentally reshaped AI. This article explains core concepts, training mechanics, emergent intelligence, and the philosophical limits of machine creativity.",
