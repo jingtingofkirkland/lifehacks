@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Home, Rocket, Video, Download, Loader2, RotateCcw, Square } from 'lucide-react';
 import {
   getAllLaunchData,
+  SUPPORTED_YEARS,
+  type SupportedYear,
   type SpaceXLaunch,
   type WorldLaunch,
 } from '@/lib/api';
@@ -21,12 +23,12 @@ const CHART_CONFIG = {
   BAR_GAP: 10,
   ANIMATION_DURATION: 1000,
   MIN_CANVAS_HEIGHT: 400,
-  SCALE_FACTOR: 2, // 2x resolution for crisp text
+  SCALE_FACTOR: 2,
   COLORS: {
     PRIMARY_BAR: '#00ff88',
     BACKGROUND_BAR: '#3a4156',
     TEXT: '#e0e6ed',
-    TEXT_EXPENDED: '#ff4444', // Red color for expended boosters
+    TEXT_EXPENDED: '#ff4444',
     COUNT_LINE: '#00d9ff',
     MASS_LINE: '#ff2e97',
     LEADER_HIGHLIGHT: '#ffd700',
@@ -35,33 +37,25 @@ const CHART_CONFIG = {
   }
 };
 
-// List of expended boosters (no longer in service)
 const EXPENDED_BOOSTERS = new Set([
-  'B1076', // Expended in 2025
+  'B1076',
 ]);
 
-// Helper to setup high-resolution canvas
 function setupHighResCanvas(
   canvas: HTMLCanvasElement,
   logicalWidth: number,
   logicalHeight: number
 ): CanvasRenderingContext2D | null {
   const scale = CHART_CONFIG.SCALE_FACTOR;
-
-  // Set actual size in memory (scaled up)
   canvas.width = logicalWidth * scale;
   canvas.height = logicalHeight * scale;
-
-  // Set display size (CSS pixels)
   canvas.style.width = `${logicalWidth}px`;
   canvas.style.height = `${logicalHeight}px`;
 
   const ctx = canvas.getContext('2d');
   if (ctx) {
-    // Scale all drawing operations
     ctx.scale(scale, scale);
   }
-
   return ctx;
 }
 
@@ -100,7 +94,6 @@ function useChartRecorder() {
     chunksRef.current = [];
     const stream = canvas.captureStream(30);
 
-    // Prioritize MP4 for better compatibility (Safari, iOS, social media)
     const mimeTypes = [
       { type: 'video/mp4;codecs=avc1', ext: 'mp4' },
       { type: 'video/mp4', ext: 'mp4' },
@@ -242,35 +235,87 @@ function RecordButton({
   );
 }
 
+// Year Tabs Component
+function YearTabs({
+  selectedYear,
+  onYearChange,
+  isLoading,
+}: {
+  selectedYear: SupportedYear;
+  onYearChange: (year: SupportedYear) => void;
+  isLoading: boolean;
+}) {
+  return (
+    <div className="flex justify-center gap-2 mb-8">
+      {SUPPORTED_YEARS.map((year) => (
+        <Button
+          key={year}
+          variant="outline"
+          size="lg"
+          disabled={isLoading}
+          onClick={() => onYearChange(year)}
+          className={`
+            px-6 py-2 font-bold transition-all duration-300
+            ${selectedYear === year
+              ? 'bg-cyan-500/30 border-cyan-400 text-cyan-300 shadow-lg shadow-cyan-500/20'
+              : 'bg-slate-700/50 border-slate-600 text-slate-400 hover:bg-slate-600/50 hover:text-slate-300'
+            }
+          `}
+        >
+          {year}
+        </Button>
+      ))}
+    </div>
+  );
+}
+
 export default function SpacePage() {
+  const [selectedYear, setSelectedYear] = useState<SupportedYear>(2025);
+  const [isLoading, setIsLoading] = useState(false);
   const [spaceXData, setSpaceXData] = useState<SpaceXLaunch[] | null>(null);
   const [worldData, setWorldData] = useState<WorldLaunch[] | null>(null);
-  const [worldTitle, setWorldTitle] = useState('World Counts 2025');
-  const [spaceXTitle, setSpaceXTitle] = useState('SpaceX Launches and Mass 2025');
+  const [worldTitle, setWorldTitle] = useState(`World Counts ${selectedYear}`);
+  const [spaceXTitle, setSpaceXTitle] = useState(`SpaceX Launches and Mass ${selectedYear}`);
   const [f9Title, setF9Title] = useState('F9 Boosters Flight Counts');
 
   const worldCanvasRef = useRef<HTMLCanvasElement>(null);
   const countMassCanvasRef = useRef<HTMLCanvasElement>(null);
   const barChartCanvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Animation key states for triggering replays
   const [worldAnimKey, setWorldAnimKey] = useState(0);
   const [spaceXAnimKey, setSpaceXAnimKey] = useState(0);
   const [f9AnimKey, setF9AnimKey] = useState(0);
 
-  // Recording states
   const worldRecorder = useChartRecorder();
   const spaceXRecorder = useChartRecorder();
   const f9Recorder = useChartRecorder();
 
+  // Fetch data when year changes
   useEffect(() => {
-    getAllLaunchData()
+    setIsLoading(true);
+    getAllLaunchData(selectedYear)
       .then(({ spaceX, world }) => {
         setSpaceXData(spaceX);
         setWorldData(world);
+        // Reset animation keys to trigger re-render
+        setWorldAnimKey(k => k + 1);
+        setSpaceXAnimKey(k => k + 1);
+        setF9AnimKey(k => k + 1);
       })
-      .catch(console.error);
-  }, []);
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
+  }, [selectedYear]);
+
+  // Handle year change
+  const handleYearChange = useCallback((year: SupportedYear) => {
+    if (year !== selectedYear) {
+      // Reset recorders when changing years
+      worldRecorder.reset();
+      spaceXRecorder.reset();
+      f9Recorder.reset();
+      setSelectedYear(year);
+    }
+  }, [selectedYear, worldRecorder, spaceXRecorder, f9Recorder]);
 
   // World Launches Animation
   useEffect(() => {
@@ -279,7 +324,7 @@ export default function SpacePage() {
 
     const barHeight = CHART_CONFIG.BAR_HEIGHT;
     const barGap = CHART_CONFIG.BAR_GAP;
-    const dataYear = 2025; // Data is for 2025 launches
+    const dataYear = selectedYear;
     const logicalWidth = 800;
 
     const parsedData = worldData.map(d => ({
@@ -288,7 +333,20 @@ export default function SpacePage() {
       country: d.org.country
     }));
 
-    setWorldTitle(`World Counts 2025 (Total: ${parsedData.length})`);
+    setWorldTitle(`World Counts ${dataYear} (Total: ${parsedData.length})`);
+
+    // Handle empty data
+    if (parsedData.length === 0) {
+      const ctx = setupHighResCanvas(canvas, logicalWidth, 200);
+      if (ctx) {
+        ctx.fillStyle = CHART_CONFIG.COLORS.TEXT;
+        ctx.font = 'bold 18px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(`No launch data available for ${dataYear}`, logicalWidth / 2, 100);
+      }
+      return;
+    }
+
     parsedData.sort((a, b) => a.time.getTime() - b.time.getTime());
 
     const groupbyCountry = parsedData.reduce((acc, item) => {
@@ -311,7 +369,8 @@ export default function SpacePage() {
     const chartHeight = logicalHeight;
 
     const hoursPerRender = 10;
-    const startDate = new Date(2025, 0, 1);
+    const startDate = new Date(dataYear, 0, 1);
+    const endDate = new Date(dataYear + 1, 0, 1);
     let hours = 0;
     const interplant = 2;
     const cumulativeIndex: Record<string, number> = {};
@@ -406,7 +465,9 @@ export default function SpacePage() {
         return Math.floor(steps / interplant) < org.launches.length;
       });
 
-      if (anyLeft) {
+      const dateStillInYear = currentDate < endDate;
+
+      if (anyLeft && dateStillInYear) {
         animationId = requestAnimationFrame(animate);
       } else if (!animationComplete) {
         animationComplete = true;
@@ -418,7 +479,7 @@ export default function SpacePage() {
 
     animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
-  }, [worldData, worldAnimKey]);
+  }, [worldData, worldAnimKey, selectedYear]);
 
   // SpaceX Chart Animation
   useEffect(() => {
@@ -429,6 +490,16 @@ export default function SpacePage() {
     const logicalHeight = 600;
     const ctx = setupHighResCanvas(canvas, logicalWidth, logicalHeight);
     if (!ctx) return;
+
+    // Handle empty data
+    if (spaceXData.length === 0) {
+      ctx.fillStyle = CHART_CONFIG.COLORS.TEXT;
+      ctx.font = 'bold 18px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(`No SpaceX launch data available for ${selectedYear}`, logicalWidth / 2, logicalHeight / 2);
+      setSpaceXTitle(`SpaceX Launches and Mass ${selectedYear} (0/0 ton)`);
+      return;
+    }
 
     const chartWidth = logicalWidth;
     const chartHeight = logicalHeight;
@@ -448,7 +519,7 @@ export default function SpacePage() {
       mass: Math.floor((cumulativeMass += d.mass) / 1000)
     }));
 
-    setSpaceXTitle(`SpaceX Launches and Mass 2025 (${parsedData.length}/${Math.floor(cumulativeMass / 1000)} ton)`);
+    setSpaceXTitle(`SpaceX Launches and Mass ${selectedYear} (${parsedData.length}/${Math.floor(cumulativeMass / 1000)} ton)`);
 
     const minTime = chartData[0].time;
     const maxTime = chartData[chartData.length - 1].time;
@@ -567,12 +638,26 @@ export default function SpacePage() {
 
     animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
-  }, [spaceXData, spaceXAnimKey]);
+  }, [spaceXData, spaceXAnimKey, selectedYear]);
 
   // F9 Boosters Animation
   useEffect(() => {
     if (!spaceXData || !barChartCanvasRef.current) return;
     const canvas = barChartCanvasRef.current;
+
+    // Handle empty data
+    if (spaceXData.length === 0) {
+      const logicalWidth = 800;
+      const ctx = setupHighResCanvas(canvas, logicalWidth, 200);
+      if (ctx) {
+        ctx.fillStyle = CHART_CONFIG.COLORS.TEXT;
+        ctx.font = 'bold 18px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(`No booster data available for ${selectedYear}`, logicalWidth / 2, 100);
+      }
+      setF9Title(`F9 Boosters Flight Counts (0 boosters)`);
+      return;
+    }
 
     const boosterData: BoosterData[] = spaceXData.map(x => {
       const r = x.rocket.split(/[-\.‑]/);
@@ -615,7 +700,6 @@ export default function SpacePage() {
         ctx.fillStyle = CHART_CONFIG.COLORS.PRIMARY_BAR;
         ctx.fillRect(x, y, currentBarWidth, CHART_CONFIG.BAR_HEIGHT);
 
-        // Use red color for expended boosters
         ctx.fillStyle = isExpended ? CHART_CONFIG.COLORS.TEXT_EXPENDED : CHART_CONFIG.COLORS.TEXT;
         ctx.font = 'bold 14px Arial';
         ctx.fillText(booster.name, 5, y + CHART_CONFIG.BAR_HEIGHT / 2 + 5);
@@ -639,7 +723,7 @@ export default function SpacePage() {
 
     animationId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animationId);
-  }, [spaceXData, f9AnimKey]);
+  }, [spaceXData, f9AnimKey, selectedYear]);
 
   // Record handlers
   const handleWorldRecord = useCallback(() => {
@@ -676,7 +760,7 @@ export default function SpacePage() {
 
       <div className="relative z-10 container max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
-        <header className="text-center mb-12">
+        <header className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Rocket className="h-10 w-10 text-cyan-400" />
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
@@ -686,78 +770,103 @@ export default function SpacePage() {
           <p className="text-slate-400 text-lg">Real-time Mission Data Visualization</p>
         </header>
 
+        {/* Year Tabs */}
+        <YearTabs
+          selectedYear={selectedYear}
+          onYearChange={handleYearChange}
+          isLoading={isLoading}
+        />
+
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="h-8 w-8 text-cyan-400 animate-spin mr-3" />
+            <span className="text-slate-400 text-lg">Loading {selectedYear} data...</span>
+          </div>
+        )}
+
         {/* Charts */}
-        <div className="space-y-8">
-          {/* World Launches Chart */}
-          <Card className="bg-slate-800/70 border-cyan-500/30 backdrop-blur">
-            <CardHeader>
-              <CardTitle className="text-cyan-400 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                {worldTitle}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col items-center">
-                <canvas ref={worldCanvasRef} width={800} className="rounded-lg bg-slate-900/50" />
-                <RecordButton
-                  recorder={worldRecorder}
-                  onRecord={handleWorldRecord}
-                  filename="world-launches-2025"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* SpaceX Chart */}
-          <Card className="bg-slate-800/70 border-cyan-500/30 backdrop-blur">
-            <CardHeader>
-              <CardTitle className="text-cyan-400 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                {spaceXTitle}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col items-center">
-                <canvas ref={countMassCanvasRef} width={800} className="rounded-lg bg-slate-900/50" />
-                <div className="flex justify-center gap-8 mt-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-1 bg-cyan-400 rounded" />
-                    <span className="text-slate-400">Launch Count</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-1 bg-pink-500 rounded" />
-                    <span className="text-slate-400">Cumulative Mass (Tons)</span>
-                  </div>
+        {!isLoading && (
+          <div className="space-y-8">
+            {/* World Launches Chart */}
+            <Card className="bg-slate-800/70 border-cyan-500/30 backdrop-blur">
+              <CardHeader>
+                <CardTitle className="text-cyan-400 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                  {worldTitle}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col items-center">
+                  <canvas ref={worldCanvasRef} width={800} className="rounded-lg bg-slate-900/50" />
+                  {worldData && worldData.length > 0 && (
+                    <RecordButton
+                      recorder={worldRecorder}
+                      onRecord={handleWorldRecord}
+                      filename={`world-launches-${selectedYear}`}
+                    />
+                  )}
                 </div>
-                <RecordButton
-                  recorder={spaceXRecorder}
-                  onRecord={handleSpaceXRecord}
-                  filename="spacex-launches-2025"
-                />
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* Boosters Chart */}
-          <Card className="bg-slate-800/70 border-cyan-500/30 backdrop-blur">
-            <CardHeader>
-              <CardTitle className="text-cyan-400 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                {f9Title}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col items-center">
-                <canvas ref={barChartCanvasRef} width={800} className="rounded-lg bg-slate-900/50" />
-                <RecordButton
-                  recorder={f9Recorder}
-                  onRecord={handleF9Record}
-                  filename="f9-boosters-2025"
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+            {/* SpaceX Chart */}
+            <Card className="bg-slate-800/70 border-cyan-500/30 backdrop-blur">
+              <CardHeader>
+                <CardTitle className="text-cyan-400 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                  {spaceXTitle}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col items-center">
+                  <canvas ref={countMassCanvasRef} width={800} className="rounded-lg bg-slate-900/50" />
+                  {spaceXData && spaceXData.length > 0 && (
+                    <>
+                      <div className="flex justify-center gap-8 mt-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-1 bg-cyan-400 rounded" />
+                          <span className="text-slate-400">Launch Count</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-1 bg-pink-500 rounded" />
+                          <span className="text-slate-400">Cumulative Mass (Tons)</span>
+                        </div>
+                      </div>
+                      <RecordButton
+                        recorder={spaceXRecorder}
+                        onRecord={handleSpaceXRecord}
+                        filename={`spacex-launches-${selectedYear}`}
+                      />
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Boosters Chart */}
+            <Card className="bg-slate-800/70 border-cyan-500/30 backdrop-blur">
+              <CardHeader>
+                <CardTitle className="text-cyan-400 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                  {f9Title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col items-center">
+                  <canvas ref={barChartCanvasRef} width={800} className="rounded-lg bg-slate-900/50" />
+                  {spaceXData && spaceXData.length > 0 && (
+                    <RecordButton
+                      recorder={f9Recorder}
+                      onRecord={handleF9Record}
+                      filename={`f9-boosters-${selectedYear}`}
+                    />
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Footer */}
         <footer className="mt-12 pt-8 border-t border-slate-700 text-center text-slate-400 text-sm">

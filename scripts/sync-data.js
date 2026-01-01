@@ -18,9 +18,10 @@ const TARGET_DIR = path.join(process.cwd(), 'public', 'api');
 
 // Files to sync (add more as needed)
 const DATA_FILES = [
-  'f9_launches.json',
-  'world_launches.json',
-  'launches.json',
+  'f9_launches_2025.json',
+  'f9_launches_2026.json',
+  'world_launches_2025.json',
+  'world_launches_2026.json',
 ];
 
 function ensureDir(dir) {
