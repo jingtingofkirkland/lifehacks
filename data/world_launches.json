@@ -3452,5 +3452,137 @@
       "country": "United States",
       "info": "Rocket Lab"
     }
+  },
+  {
+    "flight": 169,
+    "time": "20 December 12:30",
+    "rocket": "Long March 5",
+    "mission": "Y10",
+    "site": "Wenchang LC-1",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 170,
+    "time": "21 December 06:36:00",
+    "rocket": "Electron",
+    "mission": "\"The Wisdom God Guides\"",
+    "site": "Mahia LC-1B",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
+  },
+  {
+    "flight": 171,
+    "time": "22 December 01:51:30",
+    "rocket": "H3-22S",
+    "mission": "F8",
+    "site": "Tanegashima LA-Y2",
+    "org": {
+      "country": "Japan",
+      "info": "JAXA"
+    }
+  },
+  {
+    "flight": 172,
+    "time": "22 December 12:45[failed verification]",
+    "rocket": "Hanbit-Nano",
+    "mission": "\"SPACEWARD\"",
+    "site": "Alcântara",
+    "org": {
+      "country": "South Korea",
+      "info": "Innospace"
+    }
+  },
+  {
+    "flight": 173,
+    "time": "23 December 02:00:00",
+    "rocket": "Long March 12A",
+    "mission": "12A-Y1",
+    "site": "Jiuquan",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 174,
+    "time": "24 December 03:25:30",
+    "rocket": "LVM3",
+    "mission": "M6",
+    "site": "Satish Dhawan SLP",
+    "org": {
+      "country": "India",
+      "info": "ISRO"
+    }
+  },
+  {
+    "flight": 175,
+    "time": "25 December 14:11:00",
+    "rocket": "Soyuz-2.1a / Fregat-M",
+    "mission": "",
+    "site": "Plesetsk Site 43",
+    "org": {
+      "country": "Russia",
+      "info": "Roscosmos"
+    }
+  },
+  {
+    "flight": 176,
+    "time": "25 December 23:25:00",
+    "rocket": "Long March 8A",
+    "mission": "8A-Y6 / SatNet LEO Group 17",
+    "site": "Wenchang Commercial LC-1",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 177,
+    "time": "26 December 16:05:00",
+    "rocket": "Long March 3B/E",
+    "mission": "",
+    "site": "Xichang LC-2",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 178,
+    "time": "28 December 13:18:05",
+    "rocket": "Soyuz-2.1b / Fregat-M",
+    "mission": "",
+    "site": "Vostochny Site 1S",
+    "org": {
+      "country": "Russia",
+      "info": "Roscosmos"
+    }
+  },
+  {
+    "flight": 179,
+    "time": "30 December 04:12:00",
+    "rocket": "Long March 4B",
+    "mission": "4B-Y69",
+    "site": "Jiuquan SLS-2",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 180,
+    "time": "30 December 22:40:00",
+    "rocket": "Long March 7A",
+    "mission": "7A-Y7",
+    "site": "Wenchang LC-2",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]

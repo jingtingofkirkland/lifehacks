@@ -279,11 +279,11 @@ export default function SpacePage() {
 
     const barHeight = CHART_CONFIG.BAR_HEIGHT;
     const barGap = CHART_CONFIG.BAR_GAP;
-    const currentYear = new Date().getFullYear();
+    const dataYear = 2025; // Data is for 2025 launches
     const logicalWidth = 800;
 
     const parsedData = worldData.map(d => ({
-      time: new Date(`${d.time} ${currentYear}`),
+      time: new Date(`${d.time} ${dataYear}`),
       org: d.org.info,
       country: d.org.country
     }));
