@@ -27,38 +27,32 @@ const DATA_DIR = 'data';
 const CRAWL_TARGETS = {
     'falcon': {
         url: 'https://en.m.wikipedia.org/wiki/List_of_Falcon_9_and_Falcon_Heavy_launches',
-        filename: 'f9_launches.json',
+        filename: 'f9_launches_2026.json',
         description: 'SpaceX Falcon 9/Heavy launches',
         scraper: 'falcon'
     },
     'world-q1': {
-        url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_January%E2%80%93March_2025',
+        url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_January%E2%80%93March_2026',
         filename: 'world_launches_q1.json',
-        description: 'World launches Q1 2025 (Jan-Mar)',
+        description: 'World launches Q1 2026 (Jan-Mar)',
         scraper: 'world'
     },
     'world-q2': {
-        url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_April%E2%80%93June_2025',
+        url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_April%E2%80%93June_2026',
         filename: 'world_launches_q2.json',
-        description: 'World launches Q2 2025 (Apr-Jun)',
+        description: 'World launches Q2 2026 (Apr-Jun)',
         scraper: 'world'
     },
     'world-q3': {
-        url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_July%E2%80%93September_2025',
+        url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_July%E2%80%93September_2026',
         filename: 'world_launches_q3.json',
-        description: 'World launches Q3 2025 (Jul-Sep)',
+        description: 'World launches Q3 2026 (Jul-Sep)',
         scraper: 'world'
     },
     'world-q4': {
-        url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_October%E2%80%93December_2025',
+        url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_October%E2%80%93December_2026',
         filename: 'world_launches_q4.json',
-        description: 'World launches Q4 2025 (Oct-Dec)',
-        scraper: 'world'
-    },
-    'world-h1': {
-        url: 'https://en.m.wikipedia.org/wiki/List_of_spaceflight_launches_in_January%E2%80%93June_2025',
-        filename: 'world_launches_h1.json',
-        description: 'World launches H1 2025 (Jan-Jun)',
+        description: 'World launches Q4 2026 (Oct-Dec)',
         scraper: 'world'
     }
 };
@@ -123,7 +117,7 @@ async function scrapeFalconLaunches(page) {
 
     return await page.evaluate(() => {
         const CONFIG = {
-            START_FLIGHT: 418,
+            START_FLIGHT: 583,
             HEADERS: ['time', 'rocket', 'site', 'mission', 'mass', 'orbit'],
             MASS_REGEX: /^(.*)kg/,
             ESTIMATED_MASSES: { LEO: '16300', GTO: '6000', DEFAULT: '3000' }

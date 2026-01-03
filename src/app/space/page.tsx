@@ -270,7 +270,7 @@ function YearTabs({
 }
 
 export default function SpacePage() {
-  const [selectedYear, setSelectedYear] = useState<SupportedYear>(2025);
+  const [selectedYear, setSelectedYear] = useState<SupportedYear>(2026);
   const [isLoading, setIsLoading] = useState(false);
   const [spaceXData, setSpaceXData] = useState<SpaceXLaunch[] | null>(null);
   const [worldData, setWorldData] = useState<WorldLaunch[] | null>(null);

@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "flight": 583,
+    "time": "January 3, 2026 02:09",
+    "rocket": "B1081‑21",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "CSG-3",
+    "mass": "2230",
+    "orbit": "SSO"
+  }
+]
