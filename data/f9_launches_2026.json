@@ -7,5 +7,68 @@
     "mission": "CSG-3",
     "mass": "2230",
     "orbit": "SSO"
+  },
+  {
+    "flight": 584,
+    "time": "January 4, 2026 06:48",
+    "rocket": "B1101‑1",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Starlink: Group 6-88",
+    "mass": "16675",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 585,
+    "time": "January 9, 2026 21:41",
+    "rocket": "B1069‑29",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Starlink: Group 6-96",
+    "mass": "16675",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 586,
+    "time": "January 11, 2026 13:44",
+    "rocket": "B1097‑5",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Twilight (Pandora and others 39 payloads)",
+    "mass": "325",
+    "orbit": "SSO"
+  },
+  {
+    "flight": 587,
+    "time": "January 12, 2026 21:08",
+    "rocket": "B1078‑25",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Starlink: Group 6-97",
+    "mass": "16675",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 588,
+    "time": "January 14, 2026 18:08",
+    "rocket": "B1085‑13",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Starlink: Group 6-98",
+    "mass": "16675",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 589,
+    "time": "January 17, 2026 04:39",
+    "rocket": "B1100‑2",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "NROL-105 (2 Starshield satellites)",
+    "mass": "16300",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 590,
+    "time": "January 18, 2026 23:31",
+    "rocket": "B1080‑24",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Starlink: Group 6-100",
+    "mass": "16675",
+    "orbit": "LEO"
   }
 ]

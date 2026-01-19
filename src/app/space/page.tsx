@@ -798,7 +798,7 @@ export default function SpacePage() {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col items-center">
-                  <canvas ref={worldCanvasRef} width={800} className="rounded-lg bg-slate-900/50" />
+                  <canvas ref={worldCanvasRef} className="rounded-lg bg-slate-900/50 max-w-full h-auto" />
                   {worldData && worldData.length > 0 && (
                     <RecordButton
                       recorder={worldRecorder}
@@ -820,7 +820,7 @@ export default function SpacePage() {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col items-center">
-                  <canvas ref={countMassCanvasRef} width={800} className="rounded-lg bg-slate-900/50" />
+                  <canvas ref={countMassCanvasRef} className="rounded-lg bg-slate-900/50 max-w-full h-auto" />
                   {spaceXData && spaceXData.length > 0 && (
                     <>
                       <div className="flex justify-center gap-8 mt-4 text-sm">
@@ -854,7 +854,7 @@ export default function SpacePage() {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col items-center">
-                  <canvas ref={barChartCanvasRef} width={800} className="rounded-lg bg-slate-900/50" />
+                  <canvas ref={barChartCanvasRef} className="rounded-lg bg-slate-900/50 max-w-full h-auto" />
                   {spaceXData && spaceXData.length > 0 && (
                     <RecordButton
                       recorder={f9Recorder}
