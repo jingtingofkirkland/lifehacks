@@ -3,7 +3,7 @@
     "flight": 1,
     "time": "3 January 02:09:16",
     "rocket": "Falcon 9 Block 5",
-    "mission": "",
+    "mission": "F9-583",
     "site": "Vandenberg SLC-4E",
     "org": {
       "country": "United States",
@@ -173,6 +173,28 @@
     "org": {
       "country": "China",
       "info": "CASC"
+    }
+  },
+  {
+    "flight": 17,
+    "time": "22 January 05:47:29",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-30",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 18,
+    "time": "22 January 10:52:00",
+    "rocket": "Electron",
+    "mission": "\"The Cosmos Will See You Now\"",
+    "site": "Mahia LC-1",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
     }
   }
 ]
