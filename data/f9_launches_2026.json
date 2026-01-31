@@ -79,5 +79,41 @@
     "mission": "Starlink: Group 17-30",
     "mass": "14375",
     "orbit": "SSO"
+  },
+  {
+    "flight": 592,
+    "time": "January 25, 2026 17:30",
+    "rocket": "B1097‑6",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 17-20",
+    "mass": "14375",
+    "orbit": "SSO"
+  },
+  {
+    "flight": 593,
+    "time": "January 28, 2026 04:53",
+    "rocket": "B1096‑5",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "GPS III-9",
+    "mass": "4350",
+    "orbit": "MEO"
+  },
+  {
+    "flight": 594,
+    "time": "January 29, 2026 17:53",
+    "rocket": "B1082‑19",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 17-19",
+    "mass": "14375",
+    "orbit": "SSO"
+  },
+  {
+    "flight": 595,
+    "time": "January 30, 2026 07:22",
+    "rocket": "B1095‑5",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Starlink: Group 6-101",
+    "mass": "16675",
+    "orbit": "LEO"
   }
 ]

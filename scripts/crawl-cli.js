@@ -354,13 +354,67 @@ async function fetchAndMergeFullYear(browser) {
 }
 
 /**
+ * Parse launch date from time string
+ * Returns null if date cannot be parsed or is TBD/future
+ */
+function parseLaunchDate(timeStr) {
+    if (!timeStr) return null;
+
+    // Check for TBD or unknown patterns
+    const tbdPatterns = /\b(TBD|TBA|NET|No earlier than|Unknown|\?)\b/i;
+    if (tbdPatterns.test(timeStr)) return null;
+
+    const months = {
+        'January': 0, 'February': 1, 'March': 2, 'April': 3,
+        'May': 4, 'June': 5, 'July': 6, 'August': 7,
+        'September': 8, 'October': 9, 'November': 10, 'December': 11
+    };
+
+    // Match patterns like "15 January" or "15 January 12:30"
+    const match = timeStr.match(/(\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December)/i);
+    if (!match) return null;
+
+    const day = parseInt(match[1], 10);
+    const month = months[match[2]];
+    if (month === undefined) return null;
+
+    // Assume current year (2026) for launches
+    const year = new Date().getFullYear();
+    return new Date(year, month, day);
+}
+
+/**
+ * Filter out future or TBD launches that haven't happened yet
+ */
+function filterPastLaunches(launches) {
+    const today = new Date();
+    today.setHours(23, 59, 59, 999); // Include all of today
+
+    const filtered = launches.filter(launch => {
+        const launchDate = parseLaunchDate(launch.time);
+        // Keep launch if we can parse the date and it's not in the future
+        if (launchDate === null) {
+            console.log(`   ⏭️  Filtering out (TBD/unparseable): ${launch.time}`);
+            return false;
+        }
+        if (launchDate > today) {
+            console.log(`   ⏭️  Filtering out (future): ${launch.time}`);
+            return false;
+        }
+        return true;
+    });
+
+    return filtered;
+}
+
+/**
  * Fetch all 4 quarters and merge into full year dataset
  */
 async function fetchAllAndMerge(browser) {
     console.log('\n📊 Fetching all quarters and merging into full year data...\n');
 
     const quarters = ['world-q1', 'world-q2', 'world-q3', 'world-q4'];
-    const outputFile = 'world_launches.json';
+    const outputFile = 'world_launches_2026.json';
     const allData = [];
 
     try {
@@ -395,13 +449,23 @@ async function fetchAllAndMerge(browser) {
         // Merge all quarters with continuous flight numbering
         console.log('\n🔄 Merging all quarters...');
         let flightNumber = 1;
-        const fullYearData = [];
+        let fullYearData = [];
 
         for (const { quarter, data } of allData) {
             const renumbered = data.map(item => ({ ...item, flight: flightNumber++ }));
             fullYearData.push(...renumbered);
             console.log(`   ${quarter}: ${data.length} launches (flights ${flightNumber - data.length}-${flightNumber - 1})`);
         }
+
+        // Filter out future and TBD launches
+        console.log('\n🔍 Filtering out future/TBD launches...');
+        const beforeCount = fullYearData.length;
+        fullYearData = filterPastLaunches(fullYearData);
+        const afterCount = fullYearData.length;
+        console.log(`   Filtered: ${beforeCount} → ${afterCount} (removed ${beforeCount - afterCount} future/TBD launches)`);
+
+        // Renumber flights after filtering
+        fullYearData = fullYearData.map((item, i) => ({ ...item, flight: i + 1 }));
 
         // Save merged data
         console.log(`\n💾 Saving full year data...`);
@@ -411,7 +475,7 @@ async function fetchAllAndMerge(browser) {
         console.log(`📊 Total launches: ${fullYearData.length}`);
         for (const { quarter, data } of allData) {
             const config = CRAWL_TARGETS[quarter];
-            console.log(`   - ${config.description}: ${data.length} launches`);
+            console.log(`   - ${config.description}: ${data.length} launches (raw)`);
         }
         console.log(`📁 Saved to: ${path.join(DATA_DIR, outputFile)}`);
 
@@ -440,7 +504,7 @@ Usage:
 Available targets:
 ${targets}
   world-full-inc   - Fetch Q4 and merge with existing 3Q data (incremental)
-  all              - Fetch all Q1-Q4 and merge into full year data
+  all              - Crawl Falcon + fetch all Q1-Q4 world launches (filters future/TBD)
 
 Examples:
   node crawl-cli.js falcon
@@ -475,6 +539,13 @@ async function main() {
         });
 
         if (target === 'all') {
+            // Run both Falcon and World crawls
+            console.log('\n🎯 Running all crawlers (Falcon + World)...\n');
+
+            // First crawl Falcon
+            await crawlTarget(browser, 'falcon');
+
+            // Then fetch all world quarters and merge
             await fetchAllAndMerge(browser);
         } else if (target === 'world-full-inc') {
             await fetchAndMergeFullYear(browser);
