@@ -115,5 +115,14 @@
     "mission": "Starlink: Group 6-101",
     "mass": "16675",
     "orbit": "LEO"
+  },
+  {
+    "flight": 596,
+    "time": "February 2, 2026 15:47",
+    "rocket": "B1071‑31",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 17-32",
+    "mass": "14375",
+    "orbit": "SSO"
   }
 ]

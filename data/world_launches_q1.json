@@ -262,5 +262,27 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 25,
+    "time": "2 February 15:47:11",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-32",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 26,
+    "time": "5 February 18:59:00",
+    "rocket": "Soyuz-2.1b / Fregat-M",
+    "mission": "",
+    "site": "Plesetsk Site 43/4",
+    "org": {
+      "country": "Russia",
+      "info": "RVSN RF"
+    }
   }
 ]

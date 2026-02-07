@@ -152,16 +152,5 @@
       "country": "United States",
       "info": "SpaceX"
     }
-  },
-  {
-    "flight": 15,
-    "time": "14 April - 3 May",
-    "rocket": "VSB-30",
-    "mission": "S1X-5/M17",
-    "site": "Esrange",
-    "org": {
-      "country": "Sweden",
-      "info": "SSC Space"
-    }
   }
 ]
