@@ -124,5 +124,32 @@
     "mission": "Starlink: Group 17-32",
     "mass": "14375",
     "orbit": "SSO"
+  },
+  {
+    "flight": 597,
+    "time": "February 7, 2026 20:58",
+    "rocket": "B1088‑13",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 17-33",
+    "mass": "14375",
+    "orbit": "SSO"
+  },
+  {
+    "flight": 598,
+    "time": "February 11, 2026 17:11",
+    "rocket": "B1100‑3",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 17-34",
+    "mass": "13800",
+    "orbit": "SSO"
+  },
+  {
+    "flight": 599,
+    "time": "February 13, 2026 10:15",
+    "rocket": "B1101‑2",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Crew-12 (Crew Dragon C212-5 Freedom)",
+    "mass": "13000",
+    "orbit": "LEO (ISS)"
   }
 ]

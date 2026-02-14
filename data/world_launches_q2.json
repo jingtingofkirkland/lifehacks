@@ -100,6 +100,17 @@
   },
   {
     "flight": 10,
+    "time": "May (TBD)",
+    "rocket": "Ariane 64",
+    "mission": "",
+    "site": "Kourou ELA-4",
+    "org": {
+      "country": "France",
+      "info": "Arianespace"
+    }
+  },
+  {
+    "flight": 11,
     "time": "16 June 00:40:00",
     "rocket": "Soyuz-2.1a",
     "mission": "",
@@ -110,7 +121,7 @@
     }
   },
   {
-    "flight": 11,
+    "flight": 12,
     "time": "June (TBD)",
     "rocket": "Falcon 9 Block 5",
     "mission": "",
@@ -121,7 +132,7 @@
     }
   },
   {
-    "flight": 12,
+    "flight": 13,
     "time": "June (TBD)",
     "rocket": "Pegasus XL",
     "mission": "",
@@ -132,7 +143,7 @@
     }
   },
   {
-    "flight": 13,
+    "flight": 14,
     "time": "June (TBD)",
     "rocket": "Falcon Heavy/Vulcan Centaur",
     "mission": "",
@@ -143,7 +154,7 @@
     }
   },
   {
-    "flight": 14,
+    "flight": 15,
     "time": "June (TBD)",
     "rocket": "Falcon 9 Block 5",
     "mission": "Transporter-17",

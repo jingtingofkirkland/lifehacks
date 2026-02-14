@@ -284,5 +284,93 @@
       "country": "Russia",
       "info": "RVSN RF"
     }
+  },
+  {
+    "flight": 27,
+    "time": "7 February 03:55:00",
+    "rocket": "Long March 2F/T",
+    "mission": "2F-T6",
+    "site": "Jiuquan SLS-1",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 28,
+    "time": "7 February 20:58:09",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-33",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 29,
+    "time": "11 February 17:11:29",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-34",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 30,
+    "time": "12 February 06:30:00",
+    "rocket": "Jielong 3",
+    "mission": "Y?",
+    "site": "Special Launch Platform, Yellow Sea",
+    "org": {
+      "country": "China",
+      "info": "China Rocket"
+    }
+  },
+  {
+    "flight": 31,
+    "time": "12 February 08:52:15",
+    "rocket": "Proton-M / DM-03",
+    "mission": "",
+    "site": "Baikonur Site 81/24",
+    "org": {
+      "country": "Russia",
+      "info": "Roscosmos"
+    }
+  },
+  {
+    "flight": 32,
+    "time": "12 February 09:22:00",
+    "rocket": "Vulcan Centaur VC4S",
+    "mission": "V-004",
+    "site": "Cape Canaveral SLC-41",
+    "org": {
+      "country": "United States",
+      "info": "ULA"
+    }
+  },
+  {
+    "flight": 33,
+    "time": "12 February 16:45:00",
+    "rocket": "Ariane 64",
+    "mission": "VA267/LE-01",
+    "site": "Kourou ELA-4",
+    "org": {
+      "country": "France",
+      "info": "Arianespace"
+    }
+  },
+  {
+    "flight": 34,
+    "time": "13 February 10:15:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "F9-599",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
