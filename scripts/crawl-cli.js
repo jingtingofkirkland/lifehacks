@@ -2,7 +2,7 @@
 
 /**
  * Wikipedia Launch Data Crawler - CLI Version
- * Automates extraction of launch data from Wikipedia pages using Puppeteer
+ * Extracts launch data from Wikipedia using fetch + cheerio (no browser needed)
  *
  * Usage:
  *   node crawl-cli.js falcon
@@ -10,18 +10,15 @@
  *   node crawl-cli.js all
  */
 
-const puppeteer = require('puppeteer');
+const cheerio = require('cheerio');
 const fs = require('fs').promises;
 const path = require('path');
 
 // Constants
-const PAGE_CONFIG = {
-    viewport: { width: 1280, height: 800 },
-    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-    timeout: 60000
-};
-
+const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36';
 const DATA_DIR = 'data';
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 2000;
 
 // Configuration for crawl targets
 const CRAWL_TARGETS = {
@@ -57,214 +54,271 @@ const CRAWL_TARGETS = {
     }
 };
 
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+// ─── Network Layer ───────────────────────────────────────────────
+
 /**
- * Create and configure a new browser page
+ * Retry wrapper with exponential backoff
  */
-async function createPage(browser) {
-    const page = await browser.newPage();
-    await page.setViewport(PAGE_CONFIG.viewport);
-    await page.setUserAgent(PAGE_CONFIG.userAgent);
-    return page;
+async function withRetry(fn, label = '') {
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+        try {
+            return await fn();
+        } catch (error) {
+            if (attempt === MAX_RETRIES) throw error;
+            const delay = RETRY_DELAY_MS * attempt;
+            console.log(`   ⚠️  Attempt ${attempt} failed${label ? ` (${label})` : ''}: ${error.message}. Retrying in ${delay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    }
 }
 
 /**
- * Navigate to URL and wait for page load
+ * Fetch a URL and return a cheerio instance
  */
-async function navigateTo(page, url) {
-    await page.goto(url, {
-        waitUntil: 'networkidle2',
-        timeout: PAGE_CONFIG.timeout
-    });
+async function fetchHTML(url) {
+    return withRetry(async () => {
+        const response = await fetch(url, {
+            headers: { 'User-Agent': USER_AGENT }
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        const html = await response.text();
+        return cheerio.load(html);
+    }, url);
 }
 
-/**
- * Fetch and scrape data from a URL
- */
-async function fetchData(browser, url, scraperType) {
-    const page = await createPage(browser);
-    await navigateTo(page, url);
+// ─── File I/O ────────────────────────────────────────────────────
 
-    const scraper = scraperType === 'falcon' ? scrapeFalconLaunches : scrapeWorldLaunches;
-    const data = await scraper(page);
-
-    await page.close();
-    return data;
-}
-
-/**
- * Save data to JSON file
- */
 async function saveJson(filename, data) {
     const outputPath = path.join(process.cwd(), DATA_DIR, filename);
     await fs.writeFile(outputPath, JSON.stringify(data, null, 2), 'utf-8');
     return outputPath;
 }
 
-/**
- * Read JSON file
- */
 async function readJson(filename) {
     const filePath = path.join(process.cwd(), DATA_DIR, filename);
     const content = await fs.readFile(filePath, 'utf-8');
     return JSON.parse(content);
 }
 
+// ─── Data Validation ─────────────────────────────────────────────
+
+function validateFalconLaunch(obj) {
+    const warnings = [];
+    if (!obj.time) warnings.push(`Flight ${obj.flight}: missing time`);
+    if (!obj.rocket) warnings.push(`Flight ${obj.flight}: missing rocket`);
+    if (!obj.site) warnings.push(`Flight ${obj.flight}: missing site`);
+    if (!obj.mission) warnings.push(`Flight ${obj.flight}: missing mission`);
+    if (!obj.mass || obj.mass === '0') warnings.push(`Flight ${obj.flight}: suspicious mass "${obj.mass}"`);
+    if (!obj.orbit) warnings.push(`Flight ${obj.flight}: missing orbit`);
+    return warnings;
+}
+
+function validateWorldLaunch(obj) {
+    const warnings = [];
+    if (!obj.time) warnings.push(`Flight ${obj.flight}: missing time`);
+    if (!obj.rocket) warnings.push(`Flight ${obj.flight}: missing rocket`);
+    if (!obj.site) warnings.push(`Flight ${obj.flight}: missing site`);
+    if (!obj.org?.country) warnings.push(`Flight ${obj.flight}: missing country`);
+    if (!obj.org?.info) warnings.push(`Flight ${obj.flight}: missing org info`);
+    return warnings;
+}
+
+function logValidationWarnings(data, validateFn) {
+    const warnings = data.flatMap(item => validateFn(item));
+    if (warnings.length > 0) {
+        console.log(`   ⚠️  ${warnings.length} validation warning(s):`);
+        warnings.forEach(w => console.log(`      ${w}`));
+    }
+}
+
+// ─── Falcon 9/Heavy Scraper ─────────────────────────────────────
+
 /**
- * Falcon 9/Heavy crawler implementation
+ * Falcon 9/Heavy crawler - uses cheerio on fetched HTML
  */
-async function scrapeFalconLaunches(page) {
+function scrapeFalconLaunches($) {
     console.log('   Executing Falcon crawler...');
 
-    return await page.evaluate(() => {
-        const CONFIG = {
-            START_FLIGHT: 583,
-            HEADERS: ['time', 'rocket', 'site', 'mission', 'mass', 'orbit'],
-            MASS_REGEX: /^(.*)kg/,
-            ESTIMATED_MASSES: { LEO: '16300', GTO: '6000', DEFAULT: '3000' }
-        };
+    const HEADERS = ['time', 'rocket', 'site', 'mission', 'mass', 'orbit'];
+    const MASS_REGEX = /^(.*)kg/;
+    const ESTIMATED_MASSES = { LEO: '16300', GTO: '6000', DEFAULT: '3000' };
 
-        const clean = {
-            space: (t) => t.replace('\xa0', ' '),
-            time: (t) => t.replace(/\[\d+\]/g, '').replace(/(\d{4})(\d{2}:\d{2})/, '$1 $2'),
-            rocket: (t) => t.replace('F9\xa0B5', '').replace(/\[\d+\]/, ''),
-            mass: (t) => {
-                const match = t.match(CONFIG.MASS_REGEX);
-                return match ? match[1].replace(/[~,\s]/g, '') : t;
-            }
-        };
-
-        const transformers = [clean.time, clean.rocket, clean.space, clean.space, clean.mass, clean.space];
-
-        const estimateMass = (mass, orbit) => {
-            if (!mass.startsWith('Unknown')) return mass;
-            if (orbit.startsWith('LEO')) return CONFIG.ESTIMATED_MASSES.LEO;
-            if (orbit.startsWith('GTO')) return CONFIG.ESTIMATED_MASSES.GTO;
-            return CONFIG.ESTIMATED_MASSES.DEFAULT;
-        };
-
-        const json = [];
-        for (let i = CONFIG.START_FLIGHT; ; i++) {
-            const cells = Array.from(document.querySelectorAll(`#F9-${i} td`));
-            if (cells.length === 0) break;
-
-            const data = cells.map(x => x.textContent.trim());
-            const obj = { flight: i };
-
-            CONFIG.HEADERS.forEach((header, j) => {
-                obj[header] = transformers[j](data[j]);
-            });
-
-            obj.mass = estimateMass(obj.mass, obj.orbit);
-            json.push(obj);
+    const clean = {
+        space: (t) => t.replace(/\xa0/g, ' '),
+        time: (t) => t.replace(/\[\d+\]/g, '').replace(/(\d{4})(\d{2}:\d{2})/, '$1 $2'),
+        rocket: (t) => t.replace(/F9\xa0B5/g, '').replace(/\[\d+\]/g, ''),
+        mass: (t) => {
+            const match = t.match(MASS_REGEX);
+            return match ? match[1].replace(/[~,\s]/g, '') : t;
         }
+    };
 
-        return json;
-    });
+    const transformers = [clean.time, clean.rocket, clean.space, clean.space, clean.mass, clean.space];
+
+    const estimateMass = (mass, orbit) => {
+        if (!mass.startsWith('Unknown')) return mass;
+        if (orbit.startsWith('LEO')) return ESTIMATED_MASSES.LEO;
+        if (orbit.startsWith('GTO')) return ESTIMATED_MASSES.GTO;
+        return ESTIMATED_MASSES.DEFAULT;
+    };
+
+    // Dynamically find the first F9-* row in the current year's table
+    const currentYear = new Date().getFullYear();
+    const yearTable = $(`#${currentYear}ytd`);
+    const searchScope = yearTable.length ? yearTable : $('body');
+    const firstRow = searchScope.find('tr[id^="F9-"]').first();
+    if (!firstRow.length) {
+        console.log(`   ⚠️  No F9-* rows found${yearTable.length ? ` in #${currentYear}ytd table` : ' on page'}`);
+        return [];
+    }
+    const startFlight = parseInt(firstRow.attr('id').replace('F9-', ''), 10);
+    console.log(`   📌 Detected first flight: F9-${startFlight} (from ${yearTable.length ? `#${currentYear}ytd` : 'page'})`);
+
+    const json = [];
+    for (let i = startFlight; ; i++) {
+        const cells = $(`#F9-${i} td`);
+        if (cells.length === 0) break;
+
+        const data = cells.map((_, el) => $(el).text().trim()).get();
+        const obj = { flight: i };
+
+        HEADERS.forEach((header, j) => {
+            obj[header] = transformers[j](data[j]);
+        });
+
+        obj.mass = estimateMass(obj.mass, obj.orbit);
+        json.push(obj);
+    }
+
+    return json;
 }
 
+// ─── World Launches Scraper ──────────────────────────────────────
+
 /**
- * World launches crawler implementation
+ * World launches crawler - uses cheerio on fetched HTML
+ * Uses structural HTML cues: td[scope="row"] for launch rows,
+ * "Upcoming launches" text and "Suborbital" section for boundaries
  */
-async function scrapeWorldLaunches(page) {
+function scrapeWorldLaunches($) {
     console.log('   Executing World launches crawler...');
 
-    await page.addScriptTag({ url: 'https://code.jquery.com/jquery-3.6.0.min.js' });
-    await page.waitForFunction('typeof jQuery !== "undefined"');
+    const HEADERS = ['time', 'rocket', 'mission', 'site', 'org'];
 
-    return await page.evaluate(() => {
-        const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-        const HEADERS = ['time', 'rocket', 'mission', 'site', 'org'];
+    const cleanTime = (t) => {
+        try {
+            return t.replace(/\[\d+\]/g, '').replace(/(\d{1,2}\s+[A-Za-z]+)(\d{2}:\d{2})/, '$1 $2');
+        } catch {
+            return t;
+        }
+    };
+    const takeInfo = (x) => x?.info ?? x;
+    const noop = (x) => x;
+    const transformers = [cleanTime, takeInfo, noop, takeInfo, noop];
 
-        const transform = {
-            time: (t) => {
-                try {
-                    return t.replace(/\[\d+\]/g, '').replace(/(\d{1,2}\s+[A-Za-z]+)(\d{2}:\d{2})/, '$1 $2');
-                } catch {
-                    return t;
+    const hasMonth = (text) => MONTHS.some(m => new RegExp(`\\b${m}\\b`).test(text));
+
+    const json = [];
+    let cnt = 1;
+    let reachedUpcoming = false;
+
+    // Process each .wikitable
+    $('.wikitable').each((_, tableEl) => {
+        const $table = $(tableEl);
+        const tableText = $table.text();
+
+        // Pre-scan: check if this table is purely suborbital or upcoming (no normal data)
+        let tableHasUpcoming = tableText.includes('Upcoming launches');
+        let tableHasSuborbital = tableText.includes('Suborbital');
+        let tableHasNormalData = false;
+
+        $table.find('tr').each((_, row) => {
+            const tds = $(row).find('td');
+            if (tds.length > 2) {
+                const firstTd = tds.first();
+                const isLaunchRow = firstTd.attr('scope') === 'row' || hasMonth(firstTd.text());
+                if (isLaunchRow && !reachedUpcoming) {
+                    tableHasNormalData = true;
+                    return false; // break early
                 }
-            },
-            info: (x) => x?.info ?? x,
-            noop: (x) => x
-        };
-
-        const transformers = [transform.time, transform.info, transform.noop, transform.info, transform.noop];
-
-        const hasMonth = (text) => MONTHS.some(m => new RegExp(`\\b${m}\\b`).test(text));
-
-        const checkCondition = ($tds, text) => $tds.is(function() {
-            return jQuery(this).text().includes(text);
+            }
         });
 
-        const json = [];
-        let cnt = 1;
-        let upcoming = false;
+        // Skip tables that only contain upcoming/suborbital data,
+        // or if we've already passed the "Upcoming launches" boundary globally
+        if (reachedUpcoming || (!tableHasNormalData && (tableHasUpcoming || tableHasSuborbital))) {
+            return; // skip this table
+        }
 
-        jQuery('.wikitable').each(function() {
-            let subOrbital = false;
-            let hasNormalData = false;
-            const $table = jQuery(this);
+        // Reset per-table flags for the second pass
+        let tableUpcoming = false;
+        let tableSuborbital = false;
 
-            $table.find('tr').each(function() {
-                const $tds = jQuery(this).find('td');
-                if (!upcoming) upcoming = checkCondition($tds, 'Upcoming launches');
-                if (!subOrbital) subOrbital = checkCondition($tds, 'Suborbital');
-                if (!hasNormalData) {
-                    hasNormalData = !upcoming && !subOrbital && $tds.length > 2 &&
-                        $tds.first().is(function() { return hasMonth(this.innerText); });
-                }
-            });
+        // Extract data rows
+        const rows = $table.find('tr').toArray();
+        for (const row of rows) {
+            const $row = $(row);
+            const tds = $row.find('td');
 
-            if (!hasNormalData && (upcoming || subOrbital)) return false;
+            if (tableUpcoming || tableSuborbital) break;
 
-            subOrbital = false;
-            upcoming = false;
+            // Check for boundary markers
+            const rowText = tds.text();
+            if (rowText.includes('Upcoming launches')) {
+                tableUpcoming = true;
+                reachedUpcoming = true;
+                break;
+            }
+            if (rowText.includes('Suborbital')) {
+                tableSuborbital = true;
+                break;
+            }
 
-            $table.find('tr').each(function() {
-                const $tds = jQuery(this).find('td');
-                if (upcoming || subOrbital) return false;
+            // Identify main launch rows using scope="row" or month-name fallback
+            const firstTd = tds.first();
+            const isLaunchRow = tds.length > 2 &&
+                (firstTd.attr('scope') === 'row' || hasMonth(firstTd.text()));
 
-                upcoming = checkCondition($tds, 'Upcoming launches');
-                subOrbital = checkCondition($tds, 'Suborbital');
-                if (upcoming || subOrbital) return false;
+            if (isLaunchRow) {
+                const tdTexts = tds.map((_, td) => {
+                    const $td = $(td);
+                    const text = $td.text().trim();
+                    const flagLink = $td.find('span.flagicon a').first();
 
-                const hasDate = $tds.length > 2 && $tds.first().is(function() {
-                    return hasMonth(this.innerText);
+                    if (flagLink.length) {
+                        return { country: flagLink.attr('title') || flagLink.text(), info: text };
+                    }
+                    return { info: text };
+                }).get();
+
+                const obj = { flight: cnt++ };
+                HEADERS.forEach((header, j) => {
+                    const val = header === 'org' ? tdTexts[j] : tdTexts[j]?.info;
+                    obj[header] = transformers[j](val);
                 });
-
-                if (hasDate) {
-                    const tdTexts = $tds.map(function() {
-                        const text = jQuery(this).text().trim();
-                        const link = jQuery(this).find('span.flagicon a').first();
-
-                        if (link?.length) {
-                            return { country: link.attr('title') || link.text(), info: text };
-                        }
-                        if (text.includes('img')) {
-                            const alt = text.match(/alt="([^"]*)"/);
-                            const txt = text.match(/>([^<]+)$/);
-                            return { country: alt?.[1] ?? '', info: txt?.[1]?.trim() ?? '' };
-                        }
-                        return { info: text };
-                    }).get();
-
-                    const obj = { flight: cnt++ };
-                    HEADERS.forEach((header, j) => {
-                        const val = header === 'org' ? tdTexts[j] : tdTexts[j].info;
-                        obj[header] = transformers[j](val);
-                    });
-                    json.push(obj);
-                }
-            });
-        });
-
-        return json;
+                json.push(obj);
+            }
+        }
     });
+
+    return json;
 }
 
-/**
- * Crawl a single target
- */
-async function crawlTarget(browser, targetKey) {
+// ─── Fetch + Scrape ──────────────────────────────────────────────
+
+async function fetchData(url, scraperType) {
+    const $ = await fetchHTML(url);
+    const scraper = scraperType === 'falcon' ? scrapeFalconLaunches : scrapeWorldLaunches;
+    return scraper($);
+}
+
+// ─── Crawl Commands ──────────────────────────────────────────────
+
+async function crawlTarget(targetKey) {
     const config = CRAWL_TARGETS[targetKey];
     if (!config) {
         console.error(`❌ Unknown target: ${targetKey}`);
@@ -275,13 +329,16 @@ async function crawlTarget(browser, targetKey) {
     console.log(`   URL: ${config.url}`);
 
     try {
-        console.log('   Loading page...');
-        const data = await fetchData(browser, config.url, config.scraper);
+        console.log('   Fetching page...');
+        const data = await fetchData(config.url, config.scraper);
 
         if (!data?.length) {
             console.error('   ⚠️  No data extracted!');
             return false;
         }
+
+        const validateFn = config.scraper === 'falcon' ? validateFalconLaunch : validateWorldLaunch;
+        logValidationWarnings(data, validateFn);
 
         await saveJson(config.filename, data);
         console.log(`   ✅ Success! Extracted ${data.length} launches`);
@@ -296,7 +353,7 @@ async function crawlTarget(browser, targetKey) {
 /**
  * Fetch Q4 data and merge with existing 3Q data to create full year dataset
  */
-async function fetchAndMergeFullYear(browser) {
+async function fetchAndMergeFullYear() {
     console.log('\n📊 Fetching Q4 data and merging with 3Q data...\n');
 
     const q4Config = CRAWL_TARGETS['world-q4'];
@@ -304,7 +361,6 @@ async function fetchAndMergeFullYear(browser) {
     const outputFile = 'world_launches.json';
 
     try {
-        // Read existing 3Q data
         console.log('   📁 Reading existing 3Q data...');
         let threeQData;
         try {
@@ -316,12 +372,11 @@ async function fetchAndMergeFullYear(browser) {
             return false;
         }
 
-        // Fetch Q4 data
         console.log(`\n   📡 Fetching Q4 data from Wikipedia...`);
         console.log(`   URL: ${q4Config.url}`);
-        console.log('   Loading page...');
+        console.log('   Fetching page...');
 
-        const q4Data = await fetchData(browser, q4Config.url, 'world');
+        const q4Data = await fetchData(q4Config.url, 'world');
 
         if (!q4Data?.length) {
             console.error('   ⚠️  No Q4 data extracted!');
@@ -329,7 +384,6 @@ async function fetchAndMergeFullYear(browser) {
         }
         console.log(`   ✅ Extracted ${q4Data.length} launches from Q4`);
 
-        // Merge the data
         console.log('\n   🔄 Merging Q4 data with 3Q data...');
         const maxFlight = Math.max(...threeQData.map(item => item.flight));
         console.log(`   Max flight number in 3Q: ${maxFlight}`);
@@ -337,7 +391,6 @@ async function fetchAndMergeFullYear(browser) {
         const renumberedQ4 = q4Data.map((item, i) => ({ ...item, flight: maxFlight + i + 1 }));
         const fullYearData = [...threeQData, ...renumberedQ4];
 
-        // Save merged data
         console.log(`\n   💾 Saving full year data...`);
         await saveJson(outputFile, fullYearData);
 
@@ -353,14 +406,11 @@ async function fetchAndMergeFullYear(browser) {
     }
 }
 
-/**
- * Parse launch date from time string
- * Returns null if date cannot be parsed or is TBD/future
- */
+// ─── Date Parsing & Filtering ────────────────────────────────────
+
 function parseLaunchDate(timeStr) {
     if (!timeStr) return null;
 
-    // Check for TBD or unknown patterns
     const tbdPatterns = /\b(TBD|TBA|NET|No earlier than|Unknown|\?)\b/i;
     if (tbdPatterns.test(timeStr)) return null;
 
@@ -370,7 +420,6 @@ function parseLaunchDate(timeStr) {
         'September': 8, 'October': 9, 'November': 10, 'December': 11
     };
 
-    // Match patterns like "15 January" or "15 January 12:30"
     const match = timeStr.match(/(\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December)/i);
     if (!match) return null;
 
@@ -378,21 +427,16 @@ function parseLaunchDate(timeStr) {
     const month = months[match[2]];
     if (month === undefined) return null;
 
-    // Assume current year (2026) for launches
     const year = new Date().getFullYear();
     return new Date(year, month, day);
 }
 
-/**
- * Filter out future or TBD launches that haven't happened yet
- */
 function filterPastLaunches(launches) {
     const today = new Date();
-    today.setHours(23, 59, 59, 999); // Include all of today
+    today.setHours(23, 59, 59, 999);
 
-    const filtered = launches.filter(launch => {
+    return launches.filter(launch => {
         const launchDate = parseLaunchDate(launch.time);
-        // Keep launch if we can parse the date and it's not in the future
         if (launchDate === null) {
             console.log(`   ⏭️  Filtering out (TBD/unparseable): ${launch.time}`);
             return false;
@@ -403,20 +447,17 @@ function filterPastLaunches(launches) {
         }
         return true;
     });
-
-    return filtered;
 }
 
-/**
- * Fetch all 4 quarters and merge into full year dataset
- */
-async function fetchAllAndMerge(browser) {
+// ─── Fetch All Quarters & Merge ──────────────────────────────────
+
+async function fetchAllAndMerge() {
     console.log('\n📊 Fetching all quarters and merging into full year data...\n');
 
     // Only crawl up to the current quarter — future quarters only have planned launches
     // which we exclude, so crawling them is unnecessary
-    const currentMonth = new Date().getMonth(); // 0-indexed
-    const currentQuarter = Math.floor(currentMonth / 3) + 1; // 1-4
+    const currentMonth = new Date().getMonth();
+    const currentQuarter = Math.floor(currentMonth / 3) + 1;
     const allQuarters = ['world-q1', 'world-q2', 'world-q3', 'world-q4'];
     const quarters = allQuarters.slice(0, currentQuarter);
     console.log(`   📅 Current quarter: Q${currentQuarter} — crawling Q1${currentQuarter > 1 ? `-Q${currentQuarter}` : ''} (skipping future quarters)\n`);
@@ -425,14 +466,13 @@ async function fetchAllAndMerge(browser) {
     const allData = [];
 
     try {
-        // Fetch each quarter
         for (const quarter of quarters) {
             const config = CRAWL_TARGETS[quarter];
             console.log(`\n📡 Fetching ${config.description}...`);
             console.log(`   URL: ${config.url}`);
-            console.log('   Loading page...');
+            console.log('   Fetching page...');
 
-            const data = await fetchData(browser, config.url, 'world');
+            const data = await fetchData(config.url, 'world');
 
             if (!data?.length) {
                 console.error(`   ⚠️  No data extracted for ${quarter}!`);
@@ -440,8 +480,8 @@ async function fetchAllAndMerge(browser) {
             }
 
             console.log(`   ✅ Extracted ${data.length} launches`);
+            logValidationWarnings(data, validateWorldLaunch);
 
-            // Save individual quarter file
             await saveJson(config.filename, data);
             console.log(`   📁 Saved to: ${path.join(DATA_DIR, config.filename)}`);
 
@@ -493,9 +533,8 @@ async function fetchAllAndMerge(browser) {
     }
 }
 
-/**
- * Display help message
- */
+// ─── CLI ─────────────────────────────────────────────────────────
+
 function showHelp() {
     const targets = Object.entries(CRAWL_TARGETS)
         .map(([key, val]) => `  ${key.padEnd(16)} - ${val.description}`)
@@ -521,9 +560,6 @@ Examples:
 `);
 }
 
-/**
- * Main function
- */
 async function main() {
     const args = process.argv.slice(2);
 
@@ -537,36 +573,19 @@ async function main() {
     console.log('🚀 Wikipedia Launch Data Crawler');
     console.log('='.repeat(50));
 
-    let browser;
     try {
-        console.log('\n🌐 Launching browser...');
-        browser = await puppeteer.launch({
-            headless: 'new',
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });
-
         if (target === 'all') {
-            // Run both Falcon and World crawls
             console.log('\n🎯 Running all crawlers (Falcon + World)...\n');
-
-            // First crawl Falcon
-            await crawlTarget(browser, 'falcon');
-
-            // Then fetch all world quarters and merge
-            await fetchAllAndMerge(browser);
+            await crawlTarget('falcon');
+            await fetchAllAndMerge();
         } else if (target === 'world-full-inc') {
-            await fetchAndMergeFullYear(browser);
+            await fetchAndMergeFullYear();
         } else {
-            await crawlTarget(browser, target);
+            await crawlTarget(target);
         }
     } catch (error) {
         console.error(`\n❌ Fatal error: ${error.message}`);
         process.exit(1);
-    } finally {
-        if (browser) {
-            await browser.close();
-            console.log('\n🔒 Browser closed');
-        }
     }
 
     console.log('\n✨ Done!\n');
