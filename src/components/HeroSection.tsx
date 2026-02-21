@@ -26,6 +26,7 @@ const gradientMap: Record<string, string> = {
   'from-blue-900 via-indigo-900 to-slate-900': 'linear-gradient(to bottom, #1e3a8a, #312e81, #0f172a)',
   'from-slate-900 via-purple-900 to-indigo-900': 'linear-gradient(to bottom, #0f172a, #581c87, #312e81)',
   'from-emerald-900 via-teal-900 to-slate-900': 'linear-gradient(to bottom, #064e3b, #134e4a, #0f172a)',
+  'from-rose-900 via-amber-900 to-orange-950': 'linear-gradient(to bottom, #881337, #78350f, #431407)',
 };
 
 interface HeroSectionsProps {
