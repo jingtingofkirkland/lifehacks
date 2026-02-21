@@ -413,7 +413,14 @@ function filterPastLaunches(launches) {
 async function fetchAllAndMerge(browser) {
     console.log('\n📊 Fetching all quarters and merging into full year data...\n');
 
-    const quarters = ['world-q1', 'world-q2', 'world-q3', 'world-q4'];
+    // Only crawl up to the current quarter — future quarters only have planned launches
+    // which we exclude, so crawling them is unnecessary
+    const currentMonth = new Date().getMonth(); // 0-indexed
+    const currentQuarter = Math.floor(currentMonth / 3) + 1; // 1-4
+    const allQuarters = ['world-q1', 'world-q2', 'world-q3', 'world-q4'];
+    const quarters = allQuarters.slice(0, currentQuarter);
+    console.log(`   📅 Current quarter: Q${currentQuarter} — crawling Q1${currentQuarter > 1 ? `-Q${currentQuarter}` : ''} (skipping future quarters)\n`);
+
     const outputFile = 'world_launches_2026.json';
     const allData = [];
 
