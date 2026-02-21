@@ -89,6 +89,7 @@
 
     // Redirect after a short delay so the page is visible
     document.addEventListener('DOMContentLoaded', function () {
+      window.fbq('track', 'ViewContent', {'page': 'landing', 'product':'dogcare'});
       setTimeout(function () {
         window.location.href = TARGET_URL;
       }, 800);

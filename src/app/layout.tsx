@@ -49,13 +49,13 @@ export default function RootLayout({
             };
           `}
         </Script>
-        <noscript>
-          <img height="1" width="1" style={{ display: 'none' }}
-               src="https://www.facebook.com/tr?id=337570375319394&ev=PageView&noscript=1" />
-        </noscript>
         {/* End Meta Pixel Code */}
       </head>
       <body className="min-h-screen bg-background text-foreground">
+        {/* Meta Pixel noscript fallback — uses dangerouslySetInnerHTML to
+            prevent Next.js from detecting the <img> and generating a
+            <link rel="preload"> that fires the pixel even with JS enabled */}
+        <noscript dangerouslySetInnerHTML={{ __html: '<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=337570375319394&ev=PageView&noscript=1" />' }} />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
