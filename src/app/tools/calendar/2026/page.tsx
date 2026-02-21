@@ -131,16 +131,16 @@ export default function Calendar2026() {
                             return (
                               <div key={di} className={`text-center py-0.5 relative ${
                                 isWe ? 'bg-blue-100/40 dark:bg-blue-950/20' : ''
-                              } ${hol ? 'bg-accent/30' : ''} ${!hol && bsd ? 'bg-yellow-50/50 dark:bg-yellow-950/15' : ''}`}>
+                              } ${hol?.dayOff ? 'bg-rose-100/60 dark:bg-rose-950/20' : ''} ${!hol && bsd ? 'bg-amber-100/70 dark:bg-amber-900/25' : ''}`}>
                                 <span className={`
                                   ${isWe ? 'text-destructive' : ''}
                                   ${isToday ? 'bg-primary text-primary-foreground rounded-full px-1' : ''}
-                                  ${hol ? 'font-bold' : ''}
+                                  ${hol?.dayOff ? 'font-bold' : ''}
                                 `}>
                                   {day}
                                 </span>
                                 {hol && <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full ${DOT[hol.color] ?? 'bg-gray-400'}`} />}
-                                {!hol && bsd && <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-yellow-500" />}
+                                {!hol && bsd && <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-amber-500" />}
                               </div>
                             );
                           })}
@@ -222,8 +222,8 @@ export default function Calendar2026() {
                         min-h-[3.5rem] sm:min-h-[5.5rem] print:min-h-[5rem]
                         p-1 sm:p-1.5 flex flex-col
                         ${isWe ? 'bg-blue-100/60 dark:bg-blue-950/30 print:bg-gray-100' : ''}
-                        ${hol ? 'bg-accent/40 print:bg-yellow-50' : ''}
-                        ${!hol && bsd ? 'bg-yellow-50/60 dark:bg-yellow-950/20 print:bg-yellow-50' : ''}
+                        ${hol?.dayOff ? 'bg-rose-50/80 dark:bg-rose-950/25 border-l-2 border-l-rose-400 dark:border-l-rose-600 print:bg-rose-50' : ''}
+                        ${!hol && bsd ? 'bg-amber-100/80 dark:bg-amber-900/30 border-l-2 border-l-amber-400 dark:border-l-amber-600 print:bg-amber-50' : ''}
                       `}>
                         {/* day number */}
                         <span className={`
@@ -251,8 +251,8 @@ export default function Calendar2026() {
                             </span>
                           )}
                           {bsd && (
-                            <span className="text-[7px] sm:text-[9px] leading-tight font-medium truncate text-yellow-700 dark:text-yellow-400">
-                              <span className="inline-block w-1.5 h-1.5 rounded-full mr-0.5 align-middle bg-yellow-500 print:bg-gray-500" />
+                            <span className="text-[7px] sm:text-[9px] leading-tight font-semibold truncate text-amber-800 dark:text-amber-300">
+                              <span className="inline-block w-1.5 h-1.5 rounded-full mr-0.5 align-middle bg-amber-500 print:bg-gray-600" />
                               {bsd.name}
                             </span>
                           )}
@@ -280,7 +280,7 @@ export default function Calendar2026() {
                   {monthHols.map(h => (
                     <span key={h.date + h.name} className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border ${
                       h.type === 'bsd'
-                        ? 'bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950/50 dark:text-yellow-400 dark:border-yellow-800'
+                        ? 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-900/50 dark:text-amber-300 dark:border-amber-700'
                         : (BADGE[h.color] ?? '')
                     } print:border-gray-400 print:bg-transparent print:text-black`}>
                       {h.sticker && <span className="w-4 h-4 shrink-0 flex items-center">{Stickers[h.sticker](16)}</span>}

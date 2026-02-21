@@ -8,24 +8,27 @@ export interface Holiday {
   color: string;
   sticker?: string;
   type?: HolidayType;
+  dayOff?: boolean; // true = company/federal day off, false/undefined = observance only
 }
 
 export const HOLIDAYS: Holiday[] = [
-  /* ── US Holidays ── */
-  { date: '2026-01-01', name: "New Year's Day",             color: 'blue',   sticker: 'fireworks' },
-  { date: '2026-01-19', name: 'MLK Jr. Day',                color: 'purple', sticker: 'dove' },
+  /* ── US Holidays (days off) ── */
+  { date: '2026-01-01', name: "New Year's Day",             color: 'blue',   sticker: 'fireworks', dayOff: true },
+  { date: '2026-01-19', name: 'MLK Jr. Day',                color: 'purple', sticker: 'dove',      dayOff: true },
+  { date: '2026-02-16', name: "Presidents' Day",            color: 'blue',   sticker: 'scroll',    dayOff: true },
+  { date: '2026-05-25', name: 'Memorial Day',               color: 'red',    sticker: 'flag',      dayOff: true },
+  { date: '2026-06-19', name: 'Juneteenth',                 color: 'green',  sticker: 'fist',      dayOff: true },
+  { date: '2026-07-04', name: 'Independence Day',           color: 'red',    sticker: 'flag',      dayOff: true },
+  { date: '2026-09-07', name: 'Labor Day',                  color: 'blue',   sticker: 'star',      dayOff: true },
+  { date: '2026-11-11', name: 'Veterans Day',               color: 'red',    sticker: 'poppy',     dayOff: true },
+  { date: '2026-11-26', name: 'Thanksgiving',               color: 'orange', sticker: 'turkey',    dayOff: true },
+  { date: '2026-12-25', name: 'Christmas Day',              color: 'green',  sticker: 'tree',      dayOff: true },
+
+  /* ── Observances (sticker only, no cell highlight) ── */
   { date: '2026-02-14', name: "Valentine's Day",            color: 'pink',   sticker: 'heart' },
-  { date: '2026-02-16', name: "Presidents' Day",            color: 'blue',   sticker: 'scroll' },
   { date: '2026-04-05', name: 'Easter Sunday',              color: 'pink',   sticker: 'bunny' },
-  { date: '2026-05-25', name: 'Memorial Day',               color: 'red',    sticker: 'flag' },
-  { date: '2026-06-19', name: 'Juneteenth',                 color: 'green',  sticker: 'fist' },
-  { date: '2026-07-04', name: 'Independence Day',           color: 'red',    sticker: 'flag' },
-  { date: '2026-09-07', name: 'Labor Day',                  color: 'blue',   sticker: 'star' },
   { date: '2026-10-12', name: 'Columbus Day',               color: 'orange', sticker: 'scroll' },
   { date: '2026-10-31', name: 'Halloween',                  color: 'orange', sticker: 'cat' },
-  { date: '2026-11-11', name: 'Veterans Day',               color: 'red',    sticker: 'poppy' },
-  { date: '2026-11-26', name: 'Thanksgiving',               color: 'orange', sticker: 'turkey' },
-  { date: '2026-12-25', name: 'Christmas Day',              color: 'green',  sticker: 'tree' },
   { date: '2026-12-31', name: "New Year's Eve",             color: 'blue',   sticker: 'partyHat' },
 
   /* ── BSD 405 No-School Days (2025-2026) ── */
