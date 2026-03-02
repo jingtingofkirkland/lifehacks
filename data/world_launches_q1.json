@@ -405,5 +405,71 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 38,
+    "time": "21 February 09:04:19",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-25",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 39,
+    "time": "22 February 03:47:19",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 6-104",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 40,
+    "time": "24 February 23:04:10",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 6-110",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 41,
+    "time": "25 February 14:17:49",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-26",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 42,
+    "time": "27 February 12:16:10",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 6-108",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 43,
+    "time": "1 March 10:10:39",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-23",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
