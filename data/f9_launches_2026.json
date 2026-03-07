@@ -232,5 +232,23 @@
     "mission": "Starlink: Group 17-23",
     "mass": "14375",
     "orbit": "SSO"
+  },
+  {
+    "flight": 609,
+    "time": "March 2, 2026 02:56",
+    "rocket": "B1078‑26",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Starlink: Group 10-41",
+    "mass": "16675",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 610,
+    "time": "March 4, 2026 10:52",
+    "rocket": "B1080‑25",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Starlink: Group 10-40",
+    "mass": "16675",
+    "orbit": "LEO"
   }
 ]
