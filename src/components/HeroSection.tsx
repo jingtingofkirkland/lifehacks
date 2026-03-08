@@ -101,10 +101,10 @@ export function HeroSections({ sections }: HeroSectionsProps) {
                   key={i}
                   className="absolute w-1 h-1 bg-white/30 rounded-full animate-twinkle"
                   style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
-                    animationDelay: `${Math.random() * 3}s`,
-                    animationDuration: `${2 + Math.random() * 3}s`,
+                    left: `${((i * 37 + 13) % 100)}%`,
+                    top: `${((i * 53 + 7) % 100)}%`,
+                    animationDelay: `${(i * 0.7) % 3}s`,
+                    animationDuration: `${2 + (i * 1.3) % 3}s`,
                   }}
                 />
               ))}

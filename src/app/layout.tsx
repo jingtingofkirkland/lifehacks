@@ -1,9 +1,30 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
+import { Poppins, Inter, Roboto_Mono } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { siteConfig } from '@/config/site';
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-poppins',
+  display: 'swap',
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '600', '700', '800'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const robotoMono = Roboto_Mono({
+  subsets: ['latin'],
+  variable: '--font-roboto-mono',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: siteConfig.title,
@@ -20,7 +41,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${poppins.variable} ${inter.variable} ${robotoMono.variable}`}>
       <head>
         {/* Meta Pixel Code */}
         <Script id="meta-pixel" strategy="afterInteractive">
