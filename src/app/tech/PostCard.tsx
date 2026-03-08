@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import ReactMarkdown from 'react-markdown';
 import { ExternalLink, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { TechPost } from '@/config/techPosts';
 
@@ -13,6 +14,11 @@ interface PostCardProps {
 export function PostCard({ post, content }: PostCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const hasContent = content && content.length > 0;
+
+  // Strip the first H1 line (already shown as card title)
+  const markdownContent = hasContent
+    ? content.replace(/^# .+\n?/, '')
+    : '';
 
   return (
     <div className={`group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 ${hasContent ? 'col-span-1 md:col-span-2 lg:col-span-3' : ''}`}>
@@ -53,42 +59,7 @@ export function PostCard({ post, content }: PostCardProps) {
 
           {isExpanded && (
             <div className="bg-white/5 rounded-lg p-6 border border-white/10 prose prose-invert prose-sm max-w-none animate-in fade-in slide-in-from-top-2 duration-300">
-              <div className="markdown-content">
-                {content.split('\n').map((line, index) => {
-                  // Skip the first H1 title (it's already shown above)
-                  if (line.startsWith('# ') && index === 0) return null;
-
-                  // H2 headers
-                  if (line.startsWith('## ')) {
-                    return <h2 key={index} className="text-lg font-semibold text-white mt-6 mb-3">{line.replace('## ', '')}</h2>;
-                  }
-
-                  // H3 headers
-                  if (line.startsWith('### ')) {
-                    return <h3 key={index} className="text-base font-semibold text-white/90 mt-4 mb-2">{line.replace('### ', '')}</h3>;
-                  }
-
-                  // Bold text and bullet points
-                  if (line.startsWith('- ')) {
-                    const formattedLine = line.replace(/\*\*(.+?)\*\*/g, '<strong class="text-white">$1</strong>');
-                    return (
-                      <li key={index} className="flex items-start ml-4 text-white/60 mb-1">
-                        <span className="mr-2 text-blue-400">•</span>
-                        <span dangerouslySetInnerHTML={{ __html: formattedLine.replace('- ', '') }} />
-                      </li>
-                    );
-                  }
-
-                  // Empty lines
-                  if (line.trim() === '') {
-                    return <br key={index} />;
-                  }
-
-                  // Regular paragraphs with bold support
-                  const formattedLine = line.replace(/\*\*(.+?)\*\*/g, '<strong class="text-white">$1</strong>');
-                  return <p key={index} className="text-white/60 mb-2" dangerouslySetInnerHTML={{ __html: formattedLine }} />;
-                })}
-              </div>
+              <ReactMarkdown>{markdownContent}</ReactMarkdown>
             </div>
           )}
         </div>
