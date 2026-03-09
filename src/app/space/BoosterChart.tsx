@@ -56,7 +56,14 @@ export function BoosterChart({ data, selectedYear, animKey, recorder, title, onT
       return { name: r[0].trim(), flights: Number(r[1]) };
     });
 
-    const sortedData = getSortedUniqueData(boosterData);
+    // Count how many flights each booster did this year
+    const yearlyCount: Record<string, number> = {};
+    boosterData.forEach(b => { yearlyCount[b.name] = (yearlyCount[b.name] || 0) + 1; });
+
+    const sortedData = getSortedUniqueData(boosterData).map(b => ({
+      ...b,
+      yearlyFlights: yearlyCount[b.name] || 1,
+    }));
     const expendedCount = sortedData.filter(b => EXPENDED_BOOSTERS.has(b.name)).length;
     onTitleChange(`F9 Boosters Flight Counts (${sortedData.length} boosters, ${expendedCount} expended)`);
 
@@ -97,7 +104,16 @@ export function BoosterChart({ data, selectedYear, animKey, recorder, title, onT
         ctx.fillText(booster.name, 5, y + CHART_CONFIG.BAR_HEIGHT / 2 + 5);
 
         if (progress === 1) {
-          ctx.fillText(String(booster.flights), x + currentBarWidth + 5, y + CHART_CONFIG.BAR_HEIGHT / 2 + 5);
+          const label = booster.yearlyFlights && booster.yearlyFlights > 1
+            ? `${booster.flights} (×${booster.yearlyFlights})`
+            : String(booster.flights);
+          ctx.fillText(label, x + currentBarWidth + 5, y + CHART_CONFIG.BAR_HEIGHT / 2 + 5);
+          if (booster.yearlyFlights && booster.yearlyFlights > 1) {
+            // Highlight yearly count in cyan
+            const totalWidth = ctx.measureText(String(booster.flights) + ' ').width;
+            ctx.fillStyle = CHART_CONFIG.COLORS.COUNT_LINE;
+            ctx.fillText(`(×${booster.yearlyFlights})`, x + currentBarWidth + 5 + totalWidth, y + CHART_CONFIG.BAR_HEIGHT / 2 + 5);
+          }
         }
       });
 

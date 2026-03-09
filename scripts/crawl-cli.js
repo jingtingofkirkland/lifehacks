@@ -145,7 +145,7 @@ function scrapeFalconLaunches($) {
 
     const HEADERS = ['time', 'rocket', 'site', 'mission', 'mass', 'orbit'];
     const MASS_REGEX = /^(.*)kg/;
-    const ESTIMATED_MASSES = { LEO: '16300', GTO: '6000', DEFAULT: '3000' };
+    const FALLBACK_MASS = '3000';
 
     const clean = {
         space: (t) => t.replace(/\xa0/g, ' '),
@@ -159,13 +159,6 @@ function scrapeFalconLaunches($) {
 
     const transformers = [clean.time, clean.rocket, clean.space, clean.space, clean.mass, clean.space];
 
-    const estimateMass = (mass, orbit) => {
-        if (!mass.startsWith('Unknown')) return mass;
-        if (orbit.startsWith('LEO')) return ESTIMATED_MASSES.LEO;
-        if (orbit.startsWith('GTO')) return ESTIMATED_MASSES.GTO;
-        return ESTIMATED_MASSES.DEFAULT;
-    };
-
     // Dynamically find the first F9-* row in the current year's table
     const currentYear = new Date().getFullYear();
     const yearTable = $(`#${currentYear}ytd`);
@@ -178,6 +171,7 @@ function scrapeFalconLaunches($) {
     const startFlight = parseInt(firstRow.attr('id').replace('F9-', ''), 10);
     console.log(`   📌 Detected first flight: F9-${startFlight} (from ${yearTable.length ? `#${currentYear}ytd` : 'page'})`);
 
+    // First pass: extract all launches with raw mass
     const json = [];
     for (let i = startFlight; ; i++) {
         const cells = $(`#F9-${i} td`);
@@ -190,8 +184,47 @@ function scrapeFalconLaunches($) {
             obj[header] = transformers[j](data[j]);
         });
 
-        obj.mass = estimateMass(obj.mass, obj.orbit);
         json.push(obj);
+    }
+
+    // Compute running averages per orbit type from known masses
+    const orbitMasses = {};
+    let totalKnownMass = 0;
+    let totalKnownCount = 0;
+    for (const obj of json) {
+        const massNum = parseFloat(obj.mass);
+        if (!isNaN(massNum) && massNum > 0 && !obj.mass.startsWith('Unknown')) {
+            const orbitKey = obj.orbit.split(' ')[0]; // normalize: "LEO (ISS)" → "LEO"
+            if (!orbitMasses[orbitKey]) orbitMasses[orbitKey] = { sum: 0, count: 0 };
+            orbitMasses[orbitKey].sum += massNum;
+            orbitMasses[orbitKey].count++;
+            totalKnownMass += massNum;
+            totalKnownCount++;
+        }
+    }
+
+    const overallAvg = totalKnownCount > 0 ? Math.round(totalKnownMass / totalKnownCount) : 3000;
+    const orbitAvgs = {};
+    for (const [orbit, { sum, count }] of Object.entries(orbitMasses)) {
+        orbitAvgs[orbit] = Math.round(sum / count);
+    }
+
+    if (Object.keys(orbitAvgs).length > 0) {
+        console.log(`   📊 Mass averages by orbit: ${Object.entries(orbitAvgs).map(([o, a]) => `${o}=${a}kg`).join(', ')} (overall=${overallAvg}kg)`);
+    }
+
+    // Second pass: estimate unknown masses using running averages
+    let estimatedCount = 0;
+    for (const obj of json) {
+        if (obj.mass.startsWith('Unknown') || obj.mass === '' || obj.mass === '0') {
+            const orbitKey = obj.orbit.split(' ')[0];
+            const estimated = orbitAvgs[orbitKey] || overallAvg || FALLBACK_MASS;
+            obj.mass = String(estimated);
+            estimatedCount++;
+        }
+    }
+    if (estimatedCount > 0) {
+        console.log(`   📊 Estimated mass for ${estimatedCount} launches using running averages`);
     }
 
     return json;

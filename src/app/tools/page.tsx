@@ -22,6 +22,18 @@ const tools = [
     ),
     tag: 'Printable',
   },
+  {
+    title: 'Tip Calculator',
+    desc: 'Calculate tip, split the bill, and figure out per-person totals instantly.',
+    href: '/tools/tip-calculator',
+    icon: (
+      <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="32" r="24" fill="#D1FAE5" stroke="#059669" strokeWidth="2"/>
+        <text x="32" y="38" textAnchor="middle" fontSize="22" fontWeight="bold" fill="#059669">$</text>
+      </svg>
+    ),
+    tag: 'Calculator',
+  },
 ];
 
 const businesses = [

@@ -1,6 +1,7 @@
 export interface BoosterData {
   name: string;
   flights: number;
+  yearlyFlights?: number;
 }
 
 export const CHART_CONFIG = {
