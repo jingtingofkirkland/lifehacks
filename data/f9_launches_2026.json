@@ -59,7 +59,7 @@
     "rocket": "B1100‑2",
     "site": "Vandenberg, SLC‑4E",
     "mission": "NROL-105 (2 Starshield satellites)",
-    "mass": "16300",
+    "mass": "16371",
     "orbit": "LEO"
   },
   {
@@ -250,5 +250,14 @@
     "mission": "Starlink: Group 10-40",
     "mass": "16675",
     "orbit": "LEO"
+  },
+  {
+    "flight": 611,
+    "time": "March 8, 2026 11:00",
+    "rocket": "B1097‑7",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 17-18",
+    "mass": "14375",
+    "orbit": "SSO"
   }
 ]
