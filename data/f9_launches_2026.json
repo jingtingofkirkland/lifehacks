@@ -259,5 +259,14 @@
     "mission": "Starlink: Group 17-18",
     "mass": "14375",
     "orbit": "SSO"
+  },
+  {
+    "flight": 612,
+    "time": "March 10, 2026 04:19",
+    "rocket": "B1085‑14",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "EchoStar XXV",
+    "mass": "6800",
+    "orbit": "GTO"
   }
 ]

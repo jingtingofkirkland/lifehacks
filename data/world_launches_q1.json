@@ -537,5 +537,38 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 50,
+    "time": "11 March 00:50:00",
+    "rocket": "Alpha Block 1",
+    "mission": "FLTA007",
+    "site": "Vandenberg SLC-2W",
+    "org": {
+      "country": "United States",
+      "info": "Firefly Aerospace"
+    }
+  },
+  {
+    "flight": 51,
+    "time": "12 March 19:48:00",
+    "rocket": "Long March 8A",
+    "mission": "",
+    "site": "Wenchang Commercial LC-1",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 52,
+    "time": "12 March 22:33:00",
+    "rocket": "Long March 2D",
+    "mission": "",
+    "site": "Xichang LC-3",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
