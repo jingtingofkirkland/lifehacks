@@ -43,3 +43,15 @@ jobs:
           git add data/
           git commit -m "Auto-crawl: update launch data $(date -u +%Y-%m-%d)"
           git push
+
+      - name: Trigger deploy
+        if: steps.diff.outputs.changed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'nextjs-deploy.yml',
+              ref: 'master',
+            });
