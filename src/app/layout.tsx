@@ -4,6 +4,7 @@ import { Poppins, Inter, Roboto_Mono } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { FeedbackButton } from '@/components/FeedbackButton';
 import { siteConfig } from '@/config/site';
 
 const poppins = Poppins({
@@ -85,6 +86,7 @@ export default function RootLayout({
         >
           <ThemeToggle />
           {children}
+          <FeedbackButton />
         </ThemeProvider>
       </body>
     </html>

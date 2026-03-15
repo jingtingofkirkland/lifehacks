@@ -116,7 +116,12 @@ export function RecordButton({
         <Button
           variant="outline"
           size="sm"
-          onClick={onRecord}
+          onClick={() => {
+            if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
+              (window as any).fbq('trackCustom', 'RecordAnimation', { chart: filename });
+            }
+            onRecord();
+          }}
           className="bg-slate-700/50 border-cyan-500/30 hover:bg-cyan-500/20 text-cyan-400"
         >
           <Video className="h-4 w-4 mr-2" />
@@ -148,7 +153,12 @@ export function RecordButton({
           <Button
             variant="outline"
             size="sm"
-            onClick={handleDownload}
+            onClick={() => {
+              if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
+                (window as any).fbq('trackCustom', 'DownloadRecording', { chart: filename });
+              }
+              handleDownload();
+            }}
             className="bg-green-500/20 border-green-500/50 hover:bg-green-500/30 text-green-400"
           >
             <Download className="h-4 w-4 mr-2" />
