@@ -59,7 +59,7 @@
     "rocket": "B1100‑2",
     "site": "Vandenberg, SLC‑4E",
     "mission": "NROL-105 (2 Starshield satellites)",
-    "mass": "16371",
+    "mass": "16392",
     "orbit": "LEO"
   },
   {
@@ -268,5 +268,23 @@
     "mission": "EchoStar XXV",
     "mass": "6800",
     "orbit": "GTO"
+  },
+  {
+    "flight": 613,
+    "time": "March 13, 2026 14:57",
+    "rocket": "B1071‑32",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 17-31",
+    "mass": "14375",
+    "orbit": "SSO"
+  },
+  {
+    "flight": 614,
+    "time": "March 14, 2026 12:37",
+    "rocket": "B1095‑6",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Starlink: Group 10-48",
+    "mass": "16675",
+    "orbit": "LEO"
   }
 ]
