@@ -1,7 +1,14 @@
-/* ─────────── Cute cartoon animals + your dog PNG for empty calendar cells ─────────── */
+/* ─────────── Cute cartoon animals + puppy photos for empty calendar cells ─────────── */
+/* Puppies are placed at every 3rd index (0,3,6,9,12,15) so that no two puppies
+   are 7 positions apart — preventing vertical adjacency in the calendar grid.
+   Each puppy type appears 2×, each SVG animal appears 1×. */
 
 const MiniAnimals: ((s?: number) => JSX.Element)[] = [
-  // sleeping cat
+  // [0] dog sketch (PNG)
+  (s = 24) => (
+    <img src="/dog_sketch.png" alt="" width={s} height={s} style={{ objectFit: 'contain' }} />
+  ),
+  // [1] sleeping cat
   (s = 24) => (
     <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
       <ellipse cx="24" cy="32" rx="14" ry="8" fill="#FFB366"/>
@@ -14,11 +21,7 @@ const MiniAnimals: ((s?: number) => JSX.Element)[] = [
       <path d="M38 32 Q40 30 40 34" stroke="#FFB366" strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
   ),
-  // your dog (PNG)
-  (s = 24) => (
-    <img src="/dog_sketch.png" alt="" width={s} height={s} style={{ objectFit: 'contain' }} />
-  ),
-  // happy puppy
+  // [2] happy puppy (SVG)
   (s = 24) => (
     <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
       <circle cx="24" cy="26" r="12" fill="#D2A679"/>
@@ -32,7 +35,11 @@ const MiniAnimals: ((s?: number) => JSX.Element)[] = [
       <circle cx="17" cy="28" r="2" fill="#FFB3B3" opacity="0.4"/><circle cx="31" cy="28" r="2" fill="#FFB3B3" opacity="0.4"/>
     </svg>
   ),
-  // chick
+  // [3] puppy in the park (JPG)
+  (s = 24) => (
+    <img src="/puppy_park.jpg" alt="" width={s} height={s} style={{ objectFit: 'contain', borderRadius: '4px' }} />
+  ),
+  // [4] chick
   (s = 24) => (
     <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
       <circle cx="24" cy="28" r="12" fill="#FDE68A"/><circle cx="24" cy="18" r="8" fill="#FDE68A"/>
@@ -44,24 +51,7 @@ const MiniAnimals: ((s?: number) => JSX.Element)[] = [
       <path d="M34 28 Q38 24 36 20" stroke="#FDE68A" strokeWidth="2" strokeLinecap="round"/>
     </svg>
   ),
-  // your dog (PNG) — appears again
-  (s = 24) => (
-    <img src="/dog_sketch.png" alt="" width={s} height={s} style={{ objectFit: 'contain' }} />
-  ),
-  // hedgehog
-  (s = 24) => (
-    <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
-      <ellipse cx="24" cy="30" rx="14" ry="10" fill="#92400E"/>
-      <polygon points="18,22 16,14 22,20" fill="#78350F"/><polygon points="22,20 20,12 26,18" fill="#78350F"/>
-      <polygon points="26,18 24,10 30,18" fill="#78350F"/><polygon points="30,18 28,10 34,20" fill="#78350F"/>
-      <polygon points="34,22 32,14 36,22" fill="#78350F"/>
-      <circle cx="18" cy="28" r="6" fill="#D2A679"/>
-      <circle cx="16" cy="27" r="1.2" fill="#334155"/><circle cx="20" cy="27" r="1.2" fill="#334155"/>
-      <ellipse cx="18" cy="29.5" rx="1" ry="0.7" fill="#334155"/>
-      <circle cx="14" cy="30" r="1.5" fill="#FFB3B3" opacity="0.4"/><circle cx="22" cy="30" r="1.5" fill="#FFB3B3" opacity="0.4"/>
-    </svg>
-  ),
-  // panda
+  // [5] panda
   (s = 24) => (
     <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
       <circle cx="24" cy="26" r="13" fill="white" stroke="#E5E7EB" strokeWidth="0.5"/>
@@ -74,7 +64,11 @@ const MiniAnimals: ((s?: number) => JSX.Element)[] = [
       <circle cx="15" cy="28" r="2" fill="#FFB3B3" opacity="0.3"/><circle cx="33" cy="28" r="2" fill="#FFB3B3" opacity="0.3"/>
     </svg>
   ),
-  // penguin
+  // [6] beige puppy (JPG)
+  (s = 24) => (
+    <img src="/puppy_beige.jpg" alt="" width={s} height={s} style={{ objectFit: 'contain', borderRadius: '4px' }} />
+  ),
+  // [7] penguin
   (s = 24) => (
     <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
       <ellipse cx="24" cy="28" rx="11" ry="14" fill="#334155"/><ellipse cx="24" cy="30" rx="7" ry="10" fill="white"/>
@@ -86,11 +80,7 @@ const MiniAnimals: ((s?: number) => JSX.Element)[] = [
       <ellipse cx="21" cy="40" rx="3" ry="1.5" fill="#F59E0B"/><ellipse cx="27" cy="40" rx="3" ry="1.5" fill="#F59E0B"/>
     </svg>
   ),
-  // your dog (PNG) — third appearance
-  (s = 24) => (
-    <img src="/dog_sketch.png" alt="" width={s} height={s} style={{ objectFit: 'contain' }} />
-  ),
-  // fox
+  // [8] fox
   (s = 24) => (
     <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
       <circle cx="24" cy="28" r="12" fill="#F97316"/>
@@ -103,7 +93,11 @@ const MiniAnimals: ((s?: number) => JSX.Element)[] = [
       <path d="M22 32 Q24 34 26 32" stroke="#334155" strokeWidth="0.6" fill="none"/>
     </svg>
   ),
-  // bear
+  // [9] dog sketch (PNG) — second appearance
+  (s = 24) => (
+    <img src="/dog_sketch.png" alt="" width={s} height={s} style={{ objectFit: 'contain' }} />
+  ),
+  // [10] bear
   (s = 24) => (
     <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
       <circle cx="14" cy="16" r="5" fill="#92400E"/><circle cx="34" cy="16" r="5" fill="#92400E"/>
@@ -116,7 +110,7 @@ const MiniAnimals: ((s?: number) => JSX.Element)[] = [
       <path d="M22 31 Q24 33 26 31" stroke="#334155" strokeWidth="0.7" fill="none"/>
     </svg>
   ),
-  // owl
+  // [11] owl
   (s = 24) => (
     <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
       <ellipse cx="24" cy="28" rx="13" ry="14" fill="#92400E"/>
@@ -128,22 +122,11 @@ const MiniAnimals: ((s?: number) => JSX.Element)[] = [
       <path d="M18 34 Q24 38 30 34" stroke="#78350F" strokeWidth="1" fill="none"/>
     </svg>
   ),
-  // your dog (PNG) — fourth appearance
+  // [12] puppy in the park (JPG) — second appearance
   (s = 24) => (
-    <img src="/dog_sketch.png" alt="" width={s} height={s} style={{ objectFit: 'contain' }} />
+    <img src="/puppy_park.jpg" alt="" width={s} height={s} style={{ objectFit: 'contain', borderRadius: '4px' }} />
   ),
-  // frog
-  (s = 24) => (
-    <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
-      <ellipse cx="24" cy="30" rx="14" ry="10" fill="#22C55E"/>
-      <circle cx="16" cy="20" r="6" fill="#22C55E"/><circle cx="32" cy="20" r="6" fill="#22C55E"/>
-      <circle cx="16" cy="20" r="3.5" fill="white"/><circle cx="32" cy="20" r="3.5" fill="white"/>
-      <circle cx="16.5" cy="20" r="2" fill="#334155"/><circle cx="32.5" cy="20" r="2" fill="#334155"/>
-      <path d="M18 34 Q24 38 30 34" stroke="#15803D" strokeWidth="1.2" fill="none"/>
-      <circle cx="14" cy="32" r="2.5" fill="#FFB3B3" opacity="0.3"/><circle cx="34" cy="32" r="2.5" fill="#FFB3B3" opacity="0.3"/>
-    </svg>
-  ),
-  // koala
+  // [13] koala
   (s = 24) => (
     <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
       <circle cx="14" cy="20" r="7" fill="#94A3B8"/><circle cx="34" cy="20" r="7" fill="#94A3B8"/>
@@ -155,7 +138,7 @@ const MiniAnimals: ((s?: number) => JSX.Element)[] = [
       <ellipse cx="24" cy="31" rx="2.5" ry="1.5" fill="#334155"/>
     </svg>
   ),
-  // bunny
+  // [14] bunny
   (s = 24) => (
     <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
       <ellipse cx="20" cy="12" rx="3.5" ry="10" fill="white" stroke="#E5E7EB" strokeWidth="0.8"/>
@@ -168,7 +151,11 @@ const MiniAnimals: ((s?: number) => JSX.Element)[] = [
       <circle cx="17" cy="30" r="2.5" fill="#FFB3B3" opacity="0.3"/><circle cx="31" cy="30" r="2.5" fill="#FFB3B3" opacity="0.3"/>
     </svg>
   ),
-  // whale
+  // [15] beige puppy (JPG) — second appearance
+  (s = 24) => (
+    <img src="/puppy_beige.jpg" alt="" width={s} height={s} style={{ objectFit: 'contain', borderRadius: '4px' }} />
+  ),
+  // [16] whale
   (s = 24) => (
     <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
       <ellipse cx="24" cy="28" rx="16" ry="10" fill="#3B82F6"/>
@@ -181,7 +168,7 @@ const MiniAnimals: ((s?: number) => JSX.Element)[] = [
       <line x1="22" y1="15" x2="24" y2="10" stroke="#60A5FA" strokeWidth="1.5" strokeLinecap="round"/>
     </svg>
   ),
-  // duck
+  // [17] duck
   (s = 24) => (
     <svg width={s} height={s} viewBox="0 0 48 48" fill="none">
       <ellipse cx="26" cy="32" rx="14" ry="10" fill="#FDE68A"/>

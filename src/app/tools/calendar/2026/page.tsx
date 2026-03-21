@@ -48,7 +48,7 @@ export default function Calendar2026() {
   const next = () => setMonth(m => Math.min(11, m + 1));
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50/50 via-background to-background dark:from-amber-950/15 dark:via-background dark:to-background text-foreground relative overflow-hidden">
+    <div className="min-h-screen print:min-h-0 bg-gradient-to-b from-amber-50/50 via-background to-background dark:from-amber-950/15 dark:via-background dark:to-background text-foreground relative overflow-hidden">
       {/* ── Subtle background accents (hidden on print) ── */}
       <div className="absolute top-0 right-0 w-72 h-72 bg-amber-200/15 dark:bg-amber-800/5 rounded-full blur-3xl pointer-events-none print:hidden" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-orange-200/10 dark:bg-orange-900/5 rounded-full blur-3xl pointer-events-none print:hidden" />
@@ -57,8 +57,8 @@ export default function Calendar2026() {
       <header className="print:hidden sticky top-0 z-40 backdrop-blur-md bg-background/70 border-b border-border/60">
         <div className="max-w-5xl mx-auto px-4 py-2 lg:py-3 lg:flex lg:items-center lg:justify-between">
           {/* top row: nav + title */}
-          <div className="flex items-center justify-between">
-            <a href="/tools" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors group">
+          <div className="flex items-center justify-between gap-4">
+            <a href="/tools" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors group shrink-0">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-0.5 transition-transform"><path d="M15 18l-6-6 6-6"/></svg>
               Tools
             </a>
@@ -91,7 +91,7 @@ export default function Calendar2026() {
         </div>
       </header>
 
-      <main className="relative max-w-5xl mx-auto px-4 py-6 print:px-2 print:py-2 print:max-w-none">
+      <main className="relative max-w-5xl mx-auto px-4 py-6 print:px-2 print:py-2 print:pt-[0.8in] print:max-w-none">
 
         {/* ═══════════════ YEAR VIEW ═══════════════ */}
         {view === 'year' && (
@@ -299,7 +299,7 @@ export default function Calendar2026() {
       {/* ── Print styles ── */}
       <style jsx global>{`
         @media print {
-          body { background: white !important; color: black !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          body { background: white !important; color: black !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; min-height: 0 !important; }
           .print\\:hidden, header, nav { display: none !important; }
           @page { margin: 0.4in; size: ${view === 'year' ? 'portrait' : 'landscape'}; }
         }
