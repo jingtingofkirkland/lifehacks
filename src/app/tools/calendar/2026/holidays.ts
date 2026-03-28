@@ -53,6 +53,36 @@ export const HOLIDAYS: Holiday[] = [
   { date: '2026-01-23', name: 'BSD End of 1st Semester',     color: 'gray' },
   { date: '2026-04-03', name: 'BSD End of Q3',               color: 'gray' },
   { date: '2026-06-23', name: 'BSD Last Day',                color: 'gray' },
+
+  /* ── BSD 405 2026-2027 School Year (Sept–Dec 2026) ── */
+
+  /* First days of school (info markers) */
+  { date: '2026-09-02', name: 'BSD First Day (Gr. 1–12)',    color: 'gray' },
+  { date: '2026-09-08', name: 'BSD First Day (Kindergarten)', color: 'gray' },
+  { date: '2026-09-09', name: 'BSD First Day (Preschool)',   color: 'gray' },
+
+  /* No-school days */
+  { date: '2026-10-09', name: 'BSD Non-School Day',          color: 'yellow', type: 'bsd' },
+  { date: '2026-11-27', name: 'BSD Thanksgiving Break',      color: 'yellow', type: 'bsd' },
+
+  /* Elementary Conference Early Release */
+  { date: '2026-11-16', name: 'BSD Early Release (Conf.)',   color: 'gray' },
+  { date: '2026-11-17', name: 'BSD Early Release (Conf.)',   color: 'gray' },
+  { date: '2026-11-18', name: 'BSD Early Release (Conf.)',   color: 'gray' },
+  { date: '2026-11-19', name: 'BSD Early Release (Conf.)',   color: 'gray' },
+  { date: '2026-11-20', name: 'BSD Early Release (Conf.)',   color: 'gray' },
+
+  /* Quarter marker */
+  { date: '2026-11-06', name: 'BSD End of Q1',               color: 'gray' },
+
+  /* Winter Break (non-holiday weekdays) */
+  { date: '2026-12-21', name: 'BSD Winter Break',            color: 'yellow', type: 'bsd' },
+  { date: '2026-12-22', name: 'BSD Winter Break',            color: 'yellow', type: 'bsd' },
+  { date: '2026-12-23', name: 'BSD Winter Break',            color: 'yellow', type: 'bsd' },
+  { date: '2026-12-24', name: 'BSD Winter Break',            color: 'yellow', type: 'bsd' },
+  { date: '2026-12-28', name: 'BSD Winter Break',            color: 'yellow', type: 'bsd' },
+  { date: '2026-12-29', name: 'BSD Winter Break',            color: 'yellow', type: 'bsd' },
+  { date: '2026-12-30', name: 'BSD Winter Break',            color: 'yellow', type: 'bsd' },
 ];
 
 /* ─────────────────── Style Maps ─────────────────── */

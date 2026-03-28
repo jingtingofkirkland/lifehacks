@@ -103,3 +103,18 @@ npm run sync-data        # Copy data/*.json → public/api/
 - Dark mode via CSS class strategy (`next-themes`)
 - Print styles via `@media print` with `print:` Tailwind prefix
 - Custom domain configured via `static/CNAME`
+
+## Pre-Commit E2E Verification (REQUIRED)
+
+Before declaring changes ready to commit or push, ALWAYS run this verification:
+
+1. **Build check**: Run `npm run build` — must pass with zero errors and all pages generated.
+2. **Dev server smoke test**: Start `npm run dev`, then check every page returns HTTP 200:
+   ```
+   / /space/ /tech/ /tools/ /tools/calendar/2026/ /about/ /share/ /subscribe/ /thank-you/ /landing.html
+   ```
+3. **Content spot-check**: Verify key content renders on each page (titles, data, interactive elements).
+4. **API data check**: Confirm `/api/f9_launches_*.json` and `/api/world_launches_*.json` serve valid JSON.
+5. **Stop dev server** after verification.
+
+Do NOT tell the user changes are ready to commit/push until all steps above pass.
