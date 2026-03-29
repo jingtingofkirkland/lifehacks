@@ -746,5 +746,16 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 69,
+    "time": "28 March 09:14:00 ",
+    "rocket": "Electron",
+    "mission": "Daughter Of The Stars",
+    "site": "Mahia LC-1",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
   }
 ]
