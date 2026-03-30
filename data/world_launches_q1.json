@@ -757,5 +757,47 @@
       "country": "United States",
       "info": "Rocket Lab"
     }
+  },
+  {
+    "flight": 70,
+    "time": "30 March 11:00:00",
+    "rocket": "Kinetica 2",
+    "mission": "Y1",
+    "site": "Jiuquan LS-140",
+    "org": {
+      "country": "China",
+      "info": "CAS Space"
+    }
+  },
+  {
+    "flight": 71,
+    "time": "New March 01",
+    "rocket": "CAS",
+    "mission": "Low Earth",
+    "site": "Technology demonstration",
+    "org": {
+      "info": "In orbit"
+    }
+  },
+  {
+    "flight": 72,
+    "time": "New March 02 (Qingzhou Prototype Demo)",
+    "rocket": "CAS",
+    "mission": "Low Earth",
+    "site": "Technology demonstration",
+    "org": {
+      "info": "In orbit"
+    }
+  },
+  {
+    "flight": 73,
+    "time": "30 March 11:02:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Transporter-16",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
