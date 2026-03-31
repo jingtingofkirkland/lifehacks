@@ -779,5 +779,27 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 72,
+    "time": "30 March 21:15:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 10-44",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 73,
+    "time": "8 January 21:30",
+    "rocket": "Oreshnik",
+    "mission": "",
+    "site": "Kapustin Yar",
+    "org": {
+      "country": "Russia",
+      "info": ""
+    }
   }
 ]
