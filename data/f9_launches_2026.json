@@ -59,7 +59,7 @@
     "rocket": "B1100‑2",
     "site": "Vandenberg, SLC‑4E",
     "mission": "NROL-105 (2 Starshield satellites)",
-    "mass": "16451",
+    "mass": "16463",
     "orbit": "LEO"
   },
   {
@@ -356,6 +356,15 @@
     "rocket": "B1067‑34",
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-44",
+    "mass": "16675",
+    "orbit": "LEO"
+  },
+  {
+    "flight": 623,
+    "time": "April 2, 2026 11:55",
+    "rocket": "B1085‑15",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Starlink: Group 10-58",
     "mass": "16675",
     "orbit": "LEO"
   }
