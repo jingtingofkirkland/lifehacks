@@ -53,5 +53,38 @@
       "country": "United States",
       "info": "ULA"
     }
+  },
+  {
+    "flight": 6,
+    "time": "7 April 02:50:39",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-35",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 7,
+    "time": "7 April 11:30:00",
+    "rocket": "Minotaur IV",
+    "mission": "",
+    "site": "Vandenberg SLC-8",
+    "org": {
+      "country": "United States",
+      "info": "Northrop Grumman"
+    }
+  },
+  {
+    "flight": 8,
+    "time": "7 April 13:30:00",
+    "rocket": "Long March 8",
+    "mission": "Y? / Spacesail Polar Group 07",
+    "site": "Wenchang Commercial LC-1",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]

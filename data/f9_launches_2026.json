@@ -347,7 +347,7 @@
     "rocket": "B1093‑12",
     "site": "Vandenberg, SLC‑4E",
     "mission": "Transporter-16 (119 payloads smallsat rideshare)[67]",
-    "mass": "12766",
+    "mass": "12856",
     "orbit": "SSO"
   },
   {
@@ -367,5 +367,14 @@
     "mission": "Starlink: Group 10-58",
     "mass": "16675",
     "orbit": "LEO"
+  },
+  {
+    "flight": 624,
+    "time": "April 7, 2026 02:50",
+    "rocket": "B1103‑1",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 17-35",
+    "mass": "14375",
+    "orbit": "SSO"
   }
 ]
