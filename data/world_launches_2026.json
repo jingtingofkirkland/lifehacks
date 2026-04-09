@@ -889,5 +889,16 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 82,
+    "time": "8 April 19:39:08",
+    "rocket": "Long March 6A",
+    "mission": "6A-Y? / SatNet LEO Group 21",
+    "site": "Taiyuan LA-9A",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
