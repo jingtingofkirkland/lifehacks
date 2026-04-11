@@ -59,7 +59,7 @@
     "rocket": "B1100‑2",
     "site": "Vandenberg, SLC‑4E",
     "mission": "NROL-105 (2 Starshield satellites)",
-    "mass": "16463",
+    "mass": "15917",
     "orbit": "LEO"
   },
   {
@@ -347,7 +347,7 @@
     "rocket": "B1093‑12",
     "site": "Vandenberg, SLC‑4E",
     "mission": "Transporter-16 (119 payloads smallsat rideshare)[67]",
-    "mass": "12856",
+    "mass": "12936",
     "orbit": "SSO"
   },
   {
@@ -376,5 +376,23 @@
     "mission": "Starlink: Group 17-35",
     "mass": "14375",
     "orbit": "SSO"
+  },
+  {
+    "flight": 625,
+    "time": "April 11, 2026 05:04",
+    "rocket": "B1063‑32",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 17-21",
+    "mass": "14375",
+    "orbit": "SSO"
+  },
+  {
+    "flight": 626,
+    "time": "April 11, 2026 11:41",
+    "rocket": "B1094‑7",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Cygnus NG-24",
+    "mass": "5000",
+    "orbit": "LEO (ISS)"
   }
 ]
