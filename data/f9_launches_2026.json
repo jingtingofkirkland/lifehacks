@@ -59,7 +59,7 @@
     "rocket": "B1100‑2",
     "site": "Vandenberg, SLC‑4E",
     "mission": "NROL-105 (2 Starshield satellites)",
-    "mass": "15917",
+    "mass": "15951",
     "orbit": "LEO"
   },
   {
@@ -394,5 +394,14 @@
     "mission": "Cygnus NG-24",
     "mass": "5000",
     "orbit": "LEO (ISS)"
+  },
+  {
+    "flight": 627,
+    "time": "April 14, 2026 09:33",
+    "rocket": "B1080‑26",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Starlink: Group 10-24",
+    "mass": "16675",
+    "orbit": "LEO"
   }
 ]

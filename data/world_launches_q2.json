@@ -130,5 +130,27 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 13,
+    "time": "14 April 04:03:00",
+    "rocket": "Kinetica 1",
+    "mission": "Y12(?)",
+    "site": "Jiuquan LS-130",
+    "org": {
+      "country": "China",
+      "info": "CAS Space"
+    }
+  },
+  {
+    "flight": 14,
+    "time": "14 April 09:33:10",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 10-24",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
