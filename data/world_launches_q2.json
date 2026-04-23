@@ -218,5 +218,38 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 21,
+    "time": "23 April 02:00:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-14",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 22,
+    "time": "23 April 03:09:00",
+    "rocket": "Electron",
+    "mission": "\"Kakushin Rising\"",
+    "site": "Mahia LC-1",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
+  },
+  {
+    "flight": 23,
+    "time": "23 April7:29",
+    "rocket": "Angara-1.2",
+    "mission": "",
+    "site": "Plesetsk Site 35/1",
+    "org": {
+      "country": "Russia",
+      "info": "RVSN RF"
+    }
   }
 ]
