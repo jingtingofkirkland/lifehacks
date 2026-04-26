@@ -1065,5 +1065,27 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 98,
+    "time": "25 April 12:15:00",
+    "rocket": "Long March 6",
+    "mission": "",
+    "site": "Taiyuan LA-9A",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 99,
+    "time": "25 April 22:21:47",
+    "rocket": "Soyuz-2.1a",
+    "mission": "",
+    "site": "Baikonur Site 31/6",
+    "org": {
+      "country": "Russia",
+      "info": "Roscosmos"
+    }
   }
 ]
