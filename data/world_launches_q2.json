@@ -243,7 +243,7 @@
   },
   {
     "flight": 23,
-    "time": "23 April7:29",
+    "time": "23 April 08:29",
     "rocket": "Angara-1.2",
     "mission": "",
     "site": "Plesetsk Site 35/1",
@@ -287,13 +287,24 @@
   },
   {
     "flight": 27,
-    "time": "28 April 12:52:00 ",
+    "time": "28 April 00:53:30 ",
     "rocket": "Atlas V 551",
     "mission": "LA-06/Leo-6",
     "site": "Cape Canaveral SLC-41",
     "org": {
       "country": "United States",
       "info": "ULA"
+    }
+  },
+  {
+    "flight": 28,
+    "time": "29 April 14:13:00",
+    "rocket": "Falcon Heavy",
+    "mission": "FH-012",
+    "site": "Kennedy LC-39A",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
     }
   }
 ]
