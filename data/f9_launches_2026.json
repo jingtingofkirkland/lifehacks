@@ -451,6 +451,15 @@
   },
   {
     "flight": 633,
+    "time": "April 29, 2026 14:13",
+    "rocket": "B1098‑1 / B1072‑2 / B1075‑22",
+    "site": "Kennedy, LC‑39A",
+    "mission": "ViaSat-3 F3",
+    "mass": "6400",
+    "orbit": "GTO"
+  },
+  {
+    "flight": 634,
     "time": "April 30, 2026 02:42",
     "rocket": "B1093‑13",
     "site": "Vandenberg, SLC‑4E",
@@ -459,7 +468,7 @@
     "orbit": "SSO"
   },
   {
-    "flight": 634,
+    "flight": 635,
     "time": "May 1, 2026 18:06",
     "rocket": "B1069‑31",
     "site": "Cape Canaveral, SLC‑40",

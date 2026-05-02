@@ -151,6 +151,7 @@ function scrapeFalconLaunches($) {
         space: (t) => t.replace(/\xa0/g, ' '),
         time: (t) => t.replace(/\[\d+\]/g, '').replace(/(\d{4})(\d{2}:\d{2})/, '$1 $2'),
         rocket: (t) => t.replace(/F9\xa0B5/g, '').replace(/\[\d+\]/g, ''),
+        rocketFH: (t) => t.replace(/Falcon\s*Heavy\s*B5/g, '').replace(/\[\d+\]/g, '').replace(/\s*\(core\)\s*/, '').trim(),
         mass: (t) => {
             const match = t.match(MASS_REGEX);
             return match ? match[1].replace(/[~,\s]/g, '') : t;
@@ -158,6 +159,7 @@ function scrapeFalconLaunches($) {
     };
 
     const transformers = [clean.time, clean.rocket, clean.space, clean.space, clean.mass, clean.space];
+    const fhTransformers = [clean.time, clean.rocketFH, clean.space, clean.space, clean.mass, clean.space];
 
     // Dynamically find the first F9-* row in the current year's table
     const currentYear = new Date().getFullYear();
@@ -171,7 +173,7 @@ function scrapeFalconLaunches($) {
     const startFlight = parseInt(firstRow.attr('id').replace('F9-', ''), 10);
     console.log(`   📌 Detected first flight: F9-${startFlight} (from ${yearTable.length ? `#${currentYear}ytd` : 'page'})`);
 
-    // First pass: extract all launches with raw mass
+    // First pass: extract all F9 launches with raw mass
     const json = [];
     for (let i = startFlight; ; i++) {
         const cells = $(`#F9-${i} td`);
@@ -185,6 +187,57 @@ function scrapeFalconLaunches($) {
         });
 
         json.push(obj);
+    }
+
+    // Also extract Falcon Heavy launches (FH-* rows)
+    const fhRows = searchScope.find('tr[id^="FH-"]');
+    let fhCount = 0;
+    fhRows.each((_, el) => {
+        const row = $(el);
+        const cells = row.find('td');
+        const data = cells.map((_, c) => $(c).text().trim()).get();
+
+        const obj = { flight: 0 };
+        HEADERS.forEach((header, j) => {
+            obj[header] = fhTransformers[j](data[j]);
+        });
+
+        // If center core has no flight number suffix, assume first flight
+        if (obj.rocket && !obj.rocket.includes('‑') && !obj.rocket.includes('-')) {
+            obj.rocket = obj.rocket + '‑1';
+        }
+
+        // Collect side boosters from sub-rows
+        const sideBoosters = [];
+        let subRow = row.next('tr');
+        for (let s = 0; s < 2 && subRow.length; s++) {
+            const subCells = subRow.find('td');
+            if (subCells.length >= 1) {
+                const boosterText = subCells.first().text().trim().replace(/\s*\(side\)\s*/, '').replace(/\[\d+\]/g, '');
+                if (boosterText && boosterText.match(/^B\d/)) {
+                    sideBoosters.push(boosterText);
+                }
+            }
+            subRow = subRow.next('tr');
+        }
+        if (sideBoosters.length > 0) {
+            obj.rocket = obj.rocket + ' / ' + sideBoosters.join(' / ');
+        }
+
+        json.push(obj);
+        fhCount++;
+    });
+
+    if (fhCount > 0) {
+        console.log(`   🚀 Found ${fhCount} Falcon Heavy launch(es)`);
+
+        // Sort all launches by date and renumber flights
+        json.sort((a, b) => {
+            const dateA = new Date(a.time.replace(/\s+\d{2}:\d{2}$/, ''));
+            const dateB = new Date(b.time.replace(/\s+\d{2}:\d{2}$/, ''));
+            return dateA - dateB;
+        });
+        json.forEach((obj, i) => { obj.flight = startFlight + i; });
     }
 
     // Compute running averages per orbit type from known masses

@@ -51,9 +51,11 @@ export function BoosterChart({ data, selectedYear, animKey, recorder, title, onT
       return;
     }
 
-    const boosterData: BoosterData[] = data.map(x => {
-      const r = x.rocket.split(/[-\.‑]/);
-      return { name: r[0].trim(), flights: Number(r[1]) };
+    const boosterData: BoosterData[] = data.flatMap(x => {
+      return x.rocket.split(/\s*\/\s*/).map(part => {
+        const r = part.trim().split(/[-\.‑]/);
+        return { name: r[0].trim(), flights: Number(r[1]) || 1 };
+      });
     });
 
     // Count how many flights each booster did this year

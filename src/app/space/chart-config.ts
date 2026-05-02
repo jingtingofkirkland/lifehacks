@@ -25,6 +25,7 @@ export const CHART_CONFIG = {
 
 export const EXPENDED_BOOSTERS = new Set([
   'B1076',
+  'B1098',
 ]);
 
 export function setupHighResCanvas(
