@@ -1175,5 +1175,16 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 108,
+    "time": "11 May 00:14:32",
+    "rocket": "Long March 7",
+    "mission": "",
+    "site": "Wenchang LC-2",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
