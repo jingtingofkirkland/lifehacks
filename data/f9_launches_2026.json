@@ -493,5 +493,14 @@
     "mission": "Starlink: Group 17-29",
     "mass": "13800",
     "orbit": "SSO"
+  },
+  {
+    "flight": 638,
+    "time": "May 12, 2026 02:13",
+    "rocket": "B1097‑9",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "NROL-172 (Starshield satellites)",
+    "mass": "15916",
+    "orbit": "LEO"
   }
 ]
