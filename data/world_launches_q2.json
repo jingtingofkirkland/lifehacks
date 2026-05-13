@@ -394,5 +394,16 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 37,
+    "time": "12 May 11:59:00",
+    "rocket": "Long March 6A",
+    "mission": "Y23 / Spacesail Polar Group 08",
+    "site": "Taiyuan",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
