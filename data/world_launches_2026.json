@@ -1219,5 +1219,16 @@
       "country": "China",
       "info": "Land Space"
     }
+  },
+  {
+    "flight": 112,
+    "time": "15 May 04:33:00",
+    "rocket": "Kinetica 1",
+    "mission": "Y13",
+    "site": "Jiuquan LS-130",
+    "org": {
+      "country": "China",
+      "info": "CAS Space"
+    }
   }
 ]
