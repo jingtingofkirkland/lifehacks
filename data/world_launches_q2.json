@@ -438,5 +438,16 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 41,
+    "time": "17 May 14:42:00",
+    "rocket": "Long March 8",
+    "mission": "Y8",
+    "site": "Wenchang Commercial LC-1",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
