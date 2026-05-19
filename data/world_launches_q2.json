@@ -449,5 +449,16 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 42,
+    "time": "19 May 03:52:10",
+    "rocket": "Vega-C",
+    "mission": "VV29",
+    "site": "Kourou ELV",
+    "org": {
+      "country": "Italy",
+      "info": "Avio"
+    }
   }
 ]
