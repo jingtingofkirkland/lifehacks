@@ -460,5 +460,16 @@
       "country": "Italy",
       "info": "Avio"
     }
+  },
+  {
+    "flight": 43,
+    "time": "20 May 02:11:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-42",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]

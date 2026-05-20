@@ -347,7 +347,7 @@
     "rocket": "B1093‑12",
     "site": "Vandenberg, SLC‑4E",
     "mission": "Transporter-16 (119 payloads smallsat rideshare)[67]",
-    "mass": "12657",
+    "mass": "12701",
     "orbit": "SSO"
   },
   {
@@ -511,5 +511,14 @@
     "mission": "SpaceX CRS-34 (Cargo Dragon C209-6)",
     "mass": "2948",
     "orbit": "LEO (ISS)"
+  },
+  {
+    "flight": 640,
+    "time": "May 20, 2026 02:46",
+    "rocket": "B1103‑2",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 17-42",
+    "mass": "13800",
+    "orbit": "SSO"
   }
 ]
