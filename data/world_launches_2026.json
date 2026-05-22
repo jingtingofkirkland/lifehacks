@@ -1274,5 +1274,27 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 117,
+    "time": "21 May 10:04:20",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 10-31",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 118,
+    "time": "22 May 09:33:00",
+    "rocket": "Electron",
+    "mission": "\"Viva La StriX\"",
+    "site": "Mahia LC-1",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
   }
 ]
