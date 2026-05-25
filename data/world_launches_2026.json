@@ -1296,5 +1296,16 @@
       "country": "United States",
       "info": "Rocket Lab"
     }
+  },
+  {
+    "flight": 119,
+    "time": "24 May 15:08:36",
+    "rocket": "Long March 2F",
+    "mission": "Y23",
+    "site": "Jiuquan SLS-1",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
