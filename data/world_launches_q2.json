@@ -592,5 +592,16 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 55,
+    "time": "3 June 14:00:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-47",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
