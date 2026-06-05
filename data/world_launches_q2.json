@@ -625,5 +625,16 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 58,
+    "time": "5 June 05:00:00",
+    "rocket": "Long March 8",
+    "mission": "8-Y9",
+    "site": "Wenchang Commercial LC-1",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
