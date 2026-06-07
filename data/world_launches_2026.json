@@ -1439,5 +1439,16 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 132,
+    "time": "7 June 04:24:45",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-43",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
