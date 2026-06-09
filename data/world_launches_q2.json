@@ -650,13 +650,24 @@
   },
   {
     "flight": 60,
-    "time": "8 June 10:07:00",
+    "time": "8 June 10:13:50",
     "rocket": "Falcon 9 Block 5",
     "mission": "Starlink Group 10-35",
     "site": "Cape Canaveral SLC-40",
     "org": {
       "country": "United States",
       "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 61,
+    "time": "9 June 08:23:00",
+    "rocket": "Zhuque-2E",
+    "mission": "Y6",
+    "site": "Jiuquan Site 96",
+    "org": {
+      "country": "China",
+      "info": "Land Space"
     }
   }
 ]
