@@ -1472,5 +1472,27 @@
       "country": "China",
       "info": "Land Space"
     }
+  },
+  {
+    "flight": 135,
+    "time": "11 June 07:30:00",
+    "rocket": "Long March 5",
+    "mission": "5-Y11",
+    "site": "Wenchang LC-1",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 136,
+    "time": "11 June 15:05:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-44",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
