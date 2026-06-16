@@ -1486,28 +1486,6 @@
   },
   {
     "flight": 136,
-    "time": "11 June 15:05:00",
-    "rocket": "Falcon 9 Block 5",
-    "mission": "Starlink Group 17-44",
-    "site": "Vandenberg SLC-4E",
-    "org": {
-      "country": "United States",
-      "info": "SpaceX"
-    }
-  },
-  {
-    "flight": 137,
-    "time": "12 June 00:53:59",
-    "rocket": "H3-30S",
-    "mission": "F6",
-    "site": "Tanegashima LA-Y2",
-    "org": {
-      "country": "Japan",
-      "info": "JAXA"
-    }
-  },
-  {
-    "flight": 138,
     "time": "22 April 01:36",
     "rocket": "HASTE",
     "mission": "BUBBLES",

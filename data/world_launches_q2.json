@@ -683,9 +683,20 @@
   },
   {
     "flight": 63,
-    "time": "11 June 15:05:00",
+    "time": "June 1108:00",
+    "rocket": "HASTE",
+    "mission": "CURVEBALL",
+    "site": "MARS LC-2",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
+  },
+  {
+    "flight": 64,
+    "time": "Q2 (TBD)",
     "rocket": "Falcon 9 Block 5",
-    "mission": "Starlink Group 17-44",
+    "mission": "",
     "site": "Vandenberg SLC-4E",
     "org": {
       "country": "United States",
@@ -693,22 +704,11 @@
     }
   },
   {
-    "flight": 64,
-    "time": "12 June 00:53:59",
-    "rocket": "H3-30S",
-    "mission": "F6",
-    "site": "Tanegashima LA-Y2",
-    "org": {
-      "country": "Japan",
-      "info": "JAXA"
-    }
-  },
-  {
     "flight": 65,
     "time": "Q2 (TBD)",
     "rocket": "Falcon 9 Block 5",
     "mission": "",
-    "site": "Vandenberg SLC-4E",
+    "site": "TBA",
     "org": {
       "country": "United States",
       "info": "SpaceX"
@@ -741,7 +741,7 @@
     "time": "Q2 (TBD)",
     "rocket": "Falcon 9 Block 5",
     "mission": "",
-    "site": "TBA",
+    "site": "Vandenberg SLC-4E",
     "org": {
       "country": "United States",
       "info": "SpaceX"
@@ -763,7 +763,7 @@
     "time": "Q2 (TBD)",
     "rocket": "Falcon 9 Block 5",
     "mission": "",
-    "site": "Vandenberg SLC-4E",
+    "site": "TBA",
     "org": {
       "country": "United States",
       "info": "SpaceX"
@@ -782,17 +782,6 @@
   },
   {
     "flight": 72,
-    "time": "Q2 (TBD)",
-    "rocket": "Falcon 9 Block 5",
-    "mission": "",
-    "site": "TBA",
-    "org": {
-      "country": "United States",
-      "info": "SpaceX"
-    }
-  },
-  {
-    "flight": 73,
     "time": "H1 (TBD)",
     "rocket": "Long March 10B",
     "mission": "10B-X1",
@@ -803,7 +792,7 @@
     }
   },
   {
-    "flight": 74,
+    "flight": 73,
     "time": "Q2 (TBD)",
     "rocket": "Starship",
     "mission": "Flight 13",
@@ -814,7 +803,7 @@
     }
   },
   {
-    "flight": 75,
+    "flight": 74,
     "time": "H1 (TBD)",
     "rocket": "GSLV Mk II",
     "mission": "",
@@ -825,7 +814,7 @@
     }
   },
   {
-    "flight": 76,
+    "flight": 75,
     "time": "22 April 01:36",
     "rocket": "HASTE",
     "mission": "BUBBLES",
