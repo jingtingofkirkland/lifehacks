@@ -1486,6 +1486,17 @@
   },
   {
     "flight": 136,
+    "time": "11 June 08:00",
+    "rocket": "HASTE",
+    "mission": "CURVEBALL",
+    "site": "MARS LC-2",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
+  },
+  {
+    "flight": 137,
     "time": "22 April 01:36",
     "rocket": "HASTE",
     "mission": "BUBBLES",
