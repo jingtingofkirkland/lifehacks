@@ -6,7 +6,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "CSG-3",
     "mass": "2230",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "RTLS"
   },
   {
     "flight": 584,
@@ -15,7 +16,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 6-88",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 585,
@@ -24,7 +26,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 6-96",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 586,
@@ -33,7 +36,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Twilight (Pandora and others 39 payloads)",
     "mass": "325",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "RTLS"
   },
   {
     "flight": 587,
@@ -42,7 +46,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 6-97",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 588,
@@ -51,7 +56,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 6-98",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 589,
@@ -59,8 +65,11 @@
     "rocket": "B1100‑2",
     "site": "Vandenberg, SLC‑4E",
     "mission": "NROL-105 (2 Starshield satellites)",
-    "mass": "15577",
-    "orbit": "LEO"
+    "mass": "6983",
+    "orbit": "LEO",
+    "landing": "RTLS",
+    "massEstimated": true,
+    "massEstimateBasis": "orbit+landing:LEO+RTLS"
   },
   {
     "flight": 590,
@@ -69,7 +78,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 6-100",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 591,
@@ -78,7 +88,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-30",
     "mass": "14375",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 592,
@@ -87,7 +98,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-20",
     "mass": "14375",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 593,
@@ -96,7 +108,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "GPS III-9",
     "mass": "4350",
-    "orbit": "MEO"
+    "orbit": "MEO",
+    "landing": "ASDS"
   },
   {
     "flight": 594,
@@ -105,7 +118,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-19",
     "mass": "14375",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 595,
@@ -114,7 +128,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 6-101",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 596,
@@ -123,7 +138,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-32",
     "mass": "14375",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 597,
@@ -132,7 +148,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-33",
     "mass": "14375",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 598,
@@ -141,7 +158,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-34",
     "mass": "13800",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 599,
@@ -150,7 +168,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Crew-12 (Crew Dragon C212-5 Freedom)",
     "mass": "13000",
-    "orbit": "LEO (ISS)"
+    "orbit": "LEO (ISS)",
+    "landing": "RTLS"
   },
   {
     "flight": 600,
@@ -159,7 +178,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-13",
     "mass": "13800",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 601,
@@ -168,7 +188,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 6-103",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 602,
@@ -177,7 +198,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-36",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 603,
@@ -186,7 +208,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-25",
     "mass": "14375",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 604,
@@ -195,7 +218,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 6-104",
     "mass": "16100",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 605,
@@ -204,7 +228,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 6-110",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 606,
@@ -213,7 +238,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-26",
     "mass": "14375",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 607,
@@ -222,7 +248,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 6-108",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 608,
@@ -231,7 +258,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-23",
     "mass": "14375",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 609,
@@ -240,7 +268,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-41",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 610,
@@ -249,7 +278,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-40",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 611,
@@ -258,7 +288,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-18",
     "mass": "14375",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 612,
@@ -267,7 +298,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "EchoStar XXV",
     "mass": "6800",
-    "orbit": "GTO"
+    "orbit": "GTO",
+    "landing": "ASDS"
   },
   {
     "flight": 613,
@@ -276,7 +308,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-31",
     "mass": "14375",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 614,
@@ -285,7 +318,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-48",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 615,
@@ -294,7 +328,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-24",
     "mass": "14375",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 616,
@@ -303,7 +338,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-46",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 617,
@@ -312,7 +348,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-33",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 618,
@@ -321,7 +358,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-15",
     "mass": "14375",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 619,
@@ -330,7 +368,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-62",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 620,
@@ -339,7 +378,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-17",
     "mass": "14375",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 621,
@@ -347,8 +387,11 @@
     "rocket": "B1093‑12",
     "site": "Vandenberg, SLC‑4E",
     "mission": "Transporter-16 (119 payloads smallsat rideshare)[80]",
-    "mass": "12853",
-    "orbit": "SSO"
+    "mass": "14078",
+    "orbit": "SSO",
+    "landing": "ASDS",
+    "massEstimated": true,
+    "massEstimateBasis": "orbit+landing:SSO+ASDS"
   },
   {
     "flight": 622,
@@ -357,7 +400,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-44",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 623,
@@ -366,7 +410,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-58",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 624,
@@ -375,7 +420,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-35",
     "mass": "14375",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 625,
@@ -384,7 +430,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-21",
     "mass": "14375",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 626,
@@ -393,7 +440,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Cygnus NG-24",
     "mass": "5000",
-    "orbit": "LEO (ISS)"
+    "orbit": "LEO (ISS)",
+    "landing": "RTLS"
   },
   {
     "flight": 627,
@@ -402,7 +450,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-24",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 628,
@@ -411,7 +460,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-27",
     "mass": "14375",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 629,
@@ -420,7 +470,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-22",
     "mass": "14375",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 630,
@@ -429,7 +480,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "GPS III-10",
     "mass": "4350",
-    "orbit": "MEO"
+    "orbit": "MEO",
+    "landing": "ASDS"
   },
   {
     "flight": 631,
@@ -438,7 +490,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-14",
     "mass": "13800",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 632,
@@ -447,7 +500,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-16",
     "mass": "14375",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 633,
@@ -456,7 +510,8 @@
     "site": "Kennedy, LC‑39A",
     "mission": "ViaSat-3 F3",
     "mass": "6400",
-    "orbit": "GTO"
+    "orbit": "GTO",
+    "landing": "EXPENDED"
   },
   {
     "flight": 634,
@@ -465,7 +520,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-36",
     "mass": "13800",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 635,
@@ -474,7 +530,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-38",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 636,
@@ -483,7 +540,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "CAS500-245 Rideshares",
     "mass": "500",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "RTLS"
   },
   {
     "flight": 637,
@@ -492,7 +550,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-29",
     "mass": "13800",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 638,
@@ -500,8 +559,11 @@
     "rocket": "B1097‑9",
     "site": "Vandenberg, SLC‑4E",
     "mission": "NROL-172 (22 Starshield satellites)",
-    "mass": "15577",
-    "orbit": "LEO"
+    "mass": "16466",
+    "orbit": "LEO",
+    "landing": "ASDS",
+    "massEstimated": true,
+    "massEstimateBasis": "orbit+landing:LEO+ASDS"
   },
   {
     "flight": 639,
@@ -510,7 +572,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "SpaceX CRS-34 (Cargo Dragon C209-6)",
     "mass": "2948",
-    "orbit": "LEO (ISS)"
+    "orbit": "LEO (ISS)",
+    "landing": "RTLS"
   },
   {
     "flight": 640,
@@ -519,7 +582,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-42",
     "mass": "13800",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 641,
@@ -528,7 +592,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-31",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 642,
@@ -537,7 +602,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-47",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 643,
@@ -546,7 +612,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-37",
     "mass": "13800",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 644,
@@ -555,7 +622,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-53",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 645,
@@ -564,7 +632,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-41",
     "mass": "13800",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 646,
@@ -573,7 +642,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-47",
     "mass": "13800",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 647,
@@ -582,7 +652,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-43",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 648,
@@ -591,7 +662,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-43 + 2 Starshield satellites",
     "mass": "12075",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 649,
@@ -600,7 +672,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-35",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 650,
@@ -609,7 +682,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-44",
     "mass": "13800",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 651,
@@ -618,7 +692,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "Starlink: Group 10-54",
     "mass": "16675",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 652,
@@ -627,7 +702,8 @@
     "site": "Vandenberg, SLC‑4E",
     "mission": "Starlink: Group 17-54",
     "mass": "13800",
-    "orbit": "SSO"
+    "orbit": "SSO",
+    "landing": "ASDS"
   },
   {
     "flight": 653,
@@ -636,7 +712,8 @@
     "site": "Cape Canaveral, SLC‑40",
     "mission": "BlueBird Block 2 FM3-5 (3 Satellites, BlueBird 8 to 10)",
     "mass": "13500",
-    "orbit": "LEO"
+    "orbit": "LEO",
+    "landing": "ASDS"
   },
   {
     "flight": 654,
@@ -644,7 +721,10 @@
     "rocket": "B1103‑3",
     "site": "Vandenberg, SLC‑4E",
     "mission": "NROL-179",
-    "mass": "Classified",
-    "orbit": "LEO"
+    "mass": "6983",
+    "orbit": "LEO",
+    "landing": "RTLS",
+    "massEstimated": true,
+    "massEstimateBasis": "orbit+landing:LEO+RTLS"
   }
 ]

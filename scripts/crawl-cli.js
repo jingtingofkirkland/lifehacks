@@ -13,6 +13,9 @@
 const cheerio = require('cheerio');
 const fs = require('fs').promises;
 const path = require('path');
+const { execFile } = require('child_process');
+const { promisify } = require('util');
+const execFileP = promisify(execFile);
 
 // Constants
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36';
@@ -75,17 +78,37 @@ async function withRetry(fn, label = '') {
 }
 
 /**
+ * Fetch HTML via curl — used as a fallback when node's fetch is blocked
+ * by a sandbox (EPERM on connect, common in restricted dev environments).
+ */
+async function fetchViaCurl(url) {
+    const { stdout } = await execFileP('curl', [
+        '-sSL', '--max-time', '30', '-A', USER_AGENT, url,
+    ], { maxBuffer: 50 * 1024 * 1024 });
+    return stdout;
+}
+
+/**
  * Fetch a URL and return a cheerio instance
  */
 async function fetchHTML(url) {
     return withRetry(async () => {
-        const response = await fetch(url, {
-            headers: { 'User-Agent': USER_AGENT }
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        let html;
+        try {
+            const response = await fetch(url, {
+                headers: { 'User-Agent': USER_AGENT }
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            html = await response.text();
+        } catch (err) {
+            // Fall back to curl on sandboxed network (EPERM) — node's fetch
+            // can't connect, but the host's curl can.
+            const isSandboxBlock = err?.cause?.code === 'EPERM' || /EPERM/.test(err?.message || '');
+            if (!isSandboxBlock) throw err;
+            html = await fetchViaCurl(url);
         }
-        const html = await response.text();
         return cheerio.load(html);
     }, url);
 }
@@ -161,6 +184,18 @@ function scrapeFalconLaunches($) {
     const transformers = [clean.time, clean.rocket, clean.space, clean.space, clean.mass, clean.space];
     const fhTransformers = [clean.time, clean.rocketFH, clean.space, clean.space, clean.mass, clean.space];
 
+    // Classify booster recovery from the "Booster landing" cell text.
+    // RTLS (LZ-1/2/4/40) keeps less propellant for boostback → lighter payloads.
+    // ASDS (OCISLY/JRTI/ASOG droneships) → heavy payloads.
+    // Expended/no-attempt → typically the heaviest missions.
+    const classifyLanding = (text) => {
+        if (!text) return 'UNKNOWN';
+        if (/LZ[‑\-]\d+|Landing\s*Zone/i.test(text)) return 'RTLS';
+        if (/OCISLY|JRTI|ASOG|Of\s*Course\s*I\s*Still\s*Love\s*You|Just\s*Read\s*the\s*Instructions|A\s*Shortfall\s*of\s*Gravitas/i.test(text)) return 'ASDS';
+        if (/No\s*attempt|Expend(ed|able)/i.test(text)) return 'EXPENDED';
+        return 'UNKNOWN';
+    };
+
     // Dynamically find the first F9-* row in the current year's table
     const currentYear = new Date().getFullYear();
     const yearTable = $(`#${currentYear}ytd`);
@@ -173,7 +208,9 @@ function scrapeFalconLaunches($) {
     const startFlight = parseInt(firstRow.attr('id').replace('F9-', ''), 10);
     console.log(`   📌 Detected first flight: F9-${startFlight} (from ${yearTable.length ? `#${currentYear}ytd` : 'page'})`);
 
-    // First pass: extract all F9 launches with raw mass
+    // First pass: extract all F9 launches with raw mass.
+    // Cell layout: [0]date [1]booster [2]site [3]payload [4]mass [5]orbit
+    //              [6]customer [7]launch-outcome [8]booster-landing
     const json = [];
     for (let i = startFlight; ; i++) {
         const cells = $(`#F9-${i} td`);
@@ -185,6 +222,7 @@ function scrapeFalconLaunches($) {
         HEADERS.forEach((header, j) => {
             obj[header] = transformers[j](data[j]);
         });
+        obj.landing = classifyLanding(data[8]);
 
         json.push(obj);
     }
@@ -201,6 +239,7 @@ function scrapeFalconLaunches($) {
         HEADERS.forEach((header, j) => {
             obj[header] = fhTransformers[j](data[j]);
         });
+        obj.landing = classifyLanding(data[8]);
 
         // If center core has no flight number suffix, assume first flight
         if (obj.rocket && !obj.rocket.includes('‑') && !obj.rocket.includes('-')) {
@@ -240,44 +279,72 @@ function scrapeFalconLaunches($) {
         json.forEach((obj, i) => { obj.flight = startFlight + i; });
     }
 
-    // Compute running averages per orbit type from known masses
-    const orbitMasses = {};
+    // Compute running averages from known masses, bucketed by (orbit, landing),
+    // landing alone, and orbit alone. Landing is a strong mass predictor:
+    // RTLS implies a lighter payload (boostback fuel), ASDS heavier, expended heaviest.
+    const isUsableMass = (s) => {
+        const n = parseFloat(s);
+        return Number.isFinite(n) && n > 0 && !/^Unknown/i.test(s) && s !== 'Classified';
+    };
+    const orbitKeyOf = (orbit) => (orbit || '').split(' ')[0]; // "LEO (ISS)" → "LEO"
+
+    const bucketAvgs = {}; // `${orbit}|${landing}` → {sum, count}
+    const orbitAvgs = {};
+    const landingAvgs = {};
     let totalKnownMass = 0;
     let totalKnownCount = 0;
+
+    const addTo = (map, key, n) => {
+        if (!map[key]) map[key] = { sum: 0, count: 0 };
+        map[key].sum += n;
+        map[key].count++;
+    };
+
     for (const obj of json) {
+        if (!isUsableMass(obj.mass)) continue;
         const massNum = parseFloat(obj.mass);
-        if (!isNaN(massNum) && massNum > 0 && !obj.mass.startsWith('Unknown')) {
-            const orbitKey = obj.orbit.split(' ')[0]; // normalize: "LEO (ISS)" → "LEO"
-            if (!orbitMasses[orbitKey]) orbitMasses[orbitKey] = { sum: 0, count: 0 };
-            orbitMasses[orbitKey].sum += massNum;
-            orbitMasses[orbitKey].count++;
-            totalKnownMass += massNum;
-            totalKnownCount++;
-        }
+        const oKey = orbitKeyOf(obj.orbit);
+        const lKey = obj.landing || 'UNKNOWN';
+        addTo(bucketAvgs, `${oKey}|${lKey}`, massNum);
+        addTo(orbitAvgs, oKey, massNum);
+        addTo(landingAvgs, lKey, massNum);
+        totalKnownMass += massNum;
+        totalKnownCount++;
     }
 
-    const overallAvg = totalKnownCount > 0 ? Math.round(totalKnownMass / totalKnownCount) : 3000;
-    const orbitAvgs = {};
-    for (const [orbit, { sum, count }] of Object.entries(orbitMasses)) {
-        orbitAvgs[orbit] = Math.round(sum / count);
+    const overallAvg = totalKnownCount > 0 ? Math.round(totalKnownMass / totalKnownCount) : parseInt(FALLBACK_MASS, 10);
+    const avgOf = (map, key) => {
+        const b = map[key];
+        return b && b.count > 0 ? Math.round(b.sum / b.count) : null;
+    };
+
+    if (totalKnownCount > 0) {
+        const landingSummary = Object.entries(landingAvgs)
+            .map(([l, { sum, count }]) => `${l}=${Math.round(sum/count)}kg(n=${count})`)
+            .join(', ');
+        console.log(`   📊 Mass averages by landing: ${landingSummary} (overall=${overallAvg}kg)`);
     }
 
-    if (Object.keys(orbitAvgs).length > 0) {
-        console.log(`   📊 Mass averages by orbit: ${Object.entries(orbitAvgs).map(([o, a]) => `${o}=${a}kg`).join(', ')} (overall=${overallAvg}kg)`);
-    }
-
-    // Second pass: estimate unknown masses using running averages
+    // Second pass: estimate missing masses. Prefer (orbit, landing) → landing → orbit → overall.
     let estimatedCount = 0;
     for (const obj of json) {
-        if (obj.mass.startsWith('Unknown') || obj.mass === '' || obj.mass === '0') {
-            const orbitKey = obj.orbit.split(' ')[0];
-            const estimated = orbitAvgs[orbitKey] || overallAvg || FALLBACK_MASS;
-            obj.mass = String(estimated);
-            estimatedCount++;
-        }
+        if (isUsableMass(obj.mass)) continue;
+        const oKey = orbitKeyOf(obj.orbit);
+        const lKey = obj.landing || 'UNKNOWN';
+        const estimated =
+            avgOf(bucketAvgs, `${oKey}|${lKey}`) ??
+            avgOf(landingAvgs, lKey) ??
+            avgOf(orbitAvgs, oKey) ??
+            overallAvg;
+        obj.mass = String(estimated);
+        obj.massEstimated = true;
+        obj.massEstimateBasis = avgOf(bucketAvgs, `${oKey}|${lKey}`) !== null ? `orbit+landing:${oKey}+${lKey}`
+            : avgOf(landingAvgs, lKey) !== null ? `landing:${lKey}`
+            : avgOf(orbitAvgs, oKey) !== null ? `orbit:${oKey}` : 'overall';
+        estimatedCount++;
     }
     if (estimatedCount > 0) {
-        console.log(`   📊 Estimated mass for ${estimatedCount} launches using running averages`);
+        console.log(`   📊 Estimated mass for ${estimatedCount} launch(es) using (orbit, landing) averages`);
     }
 
     return json;
@@ -297,7 +364,12 @@ function scrapeWorldLaunches($) {
 
     const cleanTime = (t) => {
         try {
-            return t.replace(/\[\d+\]/g, '').replace(/(\d{1,2}\s+[A-Za-z]+)(\d{2}:\d{2})/, '$1 $2');
+            return t
+                .replace(/\[\d+\]/g, '')
+                .replace(/(\d{1,2}\s+[A-Za-z]+)(\d{2}:\d{2})/, '$1 $2')
+                // Time ranges like "00:00 - 04:00" → keep only the first time; otherwise
+                // new Date() returns Invalid Date and downstream sorts/comparisons break.
+                .replace(/(\d{2}:\d{2}(?::\d{2})?)\s*[-–—]\s*\d{2}:\d{2}(?::\d{2})?/, '$1');
         } catch {
             return t;
         }
@@ -317,9 +389,11 @@ function scrapeWorldLaunches($) {
         const $table = $(tableEl);
         const tableText = $table.text();
 
-        // Pre-scan: check if this table is purely suborbital or upcoming (no normal data)
+        // Pre-scan: check if this table is purely suborbital or upcoming (no normal data).
+        // Match the actual section headers, not the word "Suborbital" in prose — e.g., a
+        // HASTE launch description legitimately contains "Suborbital Test Electron".
         let tableHasUpcoming = tableText.includes('Upcoming launches');
-        let tableHasSuborbital = tableText.includes('Suborbital');
+        let tableHasSuborbital = tableText.includes('Suborbital flights');
         let tableHasNormalData = false;
 
         $table.find('tr').each((_, row) => {
@@ -359,7 +433,7 @@ function scrapeWorldLaunches($) {
                 reachedUpcoming = true;
                 break;
             }
-            if (rowText.includes('Suborbital')) {
+            if (rowText.includes('Suborbital flights')) {
                 tableSuborbital = true;
                 break;
             }

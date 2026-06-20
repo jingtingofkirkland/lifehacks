@@ -58,10 +58,13 @@ export function SpaceXChart({ data, selectedYear, animKey, recorder, title, onTi
     const plotWidth = chartWidth - margin.left - margin.right;
     const plotHeight = chartHeight - margin.top - margin.bottom;
 
-    const parsedData = data.map(d => ({
-      time: new Date(d.time),
-      mass: parseFloat(d.mass)
-    })).sort((a, b) => a.time.getTime() - b.time.getTime());
+    const parsedData = data.map(d => {
+      const m = parseFloat(d.mass);
+      return {
+        time: new Date(d.time),
+        mass: Number.isFinite(m) ? m : 0,
+      };
+    }).sort((a, b) => a.time.getTime() - b.time.getTime());
 
     let cumulativeMass = 0;
     const chartData = parsedData.map((d, i) => ({

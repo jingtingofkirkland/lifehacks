@@ -694,9 +694,9 @@
   },
   {
     "flight": 64,
-    "time": "Q2 (TBD)",
+    "time": "11 June 15:05:00",
     "rocket": "Falcon 9 Block 5",
-    "mission": "",
+    "mission": "Starlink Group 17-44",
     "site": "Vandenberg SLC-4E",
     "org": {
       "country": "United States",
@@ -705,21 +705,21 @@
   },
   {
     "flight": 65,
-    "time": "Q2 (TBD)",
-    "rocket": "Falcon 9 Block 5",
-    "mission": "",
-    "site": "TBA",
+    "time": "12 June 00:53:59",
+    "rocket": "H3-30S",
+    "mission": "F6",
+    "site": "Tanegashima LA-Y2",
     "org": {
-      "country": "United States",
-      "info": "SpaceX"
+      "country": "Japan",
+      "info": "JAXA"
     }
   },
   {
     "flight": 66,
-    "time": "Q2 (TBD)",
+    "time": "12 June 12:37",
     "rocket": "Falcon 9 Block 5",
-    "mission": "",
-    "site": "TBA",
+    "mission": "Starlink Group 10-54",
+    "site": "Cape Canaveral SLC-40",
     "org": {
       "country": "United States",
       "info": "SpaceX"
@@ -727,20 +727,20 @@
   },
   {
     "flight": 67,
-    "time": "Q2 (TBD)",
-    "rocket": "Falcon 9 Block 5",
-    "mission": "",
-    "site": "TBA",
+    "time": "15 June 03:44:00",
+    "rocket": "Kinetica 1",
+    "mission": "Y14",
+    "site": "Jiuquan LS-130",
     "org": {
-      "country": "United States",
-      "info": "SpaceX"
+      "country": "China",
+      "info": "CAS Space"
     }
   },
   {
     "flight": 68,
-    "time": "Q2 (TBD)",
+    "time": "15 June 15:34:35",
     "rocket": "Falcon 9 Block 5",
-    "mission": "",
+    "mission": "Starlink Group 17-54",
     "site": "Vandenberg SLC-4E",
     "org": {
       "country": "United States",
@@ -749,79 +749,68 @@
   },
   {
     "flight": 69,
-    "time": "Q2 (TBD)",
-    "rocket": "Falcon 9 Block 5",
-    "mission": "",
-    "site": "Vandenberg SLC-4E",
-    "org": {
-      "country": "United States",
-      "info": "SpaceX"
-    }
-  },
-  {
-    "flight": 70,
-    "time": "Q2 (TBD)",
-    "rocket": "Falcon 9 Block 5",
-    "mission": "",
-    "site": "TBA",
-    "org": {
-      "country": "United States",
-      "info": "SpaceX"
-    }
-  },
-  {
-    "flight": 71,
-    "time": "Q2 (TBD)",
-    "rocket": "Falcon 9 Block 5",
-    "mission": "",
-    "site": "TBA",
-    "org": {
-      "country": "United States",
-      "info": "SpaceX"
-    }
-  },
-  {
-    "flight": 72,
-    "time": "H1 (TBD)",
-    "rocket": "Long March 10B",
-    "mission": "10B-X1",
-    "site": "Wenchang LC-2",
+    "time": "16 June 09:45:00",
+    "rocket": "Long March 3B/E",
+    "mission": "3B-Y?",
+    "site": "Xichang LC-2",
     "org": {
       "country": "China",
       "info": "CASC"
     }
   },
   {
-    "flight": 73,
-    "time": "Q2 (TBD)",
-    "rocket": "Starship",
-    "mission": "Flight 13",
-    "site": "Starbase OLP-B",
+    "flight": 70,
+    "time": "17 June 02:44:00",
+    "rocket": "Long March 12",
+    "mission": "Y7",
+    "site": "Wenchang Commercial LC-2",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 71,
+    "time": "17 June 03:40:00",
+    "rocket": "Kuaizhou 11",
+    "mission": "Y13",
+    "site": "Jiuquan LS-95A",
+    "org": {
+      "country": "China",
+      "info": "Expace"
+    }
+  },
+  {
+    "flight": 72,
+    "time": "17 June 06:39:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "F9-652",
+    "site": "Cape Canaveral SLC-40",
     "org": {
       "country": "United States",
       "info": "SpaceX"
     }
   },
   {
-    "flight": 74,
-    "time": "H1 (TBD)",
-    "rocket": "GSLV Mk II",
-    "mission": "",
-    "site": "Satish Dhawan SLP",
+    "flight": 73,
+    "time": "17 June 12:21:52",
+    "rocket": "Ariane 64 Block 2",
+    "mission": "VA269/LE-03",
+    "site": "Kourou ELA-4",
     "org": {
-      "country": "India",
-      "info": "ISRO"
+      "country": "France",
+      "info": "Arianespace"
     }
   },
   {
-    "flight": 75,
-    "time": "22 April 01:36",
-    "rocket": "HASTE",
-    "mission": "BUBBLES",
-    "site": "MARS LC-2",
+    "flight": 74,
+    "time": "19 June 08:50:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "F9-653",
+    "site": "Vandenberg SLC-4E",
     "org": {
       "country": "United States",
-      "info": "Rocket Lab"
+      "info": "SpaceX"
     }
   }
 ]
