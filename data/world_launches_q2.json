@@ -812,5 +812,16 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 75,
+    "time": "19 June",
+    "rocket": "Electron",
+    "mission": "",
+    "site": "Mahia LC-1",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
   }
 ]
