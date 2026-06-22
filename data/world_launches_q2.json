@@ -823,5 +823,16 @@
       "country": "United States",
       "info": "Rocket Lab"
     }
+  },
+  {
+    "flight": 76,
+    "time": "21 June 14:00:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-28",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
