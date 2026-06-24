@@ -716,7 +716,7 @@
   },
   {
     "flight": 66,
-    "time": "12 June 12:37",
+    "time": "12 June 12:37:00",
     "rocket": "Falcon 9 Block 5",
     "mission": "Starlink Group 10-54",
     "site": "Cape Canaveral SLC-40",
@@ -844,6 +844,17 @@
     "org": {
       "country": "China",
       "info": "CASC"
+    }
+  },
+  {
+    "flight": 78,
+    "time": "23 June 10:53:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
     }
   }
 ]
