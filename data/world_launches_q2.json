@@ -815,7 +815,7 @@
   },
   {
     "flight": 75,
-    "time": "19 June",
+    "time": "19 June 10:19:00",
     "rocket": "Electron",
     "mission": "",
     "site": "Mahia LC-1",
@@ -852,6 +852,17 @@
     "rocket": "Falcon 9 Block 5",
     "mission": "",
     "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 79,
+    "time": "25 June 03:30:38",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-45",
+    "site": "Vandenberg SLC-4E",
     "org": {
       "country": "United States",
       "info": "SpaceX"
