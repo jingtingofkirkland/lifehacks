@@ -867,5 +867,16 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 80,
+    "time": "26 June 16:45:00",
+    "rocket": "Electron",
+    "mission": "Ten Owl Of Ten",
+    "site": "Mahia LC-1",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
   }
 ]
