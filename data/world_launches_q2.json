@@ -878,5 +878,27 @@
       "country": "United States",
       "info": "Rocket Lab"
     }
+  },
+  {
+    "flight": 81,
+    "time": "28 June 16:09:18",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-40",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 82,
+    "time": "29 June 02:25:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
