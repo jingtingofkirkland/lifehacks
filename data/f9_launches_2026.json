@@ -387,7 +387,7 @@
     "rocket": "B1093‑12",
     "site": "Vandenberg, SLC‑4E",
     "mission": "Transporter-16 (119 payloads smallsat rideshare)[80]",
-    "mass": "14052",
+    "mass": "14044",
     "orbit": "SSO",
     "landing": "ASDS",
     "massEstimated": true,
@@ -777,6 +777,16 @@
     "mission": "SXM-11",
     "mass": "7000",
     "orbit": "GTO",
+    "landing": "ASDS"
+  },
+  {
+    "flight": 660,
+    "time": "July 2, 2026 02:58",
+    "rocket": "B1100‑7",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 17-46",
+    "mass": "13800",
+    "orbit": "SSO",
     "landing": "ASDS"
   }
 ]
