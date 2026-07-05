@@ -559,7 +559,7 @@
     "rocket": "B1097‑9",
     "site": "Vandenberg, SLC‑4E",
     "mission": "NROL-172 (22 Starshield satellites)",
-    "mass": "16466",
+    "mass": "16473",
     "orbit": "LEO",
     "landing": "ASDS",
     "massEstimated": true,
@@ -743,7 +743,7 @@
     "rocket": "B1078‑29",
     "site": "Cape Canaveral, SLC‑40",
     "mission": "SpaceX Starfall",
-    "mass": "16466",
+    "mass": "16473",
     "orbit": "LEO",
     "landing": "ASDS",
     "massEstimated": true,
@@ -787,6 +787,16 @@
     "mission": "Starlink: Group 17-46",
     "mass": "13800",
     "orbit": "SSO",
+    "landing": "ASDS"
+  },
+  {
+    "flight": 661,
+    "time": "July 5, 2026 10:50",
+    "rocket": "B1090‑13",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Starlink: Group 10-50",
+    "mass": "16675",
+    "orbit": "LEO",
     "landing": "ASDS"
   }
 ]
