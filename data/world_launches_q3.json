@@ -42,5 +42,16 @@
       "country": "United States",
       "info": "Northrop Grumman"
     }
+  },
+  {
+    "flight": 5,
+    "time": "5 July 10:36:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 10-50",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
