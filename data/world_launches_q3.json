@@ -45,10 +45,43 @@
   },
   {
     "flight": 5,
+    "time": "4 July 09:30",
+    "rocket": "Long March 6A",
+    "mission": "6A-Y25",
+    "site": "Taiyuan LA-9A",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 6,
     "time": "5 July 10:36:00",
     "rocket": "Falcon 9 Block 5",
     "mission": "Starlink Group 10-50",
     "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 7,
+    "time": "5 July 13:43",
+    "rocket": "Long March 8A",
+    "mission": "8-Y9",
+    "site": "Wenchang Commercial LC-1",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 8,
+    "time": "7 July 07:12",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Transporter-17",
+    "site": "Vandenberg SLC-4E",
     "org": {
       "country": "United States",
       "info": "SpaceX"
