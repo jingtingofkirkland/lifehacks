@@ -2110,5 +2110,16 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 193,
+    "time": "11 July 03:01",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-48",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
