@@ -2121,5 +2121,38 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 194,
+    "time": "14 July 01:28:17",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 15-14",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 195,
+    "time": "14 July 09:10:12",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 10-45",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 196,
+    "time": "14 July 14:47:43",
+    "rocket": "Soyuz-2.1a",
+    "mission": "",
+    "site": "Baikonur Site 31/6",
+    "org": {
+      "country": "Russia",
+      "info": "Roscosmos"
+    }
   }
 ]
