@@ -7,7 +7,7 @@ export const siteConfig = {
 
   navbarEntries: [
     { title: "About", url: "/about" },
-    { title: "Facebook", url: "https://www.facebook.com/profile.php?id=61551909728667" },
+    { title: "Nextdoor", url: "https://nextdoor.com/profile/01NtDbxtQJw45GwN4" },
     { title: "Subscribe", url: "/subscribe" },
   ],
 
@@ -55,7 +55,7 @@ export const siteConfig = {
     { title: "Life Saver Tools", url: "/tools" },
     { title: "Space", url: "/space" },
     { title: "AI Techs", url: "/tech" },
-    { title: "Facebook", url: "https://www.facebook.com/profile.php?id=61551909728667" },
+    { title: "Nextdoor", url: "https://nextdoor.com/profile/01NtDbxtQJw45GwN4" },
     { title: "Subscribe", url: "/subscribe" },
   ],
 

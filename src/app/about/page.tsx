@@ -24,8 +24,8 @@ export default function AboutPage() {
         </p>
         <p>
           Follow us on{' '}
-          <a href="https://www.facebook.com/profile.php?id=61551909728667" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-            Facebook
+          <a href="https://nextdoor.com/profile/01NtDbxtQJw45GwN4" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+            Nextdoor
           </a>{' '}
           to get latest life hack information!
         </p>
