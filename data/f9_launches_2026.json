@@ -850,5 +850,17 @@
     "mass": "16675",
     "orbit": "LEO",
     "landing": "ASDS"
+  },
+  {
+    "flight": 667,
+    "time": "July 16, 2026 20:32",
+    "rocket": "B1103‑4",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "SDA Tranche 1 Transport Layer E (21 satellites)",
+    "mass": "14688",
+    "orbit": "Polar LEO",
+    "landing": "ASDS",
+    "massEstimated": true,
+    "massEstimateBasis": "landing:ASDS"
   }
 ]
