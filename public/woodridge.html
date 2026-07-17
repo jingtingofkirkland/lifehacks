@@ -18,6 +18,26 @@
 
   <link rel="icon" href="data:,">
 
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+
+    fbq('init', '337570375319394');
+    fbq('track', 'PageView', {page: 'woodridge', product: 'community-alert'});
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+         src="https://www.facebook.com/tr?id=337570375319394&ev=PageView&noscript=1" />
+  </noscript>
+  <!-- End Meta Pixel Code -->
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -216,5 +236,26 @@
     <p class="foot">Stand with your neighbors to enforce our covenants and protect Woodridge.</p>
     <p class="foot-note">Want to publish a community alert like this on this site? Contact <a href="https://nextdoor.com/profile/01NtDbxtQJw45GwN4" target="_blank" rel="noopener">Jacky on Nextdoor</a>.</p>
   </div>
+
+  <script>
+    (function () {
+      function track(channel) {
+        if (typeof window.fbq === 'function') {
+          window.fbq('trackCustom', 'Reachout', { page: 'woodridge', channel: channel });
+        }
+      }
+      var map = [
+        ['.btn.venmo', 'venmo'],
+        ['.btn.nextdoor', 'nextdoor-carol'],
+        ['a[href^="tel:"]', 'call-erik'],
+        ['.foot-note a', 'nextdoor-jacky']
+      ];
+      map.forEach(function (pair) {
+        document.querySelectorAll(pair[0]).forEach(function (el) {
+          el.addEventListener('click', function () { track(pair[1]); });
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
