@@ -29,7 +29,7 @@ export function FeedbackButton() {
         title="Have feedback or ideas? Message us on Nextdoor!"
       >
         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4 20V9.5L12 4l8 5.5V20h-5v-6h-6v6H4z"/></svg>
-        <span className="hidden sm:inline">Feedback &amp; Ideas</span>
+        <span className="hidden sm:inline">Message</span>
       </a>
     </div>
   );
