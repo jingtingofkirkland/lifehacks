@@ -2003,7 +2003,7 @@
   },
   {
     "flight": 183,
-    "time": "1 July 23:46",
+    "time": "1 July 23:46:00",
     "rocket": "Long March 4B",
     "mission": "4B-Y?",
     "site": "Jiuquan SLS-2",
@@ -2080,7 +2080,7 @@
   },
   {
     "flight": 190,
-    "time": "7 July 07:12",
+    "time": "7 July 07:12:00",
     "rocket": "Falcon 9 Block 5",
     "mission": "Transporter-17",
     "site": "Vandenberg SLC-4E",
