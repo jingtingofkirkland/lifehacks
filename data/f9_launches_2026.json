@@ -387,7 +387,7 @@
     "rocket": "B1093‑12",
     "site": "Vandenberg, SLC‑4E",
     "mission": "Transporter-16 (119 payloads smallsat rideshare)[80]",
-    "mass": "14037",
+    "mass": "14030",
     "orbit": "SSO",
     "landing": "ASDS",
     "massEstimated": true,
@@ -805,7 +805,7 @@
     "rocket": "B1097‑11",
     "site": "Vandenberg, SLC‑4E",
     "mission": "Transporter-17 (81 payloads smallsat rideshare)[80]",
-    "mass": "14037",
+    "mass": "14030",
     "orbit": "SSO",
     "landing": "ASDS",
     "massEstimated": true,
@@ -857,10 +857,20 @@
     "rocket": "B1103‑4",
     "site": "Vandenberg, SLC‑4E",
     "mission": "SDA Tranche 1 Transport Layer E (21 satellites)",
-    "mass": "14688",
+    "mass": "14675",
     "orbit": "Polar LEO",
     "landing": "ASDS",
     "massEstimated": true,
     "massEstimateBasis": "landing:ASDS"
+  },
+  {
+    "flight": 668,
+    "time": "July 21, 2026 14:49",
+    "rocket": "B1082‑23",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Starlink: Group 17-39",
+    "mass": "13800",
+    "orbit": "SSO",
+    "landing": "ASDS"
   }
 ]
