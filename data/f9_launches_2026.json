@@ -872,5 +872,15 @@
     "mass": "13800",
     "orbit": "SSO",
     "landing": "ASDS"
+  },
+  {
+    "flight": 669,
+    "time": "July 21, 2026 21:15",
+    "rocket": "B1069‑32",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Mission Robotic Vehicle (MRV) × 1[342]Mission Extension Pod (MEP) × 3",
+    "mass": "4200",
+    "orbit": "GTO",
+    "landing": "EXPENDED"
   }
 ]
