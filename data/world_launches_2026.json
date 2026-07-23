@@ -2220,5 +2220,16 @@
       "country": "China",
       "info": "Orienspace"
     }
+  },
+  {
+    "flight": 203,
+    "time": "23 July 12:00:00",
+    "rocket": "Long March 3B/E",
+    "mission": "",
+    "site": "Xichang LC-2",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
