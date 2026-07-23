@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { CHART_CONFIG, EXPENDED_BOOSTERS, setupHighResCanvas, getSortedUniqueData, type BoosterData } from './chart-config';
+import { CHART_CONFIG, setupHighResCanvas, getSortedUniqueData, type BoosterData } from './chart-config';
 import { RecordButton, type ChartRecorder } from './useChartRecorder';
 import { type SpaceXLaunch } from '@/lib/api';
 
@@ -62,11 +62,19 @@ export function BoosterChart({ data, selectedYear, animKey, recorder, title, onT
     const yearlyCount: Record<string, number> = {};
     boosterData.forEach(b => { yearlyCount[b.name] = (yearlyCount[b.name] || 0) + 1; });
 
+    // Derive expended boosters from crawled landing data (any core on an
+    // EXPENDED mission — Wikipedia doesn't distinguish center vs side).
+    const expendedBoosters = new Set(
+      data
+        .filter(x => x.landing === 'EXPENDED')
+        .flatMap(x => x.rocket.split(/\s*\/\s*/).map(part => part.trim().split(/[-\.‑]/)[0].trim()))
+    );
+
     const sortedData = getSortedUniqueData(boosterData).map(b => ({
       ...b,
       yearlyFlights: yearlyCount[b.name] || 1,
     }));
-    const expendedCount = sortedData.filter(b => EXPENDED_BOOSTERS.has(b.name)).length;
+    const expendedCount = sortedData.filter(b => expendedBoosters.has(b.name)).length;
     onTitleChange(`F9 Boosters Flight Counts (${sortedData.length} boosters, ${expendedCount} expended)`);
 
     const logicalWidth = 800;
@@ -96,7 +104,7 @@ export function BoosterChart({ data, selectedYear, animKey, recorder, title, onT
         const currentBarWidth = finalBarWidth * progress;
         const x = 50;
         const y = index * (CHART_CONFIG.BAR_HEIGHT + CHART_CONFIG.BAR_GAP) + CHART_CONFIG.BAR_GAP;
-        const isExpended = EXPENDED_BOOSTERS.has(booster.name);
+        const isExpended = expendedBoosters.has(booster.name);
 
         ctx.fillStyle = CHART_CONFIG.COLORS.PRIMARY_BAR;
         ctx.fillRect(x, y, currentBarWidth, CHART_CONFIG.BAR_HEIGHT);

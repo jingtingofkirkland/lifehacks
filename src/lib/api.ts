@@ -22,6 +22,7 @@ export interface SpaceXLaunch {
   mission: string;
   mass: string;
   orbit: string;
+  landing?: string;
 }
 
 export interface WorldLaunch {
