@@ -511,7 +511,12 @@
     "mission": "ViaSat-3 F3",
     "mass": "6400",
     "orbit": "GTO",
-    "landing": "EXPENDED"
+    "landing": "EXPENDED",
+    "boosterLandings": [
+      "EXPENDED",
+      "RTLS",
+      "RTLS"
+    ]
   },
   {
     "flight": 634,

@@ -229,5 +229,16 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 22,
+    "time": "23 July 23:30:00",
+    "rocket": "Kinetica 1",
+    "mission": "",
+    "site": "Jiuquan LS-130",
+    "org": {
+      "country": "China",
+      "info": "CAS Space"
+    }
   }
 ]
