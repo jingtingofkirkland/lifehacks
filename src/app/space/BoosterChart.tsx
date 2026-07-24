@@ -62,13 +62,19 @@ export function BoosterChart({ data, selectedYear, animKey, recorder, title, onT
     const yearlyCount: Record<string, number> = {};
     boosterData.forEach(b => { yearlyCount[b.name] = (yearlyCount[b.name] || 0) + 1; });
 
-    // Derive expended boosters from crawled landing data (any core on an
-    // EXPENDED mission — Wikipedia doesn't distinguish center vs side).
-    const expendedBoosters = new Set(
-      data
-        .filter(x => x.landing === 'EXPENDED')
-        .flatMap(x => x.rocket.split(/\s*\/\s*/).map(part => part.trim().split(/[-\.‑]/)[0].trim()))
-    );
+    // Derive expended boosters from crawled landing data. For FH launches the
+    // center core and side boosters can have different outcomes, so prefer the
+    // per-core `boosterLandings` array. When it's absent (older data or single
+    // core F9), only trust `landing` for the first (center) core — assuming
+    // sides shared the center's fate would falsely mark landed sides as expended.
+    const expendedBoosters = new Set<string>();
+    data.forEach(x => {
+      const cores = x.rocket.split(/\s*\/\s*/).map(part => part.trim().split(/[-\.‑]/)[0].trim());
+      const landings = x.boosterLandings ?? [x.landing];
+      cores.forEach((core, i) => {
+        if (landings[i] === 'EXPENDED') expendedBoosters.add(core);
+      });
+    });
 
     const sortedData = getSortedUniqueData(boosterData).map(b => ({
       ...b,

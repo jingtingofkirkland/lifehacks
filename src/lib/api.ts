@@ -23,6 +23,10 @@ export interface SpaceXLaunch {
   mass: string;
   orbit: string;
   landing?: string;
+  // Per-core landing status (parallel to `rocket` split by " / ").
+  // Only populated for Falcon Heavy launches, where the center core and
+  // side boosters can have different recovery outcomes.
+  boosterLandings?: string[];
 }
 
 export interface WorldLaunch {

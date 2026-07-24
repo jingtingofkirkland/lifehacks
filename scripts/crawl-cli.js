@@ -246,8 +246,11 @@ function scrapeFalconLaunches($) {
             obj.rocket = obj.rocket + '‑1';
         }
 
-        // Collect side boosters from sub-rows
+        // Collect side boosters (and their individual landings) from sub-rows.
+        // FH sides can land while the center is expended, so we need per-core
+        // landing status — the main row's `data[8]` only covers the center core.
         const sideBoosters = [];
+        const sideLandings = [];
         let subRow = row.next('tr');
         for (let s = 0; s < 2 && subRow.length; s++) {
             const subCells = subRow.find('td');
@@ -255,12 +258,17 @@ function scrapeFalconLaunches($) {
                 const boosterText = subCells.first().text().trim().replace(/\s*\(side\)\s*/, '').replace(/\[\d+\]/g, '');
                 if (boosterText && boosterText.match(/^B\d/)) {
                     sideBoosters.push(boosterText);
+                    // Sub-rows for FH sides are usually [booster, landing]. Fall
+                    // back to scanning the whole row text if the cell layout differs.
+                    const landingCell = subCells.length >= 2 ? subCells.last().text() : subRow.text();
+                    sideLandings.push(classifyLanding(landingCell));
                 }
             }
             subRow = subRow.next('tr');
         }
         if (sideBoosters.length > 0) {
             obj.rocket = obj.rocket + ' / ' + sideBoosters.join(' / ');
+            obj.boosterLandings = [obj.landing, ...sideLandings];
         }
 
         json.push(obj);
