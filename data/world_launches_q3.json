@@ -45,7 +45,7 @@
   },
   {
     "flight": 5,
-    "time": "4 July 09:30",
+    "time": "4 July 09:30:00",
     "rocket": "Long March 6A",
     "mission": "6A-Y25",
     "site": "Taiyuan LA-9A",
@@ -239,6 +239,17 @@
     "org": {
       "country": "China",
       "info": "CAS Space"
+    }
+  },
+  {
+    "flight": 23,
+    "time": "25 July 15:51:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-51",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
     }
   }
 ]
