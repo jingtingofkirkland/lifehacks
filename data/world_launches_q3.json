@@ -251,5 +251,16 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 24,
+    "time": "29 July 11:50:00",
+    "rocket": "Long March 7A",
+    "mission": "",
+    "site": "Wenchang LC-2",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
