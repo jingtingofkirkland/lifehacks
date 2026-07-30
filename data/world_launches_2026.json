@@ -2212,10 +2212,10 @@
   },
   {
     "flight": 202,
-    "time": "22 July 02:50:00",
+    "time": "22 July 02:54:00",
     "rocket": "Gravity-1",
     "mission": "",
-    "site": "Special Launch Platform, Yellow Sea",
+    "site": "Special Launch Platform, East China Sea",
     "org": {
       "country": "China",
       "info": "Orienspace"
@@ -2234,9 +2234,9 @@
   },
   {
     "flight": 204,
-    "time": "23 July 23:30:00",
+    "time": "23 July 23:33:00",
     "rocket": "Kinetica 1",
-    "mission": "",
+    "mission": "Y15",
     "site": "Jiuquan LS-130",
     "org": {
       "country": "China",
@@ -2263,6 +2263,28 @@
     "org": {
       "country": "China",
       "info": "CASC"
+    }
+  },
+  {
+    "flight": 207,
+    "time": "30 July 01:00:00",
+    "rocket": "Long March 6A",
+    "mission": "",
+    "site": "Taiyuan LA-9A",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 208,
+    "time": "30 July 07:09:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
     }
   }
 ]

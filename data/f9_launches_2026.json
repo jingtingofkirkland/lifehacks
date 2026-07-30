@@ -897,5 +897,17 @@
     "mass": "13800",
     "orbit": "SSO",
     "landing": "ASDS"
+  },
+  {
+    "flight": 671,
+    "time": "July 30, 2026 07:10",
+    "rocket": "B1096‑7",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "NROL-95",
+    "mass": "6983",
+    "orbit": "LEO",
+    "landing": "RTLS",
+    "massEstimated": true,
+    "massEstimateBasis": "orbit+landing:LEO+RTLS"
   }
 ]
