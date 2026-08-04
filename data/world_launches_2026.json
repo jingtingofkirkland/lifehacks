@@ -2297,5 +2297,27 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 210,
+    "time": "4 August 08:50:00",
+    "rocket": "Long March 8A",
+    "mission": "",
+    "site": "Wenchang Commercial LC-1",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 211,
+    "time": "4 August 14:00:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-53",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
