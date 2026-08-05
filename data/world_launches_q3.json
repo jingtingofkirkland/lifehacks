@@ -317,5 +317,27 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 30,
+    "time": "5 August 02:35:00",
+    "rocket": "Jielong 3",
+    "mission": "",
+    "site": "Dong Fang Hang Tian Gang platform, South China Sea",
+    "org": {
+      "country": "China",
+      "info": "China Rocket"
+    }
+  },
+  {
+    "flight": 31,
+    "time": "5 August 07:42:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
