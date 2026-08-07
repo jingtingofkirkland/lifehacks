@@ -276,9 +276,9 @@
   },
   {
     "flight": 26,
-    "time": "30 July 07:09:00",
+    "time": "30 July 07:10:19",
     "rocket": "Falcon 9 Block 5",
-    "mission": "",
+    "mission": "F9-670",
     "site": "Cape Canaveral SLC-40",
     "org": {
       "country": "United States",
@@ -298,7 +298,7 @@
   },
   {
     "flight": 28,
-    "time": "4 August 08:50:00",
+    "time": "4 August 08:52:00",
     "rocket": "Long March 8A",
     "mission": "",
     "site": "Wenchang Commercial LC-1",
@@ -309,7 +309,7 @@
   },
   {
     "flight": 29,
-    "time": "4 August 14:00:00",
+    "time": "4 August 17:05:03",
     "rocket": "Falcon 9 Block 5",
     "mission": "Starlink Group 17-53",
     "site": "Vandenberg SLC-4E",
@@ -320,7 +320,7 @@
   },
   {
     "flight": 30,
-    "time": "5 August 02:35:00",
+    "time": "5 August 02:38:00",
     "rocket": "Jielong 3",
     "mission": "",
     "site": "Dong Fang Hang Tian Gang platform, South China Sea",
@@ -331,13 +331,24 @@
   },
   {
     "flight": 31,
-    "time": "5 August 07:42:00",
+    "time": "5 August 07:49:40",
     "rocket": "Falcon 9 Block 5",
-    "mission": "",
+    "mission": "F9-673",
     "site": "Cape Canaveral SLC-40",
     "org": {
       "country": "United States",
       "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 32,
+    "time": "6 August 09:18:25",
+    "rocket": "Electron",
+    "mission": "The Grain Goddess Provides",
+    "site": "Mahia LC-1A",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
     }
   }
 ]
