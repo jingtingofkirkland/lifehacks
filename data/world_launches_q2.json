@@ -683,17 +683,6 @@
   },
   {
     "flight": 63,
-    "time": "11 June 08:00",
-    "rocket": "HASTE",
-    "mission": "CURVEBALL",
-    "site": "MARS LC-2",
-    "org": {
-      "country": "United States",
-      "info": "Rocket Lab"
-    }
-  },
-  {
-    "flight": 64,
     "time": "11 June 15:05:00",
     "rocket": "Falcon 9 Block 5",
     "mission": "Starlink Group 17-44",
@@ -704,7 +693,7 @@
     }
   },
   {
-    "flight": 65,
+    "flight": 64,
     "time": "12 June 00:53:59",
     "rocket": "H3-30S",
     "mission": "F6",
@@ -715,7 +704,7 @@
     }
   },
   {
-    "flight": 66,
+    "flight": 65,
     "time": "12 June 12:37:00",
     "rocket": "Falcon 9 Block 5",
     "mission": "Starlink Group 10-54",
@@ -726,7 +715,7 @@
     }
   },
   {
-    "flight": 67,
+    "flight": 66,
     "time": "15 June 03:44:00",
     "rocket": "Kinetica 1",
     "mission": "Y14",
@@ -737,7 +726,7 @@
     }
   },
   {
-    "flight": 68,
+    "flight": 67,
     "time": "15 June 15:34:35",
     "rocket": "Falcon 9 Block 5",
     "mission": "Starlink Group 17-54",
@@ -748,7 +737,7 @@
     }
   },
   {
-    "flight": 69,
+    "flight": 68,
     "time": "16 June 09:45:00",
     "rocket": "Long March 3B/E",
     "mission": "3B-Y?",
@@ -759,7 +748,7 @@
     }
   },
   {
-    "flight": 70,
+    "flight": 69,
     "time": "17 June 02:44:00",
     "rocket": "Long March 12",
     "mission": "Y7",
@@ -770,7 +759,7 @@
     }
   },
   {
-    "flight": 71,
+    "flight": 70,
     "time": "17 June 03:40:00",
     "rocket": "Kuaizhou 11",
     "mission": "Y13",
@@ -781,7 +770,7 @@
     }
   },
   {
-    "flight": 72,
+    "flight": 71,
     "time": "17 June 06:39:00",
     "rocket": "Falcon 9 Block 5",
     "mission": "F9-652",
@@ -792,7 +781,7 @@
     }
   },
   {
-    "flight": 73,
+    "flight": 72,
     "time": "17 June 12:21:52",
     "rocket": "Ariane 64 Block 2",
     "mission": "VA269/LE-03",
@@ -803,7 +792,7 @@
     }
   },
   {
-    "flight": 74,
+    "flight": 73,
     "time": "19 June 08:50:00",
     "rocket": "Falcon 9 Block 5",
     "mission": "F9-653",
@@ -814,7 +803,7 @@
     }
   },
   {
-    "flight": 75,
+    "flight": 74,
     "time": "19 June 10:19:00",
     "rocket": "Electron",
     "mission": "",
@@ -825,7 +814,7 @@
     }
   },
   {
-    "flight": 76,
+    "flight": 75,
     "time": "21 June 14:00:00",
     "rocket": "Falcon 9 Block 5",
     "mission": "Starlink Group 17-28",
@@ -836,7 +825,7 @@
     }
   },
   {
-    "flight": 77,
+    "flight": 76,
     "time": "23 June 02:00:00",
     "rocket": "Long March 7A",
     "mission": "7A-Y?",
@@ -847,7 +836,7 @@
     }
   },
   {
-    "flight": 78,
+    "flight": 77,
     "time": "23 June 10:53:00",
     "rocket": "Falcon 9 Block 5",
     "mission": "F9-655",
@@ -858,7 +847,7 @@
     }
   },
   {
-    "flight": 79,
+    "flight": 78,
     "time": "25 June 03:30:38",
     "rocket": "Falcon 9 Block 5",
     "mission": "Starlink Group 17-45",
@@ -869,7 +858,7 @@
     }
   },
   {
-    "flight": 80,
+    "flight": 79,
     "time": "26 June 16:45:00",
     "rocket": "Electron",
     "mission": "Ten Owl Of Ten",
@@ -880,7 +869,7 @@
     }
   },
   {
-    "flight": 81,
+    "flight": 80,
     "time": "28 June 16:09:18",
     "rocket": "Falcon 9 Block 5",
     "mission": "Starlink Group 17-40",
@@ -891,7 +880,7 @@
     }
   },
   {
-    "flight": 82,
+    "flight": 81,
     "time": "29 June 02:25:00",
     "rocket": "Falcon 9 Block 5",
     "mission": "F9-658",
@@ -899,116 +888,6 @@
     "org": {
       "country": "United States",
       "info": "SpaceX"
-    }
-  },
-  {
-    "flight": 83,
-    "time": "22 April 01:36",
-    "rocket": "HASTE",
-    "mission": "BUBBLES",
-    "site": "MARS LC-2",
-    "org": {
-      "country": "United States",
-      "info": "Rocket Lab"
-    }
-  },
-  {
-    "flight": 84,
-    "time": "30 April 18:00:00 ",
-    "rocket": "Irtysh / DM-SLB",
-    "mission": "",
-    "site": "Baikonur Site 45/1",
-    "org": {
-      "country": "Russia",
-      "info": "Roscosmos"
-    }
-  },
-  {
-    "flight": 85,
-    "time": "12 May",
-    "rocket": "RS-28 Sarmat",
-    "mission": "",
-    "site": "Dombarovsky",
-    "org": {
-      "country": "Russia",
-      "info": "RVSN"
-    }
-  },
-  {
-    "flight": 86,
-    "time": "14 May 19:23",
-    "rocket": "Black Brant IX",
-    "mission": "",
-    "site": "White Sands Missile Range",
-    "org": {
-      "country": "United States",
-      "info": "NASA"
-    }
-  },
-  {
-    "flight": 87,
-    "time": "20 May 08:01",
-    "rocket": "Minuteman III",
-    "mission": "GT-256GM",
-    "site": "Vandenberg LF-09?",
-    "org": {
-      "country": "United States",
-      "info": "AFGSC"
-    }
-  },
-  {
-    "flight": 88,
-    "time": "21 May 22:30:20",
-    "rocket": "Starship",
-    "mission": "Flight 12",
-    "site": "Starbase Pad 2",
-    "org": {
-      "country": "United States",
-      "info": "SpaceX"
-    }
-  },
-  {
-    "flight": 89,
-    "time": "31 May 06:33",
-    "rocket": "Red Kite/Red Kite",
-    "mission": "S1X-5/M17",
-    "site": "Esrange",
-    "org": {
-      "country": "Sweden",
-      "info": "SSC Space /  DLR"
-    }
-  },
-  {
-    "flight": 90,
-    "time": "10 June 11:51 ",
-    "rocket": "T-minus Barracuda",
-    "mission": "",
-    "site": "Spaceport Nova Scotia",
-    "org": {
-      "country": "Canada",
-      "info": "Maritime Launch Services"
-    }
-  },
-  {
-    "flight": 91,
-    "time": "24 June 09:30",
-    "rocket": "Terrier-Improved Malemute[105]",
-    "mission": "",
-    "site": "Wallops Flight Facility",
-    "org": {
-      "country": "United States",
-      "info": "NASA"
-    }
-  },
-  {
-    "flight": 92,
-    "time": "26 June 17:11",
-    "rocket": "Castor 4BXL",
-    "mission": "",
-    "site": "Wallops Flight Facility",
-    "org": {
-      "country": "United States",
-      "info": "DoD"
     }
   }
 ]

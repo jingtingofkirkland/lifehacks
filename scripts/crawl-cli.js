@@ -388,6 +388,32 @@ function scrapeWorldLaunches($) {
 
     const hasMonth = (text) => MONTHS.some(m => new RegExp(`\\b${m}\\b`).test(text));
 
+    // Skip tables whose preceding heading marks a non-orbital or planned section.
+    // On Wikipedia's per-quarter mobile pages the "Suborbital flights" and
+    // "To be determined <Q>" tables sit under their own <h3>, not inside the table
+    // text — so text-scan alone lets Starship (test), HASTE (Rocket Lab suborbital),
+    // and New Shepard slip in and inflate world/US counts.
+    const SKIP_HEADING_RE = /^(Suborbital flights|Upcoming launches|To be determined)/i;
+
+    // Belt-and-suspenders: exclude known-suborbital vehicles even when Wikipedia
+    // places them in a main monthly table (e.g. HASTE CURVEBALL in June 2026).
+    // Starship is NOT on this list — once it reaches orbit, Wikipedia will list it
+    // in a main table and we want to count it. Update this list only when a
+    // vehicle is definitionally suborbital by design.
+    const SUBORBITAL_ROCKET_RE = /^(HASTE|New Shepard)\b/i;
+    const precedingHeadingText = ($table) => {
+        let el = $table;
+        while (el.length) {
+            const prev = el.prev();
+            if (!prev.length) { el = el.parent(); continue; }
+            if (prev.is('h1,h2,h3,h4,h5,h6')) return prev.text().trim();
+            const inner = prev.find('h1,h2,h3,h4,h5,h6').last();
+            if (inner.length) return inner.text().trim();
+            el = prev;
+        }
+        return '';
+    };
+
     const json = [];
     let cnt = 1;
     let reachedUpcoming = false;
@@ -396,6 +422,13 @@ function scrapeWorldLaunches($) {
     $('.wikitable').each((_, tableEl) => {
         const $table = $(tableEl);
         const tableText = $table.text();
+
+        const heading = precedingHeadingText($table);
+        if (SKIP_HEADING_RE.test(heading)) {
+            console.log(`   ⏭️  Skipping table under heading: "${heading}"`);
+            if (/Upcoming launches/i.test(heading)) reachedUpcoming = true;
+            return; // skip this table entirely
+        }
 
         // Pre-scan: check if this table is purely suborbital or upcoming (no normal data).
         // Match the actual section headers, not the word "Suborbital" in prose — e.g., a
@@ -462,6 +495,12 @@ function scrapeWorldLaunches($) {
                     }
                     return { info: text };
                 }).get();
+
+                const rocketText = tdTexts[1]?.info || '';
+                if (SUBORBITAL_ROCKET_RE.test(rocketText)) {
+                    console.log(`   ⏭️  Skipping suborbital vehicle: ${rocketText} (${tdTexts[0]?.info || ''})`);
+                    continue;
+                }
 
                 const obj = { flight: cnt++ };
                 HEADERS.forEach((header, j) => {
