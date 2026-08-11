@@ -364,13 +364,35 @@
   },
   {
     "flight": 34,
-    "time": "10 August 12:00:00",
+    "time": "10 August 12:02:00",
     "rocket": "Long March 7A",
     "mission": "7A-Y?",
     "site": "Wenchang LC-2",
     "org": {
       "country": "China",
       "info": "CASC"
+    }
+  },
+  {
+    "flight": 35,
+    "time": "10 August 19:23:31",
+    "rocket": "H3-22S",
+    "mission": "F9",
+    "site": "Tanegashima LA-Y2",
+    "org": {
+      "country": "Japan",
+      "info": "JAXA"
+    }
+  },
+  {
+    "flight": 36,
+    "time": "11 August 14:26:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 10-19",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
     }
   }
 ]
