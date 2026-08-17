@@ -2110,5 +2110,27 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 193,
+    "time": "16 August 21:10:00",
+    "rocket": "Long March 12",
+    "mission": "",
+    "site": "Wenchang Commercial LC-2",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 194,
+    "time": "17 August 03:02:00",
+    "rocket": "Long March 2C",
+    "mission": "",
+    "site": "Taiyuan Satellite Launch Center LA-9",
+    "org": {
+      "country": "China",
+      "info": "CALT"
+    }
   }
 ]
