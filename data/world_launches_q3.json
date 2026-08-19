@@ -408,10 +408,10 @@
   },
   {
     "flight": 38,
-    "time": "15 August 21:52:00",
+    "time": "16 August 01:12:14",
     "rocket": "Falcon 9 Block 5",
     "mission": "",
-    "site": "Vandenberg SLC-4E",
+    "site": "Cape Canaveral SLC-40",
     "org": {
       "country": "United States",
       "info": "SpaceX"
@@ -419,10 +419,10 @@
   },
   {
     "flight": 39,
-    "time": "16 August 01:12:00",
+    "time": "16 August 01:50:45",
     "rocket": "Falcon 9 Block 5",
     "mission": "",
-    "site": "Cape Canaveral SLC-40",
+    "site": "Vandenberg SLC-4E",
     "org": {
       "country": "United States",
       "info": "SpaceX"
@@ -448,6 +448,28 @@
     "org": {
       "country": "China",
       "info": "CALT"
+    }
+  },
+  {
+    "flight": 42,
+    "time": "18 August 23:35",
+    "rocket": "Zhuque-3",
+    "mission": "Y2",
+    "site": "Jiuquan LS-96",
+    "org": {
+      "country": "China",
+      "info": "LandSpace"
+    }
+  },
+  {
+    "flight": 43,
+    "time": "19 August 04:01:07",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 17-50",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
     }
   }
 ]
