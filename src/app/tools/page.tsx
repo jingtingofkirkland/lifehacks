@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
+import { UsefulnessFeedback } from '@/components/UsefulnessFeedback';
 
 export const metadata: Metadata = {
   title: 'Life Saver Tools - Great Seattle Life Hacks',
@@ -196,6 +197,14 @@ export default function ToolsPage() {
             ))}
           </div>
         </section>
+
+        {/* ── Feedback ── */}
+        <div className="mb-10">
+          <UsefulnessFeedback
+            page="tools"
+            prompt="Was this page helpful?"
+          />
+        </div>
 
         {/* ── Footer accent ── */}
         <div className="text-center pb-8">

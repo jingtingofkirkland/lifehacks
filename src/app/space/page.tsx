@@ -15,6 +15,7 @@ import { useChartRecorder } from './useChartRecorder';
 import { WorldChart } from './WorldChart';
 import { SpaceXChart } from './SpaceXChart';
 import { BoosterChart } from './BoosterChart';
+import { UsefulnessFeedback } from '@/components/UsefulnessFeedback';
 
 function YearTabs({
   selectedYear,
@@ -153,6 +154,13 @@ export default function SpacePage() {
               title={f9Title}
               onTitleChange={setF9Title}
               onRecord={handleF9Record}
+            />
+
+            <UsefulnessFeedback
+              page="space"
+              variant="dark"
+              prompt="Did these launch charts help you?"
+              className="mt-4"
             />
           </div>
         )}
