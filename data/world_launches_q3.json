@@ -471,5 +471,16 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 44,
+    "time": "20 August 13:00",
+    "rocket": "Electron",
+    "mission": "The Lightning God Defends",
+    "site": "Mahia LC-1A",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
   }
 ]
