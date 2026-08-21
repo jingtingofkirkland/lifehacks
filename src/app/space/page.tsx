@@ -160,6 +160,7 @@ export default function SpacePage() {
               page="space"
               variant="dark"
               prompt="Did these launch charts help you?"
+              helper="Your one-tap rating helps us decide which charts to add next."
               className="mt-4"
             />
           </div>

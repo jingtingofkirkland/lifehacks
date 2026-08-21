@@ -10,12 +10,14 @@ interface Props {
   page: string;
   variant?: Variant;
   prompt?: string;
+  helper?: string;
   className?: string;
 }
 
 const STYLES: Record<Variant, {
   wrap: string;
   prompt: string;
+  helper: string;
   btn: string;
   btnUseful: string;
   btnNotUseful: string;
@@ -26,6 +28,7 @@ const STYLES: Record<Variant, {
   default: {
     wrap: 'border-amber-200/70 dark:border-amber-900/40 bg-white/80 dark:bg-card/80',
     prompt: 'text-muted-foreground',
+    helper: 'text-muted-foreground/70',
     btn: 'border border-amber-200/80 dark:border-amber-800/50 bg-white/60 dark:bg-background/40 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/40',
     btnUseful: '',
     btnNotUseful: '',
@@ -36,6 +39,7 @@ const STYLES: Record<Variant, {
   dark: {
     wrap: 'border-slate-700 bg-slate-800/40',
     prompt: 'text-slate-400',
+    helper: 'text-slate-500',
     btn: 'border border-slate-600 bg-slate-700/50 text-slate-300 hover:bg-slate-600/60 hover:text-white',
     btnUseful: '',
     btnNotUseful: '',
@@ -49,6 +53,7 @@ export function UsefulnessFeedback({
   page,
   variant = 'default',
   prompt = 'Was this useful?',
+  helper = 'Help us improve — one tap, no signup.',
   className = '',
 }: Props) {
   const [voted, setVoted] = useState<'useful' | 'not_useful' | null>(null);
@@ -68,7 +73,12 @@ export function UsefulnessFeedback({
       role="group"
       aria-label="Content feedback"
     >
-      <span className={`text-sm font-medium ${s.prompt}`}>{prompt}</span>
+      <div className="flex flex-col items-center sm:items-start leading-tight">
+        <span className={`text-sm font-medium ${s.prompt}`}>{prompt}</span>
+        {helper && (
+          <span className={`text-[11px] mt-0.5 ${s.helper}`}>{helper}</span>
+        )}
+      </div>
       <div className="flex items-center gap-2">
         <button
           type="button"

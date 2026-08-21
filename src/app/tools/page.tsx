@@ -203,6 +203,7 @@ export default function ToolsPage() {
           <UsefulnessFeedback
             page="tools"
             prompt="Was this page helpful?"
+            helper="One click helps us build more free tools you'll actually use."
           />
         </div>
 
