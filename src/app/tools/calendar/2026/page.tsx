@@ -7,6 +7,7 @@ import {
   HOLIDAYS, type Holiday, MONTH_NAMES, DAY_LABELS, DOT, BADGE,
   daysInMonth, startDay, dk,
 } from './holidays';
+import { getStoredUtm } from '@/lib/utm';
 
 /* ─────────────────── Page Component ─────────────────── */
 export default function Calendar2026() {
@@ -81,7 +82,7 @@ export default function Calendar2026() {
             </button>
             <button onClick={() => {
               if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
-                (window as any).fbq('trackCustom', 'CalendarPrint', { view, month: MONTH_NAMES[month] });
+                (window as any).fbq('trackCustom', 'CalendarPrint', { view, month: MONTH_NAMES[month], ...getStoredUtm() });
               }
               window.print();
             }} className="text-xs px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white dark:bg-amber-700 dark:hover:bg-amber-600 transition-colors">

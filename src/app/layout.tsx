@@ -61,13 +61,47 @@ export default function RootLayout({
               var path = window.location.pathname.replace(/^\\/|\\/$/, '');
               return path || 'home';
             }
-            fbq('track', 'PageView', { page: getPageName() });
+
+            // Capture UTM params from landing URL (last-touch, session-scoped)
+            var UTM_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
+            function captureUtm() {
+              try {
+                var q = new URLSearchParams(window.location.search);
+                var utm = {};
+                UTM_KEYS.forEach(function(k){
+                  var v = q.get(k);
+                  if (v) utm[k.slice(4)] = v;
+                });
+                if (Object.keys(utm).length) {
+                  try { sessionStorage.setItem('utm', JSON.stringify(utm)); } catch(e){}
+                  return utm;
+                }
+              } catch(e){}
+              return null;
+            }
+            function getStoredUtm() {
+              try { return JSON.parse(sessionStorage.getItem('utm') || '{}'); } catch(e) { return {}; }
+            }
+            function withUtm(extra) {
+              var stored = getStoredUtm();
+              var out = { page: getPageName() };
+              for (var k in stored) out[k] = stored[k];
+              if (extra) for (var k2 in extra) out[k2] = extra[k2];
+              return out;
+            }
+            window.__getStoredUtm = getStoredUtm;
+
+            var landedUtm = captureUtm();
+            fbq('track', 'PageView', withUtm());
+            if (landedUtm) {
+              fbq('trackCustom', 'AdLanding', withUtm(landedUtm));
+            }
 
             // Track client-side navigations in Next.js
             var _pushState = history.pushState;
             history.pushState = function() {
               _pushState.apply(history, arguments);
-              fbq('track', 'PageView', { page: getPageName() });
+              fbq('track', 'PageView', withUtm());
             };
           `}
         </Script>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ThumbsUp, ThumbsDown } from 'lucide-react';
+import { getStoredUtm } from '@/lib/utm';
 
 type Variant = 'default' | 'dark';
 
@@ -57,7 +58,7 @@ export function UsefulnessFeedback({
     if (voted) return;
     setVoted(rating);
     if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
-      (window as any).fbq('trackCustom', 'ContentFeedback', { page, rating });
+      (window as any).fbq('trackCustom', 'ContentFeedback', { page, rating, ...getStoredUtm() });
     }
   };
 

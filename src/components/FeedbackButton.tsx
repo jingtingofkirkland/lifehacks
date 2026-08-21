@@ -1,5 +1,7 @@
 'use client';
 
+import { getStoredUtm } from '@/lib/utm';
+
 export function FeedbackButton() {
   return (
     <div className="fixed bottom-4 right-4 z-50 print:hidden flex flex-col gap-2 items-end">
@@ -7,7 +9,7 @@ export function FeedbackButton() {
         href="mailto:austinhao2018@gmail.com?subject=Feedback%20for%20Great%20Seattle%20Life%20Hacks"
         onClick={() => {
           if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
-            (window as any).fbq('trackCustom', 'Reachout', { channel: 'email' });
+            (window as any).fbq('trackCustom', 'Reachout', { channel: 'email', ...getStoredUtm() });
           }
         }}
         className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
@@ -22,7 +24,7 @@ export function FeedbackButton() {
         rel="noopener noreferrer"
         onClick={() => {
           if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
-            (window as any).fbq('trackCustom', 'Reachout', { channel: 'nextdoor' });
+            (window as any).fbq('trackCustom', 'Reachout', { channel: 'nextdoor', ...getStoredUtm() });
           }
         }}
         className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#6dbe45] hover:bg-[#55a032] text-white text-xs font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"

@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Video, Download, Loader2, RotateCcw, Square } from 'lucide-react';
+import { getStoredUtm } from '@/lib/utm';
 
 interface RecordingState {
   isRecording: boolean;
@@ -118,7 +119,7 @@ export function RecordButton({
           size="sm"
           onClick={() => {
             if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
-              (window as any).fbq('trackCustom', 'RecordAnimation', { chart: filename });
+              (window as any).fbq('trackCustom', 'RecordAnimation', { chart: filename, ...getStoredUtm() });
             }
             onRecord();
           }}
@@ -155,7 +156,7 @@ export function RecordButton({
             size="sm"
             onClick={() => {
               if (typeof window !== 'undefined' && typeof (window as any).fbq === 'function') {
-                (window as any).fbq('trackCustom', 'DownloadRecording', { chart: filename });
+                (window as any).fbq('trackCustom', 'DownloadRecording', { chart: filename, ...getStoredUtm() });
               }
               handleDownload();
             }}
