@@ -2165,5 +2165,16 @@
       "country": "United States",
       "info": "Rocket Lab"
     }
+  },
+  {
+    "flight": 198,
+    "time": "21 August 15:14:22",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 10-39",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
