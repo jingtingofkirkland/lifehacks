@@ -493,5 +493,16 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 46,
+    "time": "22 August 07:25:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 15-20",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
