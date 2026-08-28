@@ -2190,6 +2190,17 @@
   },
   {
     "flight": 200,
+    "time": "24 August 02:40:00",
+    "rocket": "Soyuz-2.1b/Fregat-M",
+    "mission": "",
+    "site": "Plesetsk Site 43/3",
+    "org": {
+      "country": "Russia",
+      "info": "RVSN RF"
+    }
+  },
+  {
+    "flight": 201,
     "time": "25 August 03:21",
     "rocket": "Long March 6C",
     "mission": "Y1",
@@ -2200,7 +2211,7 @@
     }
   },
   {
-    "flight": 201,
+    "flight": 202,
     "time": "25 August 09:33:38",
     "rocket": "Falcon 9 Block 5",
     "mission": "Starlink Group 10-49",
@@ -2211,7 +2222,7 @@
     }
   },
   {
-    "flight": 202,
+    "flight": 203,
     "time": "26 August 09:35:11",
     "rocket": "Falcon 9 Block 5",
     "mission": "Starlink Group 15-22",
@@ -2219,6 +2230,17 @@
     "org": {
       "country": "United States",
       "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 204,
+    "time": "27 August 20:10:00",
+    "rocket": "Ariane 62[62]",
+    "mission": "",
+    "site": "Kourou ELA-4",
+    "org": {
+      "country": "France",
+      "info": "Arianespace"
     }
   }
 ]
