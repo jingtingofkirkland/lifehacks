@@ -1041,5 +1041,20 @@
     "mass": "15525",
     "orbit": "LEO",
     "landing": "ASDS"
+  },
+  {
+    "flight": 685,
+    "time": "August 30, 2026 11:26",
+    "rocket": "B1105‑1 / B1072‑3 / B1104‑1",
+    "site": "Kennedy, LC‑39A",
+    "mission": "Nancy Grace Roman Space Telescope",
+    "mass": "9174",
+    "orbit": "Sun–Earth L2",
+    "landing": "EXPENDED",
+    "boosterLandings": [
+      "EXPENDED",
+      "RTLS",
+      "RTLS"
+    ]
   }
 ]
