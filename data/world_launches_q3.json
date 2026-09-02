@@ -570,5 +570,38 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 53,
+    "time": "1 September 02:00",
+    "rocket": "Pallas-1",
+    "mission": "Y1",
+    "site": "Jiuquan Galactic Energy Exclusive Launchpad",
+    "org": {
+      "country": "China",
+      "info": "Galactic Energy"
+    }
+  },
+  {
+    "flight": 54,
+    "time": "2 September 08:42:12",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 15-23",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 55,
+    "time": "2 September 12:01:00",
+    "rocket": "Electron",
+    "mission": "Owl Around The World",
+    "site": "Mahia LC-1A",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
   }
 ]
