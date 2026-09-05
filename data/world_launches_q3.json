@@ -614,5 +614,16 @@
       "country": "India",
       "info": "ISRO"
     }
+  },
+  {
+    "flight": 57,
+    "time": "5 September 20:12:00",
+    "rocket": "Spectrum",
+    "mission": "Onward and Upward",
+    "site": "Andøya",
+    "org": {
+      "country": "Germany",
+      "info": "Isar Aerospace"
+    }
   }
 ]
