@@ -625,5 +625,16 @@
       "country": "Germany",
       "info": "Isar Aerospace"
     }
+  },
+  {
+    "flight": 58,
+    "time": "6 September 14:27:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 15-24",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
