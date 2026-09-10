@@ -1076,5 +1076,17 @@
     "mass": "15525",
     "orbit": "LEO",
     "landing": "ASDS"
+  },
+  {
+    "flight": 688,
+    "time": "September 10, 2026 15:42",
+    "rocket": "B1081‑27",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "USSF-153 (\"R-2\")",
+    "mass": "16310",
+    "orbit": "LEO",
+    "landing": "ASDS",
+    "massEstimated": true,
+    "massEstimateBasis": "orbit+landing:LEO+ASDS"
   }
 ]
