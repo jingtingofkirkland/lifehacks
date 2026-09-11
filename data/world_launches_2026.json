@@ -2341,5 +2341,16 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 214,
+    "time": "11 September 03:28",
+    "rocket": "Electron",
+    "mission": "",
+    "site": "Mahia LC-1A",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
   }
 ]
