@@ -669,5 +669,16 @@
       "country": "United States",
       "info": "Rocket Lab"
     }
+  },
+  {
+    "flight": 62,
+    "time": "13 September 18:50:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
