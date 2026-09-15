@@ -680,5 +680,27 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 63,
+    "time": "15 September 06:21:07",
+    "rocket": "Vega-C",
+    "mission": "",
+    "site": "Kourou ELV",
+    "org": {
+      "country": "France",
+      "info": "Arianespace"
+    }
+  },
+  {
+    "flight": 64,
+    "time": "15 September 06:26",
+    "rocket": "Zhuque-2E",
+    "mission": "Y7",
+    "site": "",
+    "org": {
+      "country": "China",
+      "info": "LandSpace"
+    }
   }
 ]
