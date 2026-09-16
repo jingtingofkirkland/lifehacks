@@ -697,10 +697,32 @@
     "time": "15 September 06:26",
     "rocket": "Zhuque-2E",
     "mission": "Y7",
-    "site": "",
+    "site": "Jiuquan Dongfeng Zone",
     "org": {
       "country": "China",
       "info": "LandSpace"
+    }
+  },
+  {
+    "flight": 65,
+    "time": "15 September 22:00",
+    "rocket": "Gravity-1",
+    "mission": "Y3",
+    "site": "East China Sea",
+    "org": {
+      "country": "China",
+      "info": "Orienspace"
+    }
+  },
+  {
+    "flight": 66,
+    "time": "16 September 13:33:54",
+    "rocket": "Soyuz-2.1b",
+    "mission": "",
+    "site": "Baikonur Site 31/6",
+    "org": {
+      "country": "Russia",
+      "info": "Roscosmos"
     }
   }
 ]
