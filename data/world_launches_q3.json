@@ -724,5 +724,38 @@
       "country": "Russia",
       "info": "Roscosmos"
     }
+  },
+  {
+    "flight": 67,
+    "time": "17 September 00:32:00",
+    "rocket": "Long March 12",
+    "mission": "",
+    "site": "Wenchang Commercial LC-2",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 68,
+    "time": "17 September 01:07:56",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 69,
+    "time": "17 September 02:40:00",
+    "rocket": "KZ-11",
+    "mission": "Y3",
+    "site": "Jiuquan",
+    "org": {
+      "country": "China",
+      "info": "CASIC"
+    }
   }
 ]

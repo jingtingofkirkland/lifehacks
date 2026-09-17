@@ -1098,5 +1098,17 @@
     "mass": "5100",
     "orbit": "MEO",
     "landing": "ASDS"
+  },
+  {
+    "flight": 690,
+    "time": "September 17, 2026 01:07",
+    "rocket": "B1097‑13",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "USSF-259 (\"TH-1\") (~23 Starshield satellites)",
+    "mass": "14599",
+    "orbit": "Polar LEO",
+    "landing": "ASDS",
+    "massEstimated": true,
+    "massEstimateBasis": "landing:ASDS"
   }
 ]
