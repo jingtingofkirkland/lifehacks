@@ -2440,5 +2440,38 @@
       "country": "China",
       "info": "CASIC"
     }
+  },
+  {
+    "flight": 223,
+    "time": "17 September 16:50",
+    "rocket": "Soyuz 2.1b / Fregat-M",
+    "mission": "",
+    "site": "Plesetsk Cosmodrome Site 43/3",
+    "org": {
+      "country": "Russia",
+      "info": "RVSN RF"
+    }
+  },
+  {
+    "flight": 224,
+    "time": "19 September 03:22",
+    "rocket": "Electron",
+    "mission": "Owl by The Dozen",
+    "site": "Mahia LC-1B",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
+  },
+  {
+    "flight": 225,
+    "time": "19 September 10:50",
+    "rocket": "Long March 2D",
+    "mission": "",
+    "site": "Taiyuan Satellite Launch Center LA-9",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
