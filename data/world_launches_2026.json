@@ -2473,5 +2473,27 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 226,
+    "time": "20 September 01:47",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 15-27",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 227,
+    "time": "20 September 04:03 ",
+    "rocket": "Kinetica 1",
+    "mission": "Y16",
+    "site": "Jiuquan LS-130",
+    "org": {
+      "country": "China",
+      "info": "CAS Space"
+    }
   }
 ]
