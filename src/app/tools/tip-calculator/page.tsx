@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { calculateTip } from '@/lib/tip';
 
 const TIP_PRESETS = [15, 18, 20, 25];
 
@@ -11,9 +12,7 @@ export default function TipCalculatorPage() {
   const [people, setPeople] = useState(1);
 
   const billAmount = parseFloat(bill) || 0;
-  const tipAmount = billAmount * (tipPercent / 100);
-  const total = billAmount + tipAmount;
-  const perPerson = people > 0 ? total / people : total;
+  const { tipAmount, total, perPerson } = calculateTip(billAmount, tipPercent, people);
 
   return (
     <article className="min-h-screen bg-gradient-to-b from-emerald-50 via-background to-background dark:from-emerald-950/20 dark:via-background dark:to-background relative overflow-hidden">

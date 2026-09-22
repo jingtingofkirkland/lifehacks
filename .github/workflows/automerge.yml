@@ -1,0 +1,32 @@
+name: Auto-merge
+
+# Automatically enables GitHub's auto-merge (squash) on every non-draft PR.
+# GitHub then merges the PR as soon as the required CI checks pass, so a
+# green test run with no regressions merges without manual clicks.
+#
+# Requires the repository setting "Allow auto-merge" to be turned on
+# (Settings -> General -> Pull Requests). If it is off, this workflow
+# skips gracefully and leaves the PR for manual merge.
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  enable-auto-merge:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - name: Enable auto-merge (squash) when the repo allows it
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ALLOWED=$(gh api "repos/${{ github.repository }}" --jq .allow_auto_merge)
+          if [ "$ALLOWED" = "true" ]; then
+            gh pr merge --auto --squash "${{ github.event.pull_request.html_url }}"
+            echo "Auto-merge enabled: PR will merge once CI checks pass."
+          else
+            echo "::notice::Repo setting 'Allow auto-merge' is off; skipping. Enable it under Settings -> General -> Pull Requests."
+          fi
