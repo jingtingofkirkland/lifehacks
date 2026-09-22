@@ -35,6 +35,19 @@ const tools = [
     ),
     tag: 'Calculator',
   },
+
+  {
+    title: 'Math Addition for Kids',
+    desc: 'See addition three ways (ten frame, number line, bar model), practice with instant feedback, and print custom worksheets.',
+    href: '/tools/math-addition',
+    icon: (
+      <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="32" r="24" fill="#D1FAE5" stroke="#059669" strokeWidth="2"/>
+        <path d="M32 20v24M20 32h24" stroke="#059669" strokeWidth="5" strokeLinecap="round"/>
+      </svg>
+    ),
+    tag: 'Kids',
+  },
 ];
 
 const businesses = [
