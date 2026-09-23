@@ -25,7 +25,7 @@ test('tools index features the education section', async ({ page }) => {
   ).toBeVisible();
   await expect(
     page.getByRole('link', { name: /view all learning games/i }),
-  ).toHaveAttribute('href', '/tools/education');
+  ).toHaveAttribute('href', '/tools/education/');
 });
 
 test('education page lists the three learning games', async ({ page }) => {
@@ -36,9 +36,9 @@ test('education page lists the three learning games', async ({ page }) => {
   ).toBeVisible();
 
   const games: Array<[RegExp, string]> = [
-    [/merge racer/i, '/tools/math-addition'],
-    [/bubble pop/i, '/tools/math-bubble-pop'],
-    [/bridge builder/i, '/tools/math-bridge-builder'],
+    [/merge racer/i, '/tools/math-addition/'],
+    [/bubble pop/i, '/tools/math-bubble-pop/'],
+    [/bridge builder/i, '/tools/math-bridge-builder/'],
   ];
   for (const [name, href] of games) {
     const card = page.getByRole('link', { name });
