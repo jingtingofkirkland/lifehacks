@@ -263,6 +263,9 @@ export const MATH_TOOL_CSS = `
   .math-tool .problem-text{ font-size: 1.02rem; }
   .math-tool .answer-input{ width: 104px; font-size: 1.3rem; }
   .math-tool .keypad{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .math-tool .generator .controls{ flex-direction: column; align-items: stretch; }
+  .math-tool .generator .controls > *{ min-width: 0; width: 100%; max-width: 100%; }
+  .math-tool .generator .controls select{ width: 100%; }
 }
 @media print{
   .math-tool .bridge-shell, .math-tool .generator .controls, .math-tool .toggle-row,

@@ -159,6 +159,33 @@ test('bubble pop: a wrong tap wobbles and the worksheet still prints', async ({
   await expect(page.locator('.name-line .name-blank').first()).toBeVisible();
 });
 
+test.describe('mobile worksheet layout', () => {
+  // Phone viewport matching the reported style issue (controls clipped at the
+  // right edge of the "Take it to paper" card).
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test('worksheet control cards do not overflow horizontally on phones', async ({
+    page,
+  }) => {
+    for (const route of [
+      '/tools/math-addition/',
+      '/tools/math-bubble-pop/',
+      '/tools/math-bridge-builder/',
+    ]) {
+      await page.goto(route);
+      const card = page.locator('.math-tool .generator').first();
+      await expect(card).toBeVisible();
+      const overflow = await card.evaluate(
+        (el) => el.scrollWidth - el.clientWidth,
+      );
+      // A 1px tolerance for sub-pixel rounding; anything more is the bug.
+      expect(overflow, `${route} worksheet card overflows`).toBeLessThanOrEqual(
+        1,
+      );
+    }
+  });
+});
+
 test('bridge builder: a correct answer lays a plank', async ({ page }) => {
   await page.goto('/tools/math-bridge-builder/');
 

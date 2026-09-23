@@ -242,6 +242,9 @@ export const MATH_TOOL_CSS = `
   .math-tool .bubble-field{ height: 300px; }
   .math-tool .problem-grid{ grid-template-columns: 1fr; }
   .math-tool .bubble-tip{ width: 160px; }
+  .math-tool .generator .controls{ flex-direction: column; align-items: stretch; }
+  .math-tool .generator .controls > *{ min-width: 0; width: 100%; max-width: 100%; }
+  .math-tool .generator .controls select{ width: 100%; }
 }
 @media print{
   .math-tool .bubble-shell, .math-tool .generator .controls, .math-tool .toggle-row,
