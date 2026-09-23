@@ -12,6 +12,9 @@ test('tools index lists the key tools', async ({ page }) => {
   await expect(
     page.getByRole('heading', { name: /bubble pop/i }),
   ).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: /bridge builder/i }),
+  ).toBeVisible();
 });
 
 test('tip calculator computes tip and total for a bill', async ({ page }) => {
@@ -153,5 +156,50 @@ test('bubble pop: a wrong tap wobbles and the worksheet still prints', async ({
     page.locator('#worksheet-grid .sheet-problem').first(),
   ).toBeVisible();
   await expect(page.locator('.name-line')).toBeVisible();
-  await expect(page.locator('.name-line .name-blank')).toBeVisible();
+  await expect(page.locator('.name-line .name-blank').first()).toBeVisible();
+});
+
+test('bridge builder: a correct answer lays a plank', async ({ page }) => {
+  await page.goto('/tools/math-bridge-builder/');
+
+  const answer = Number(
+    await page.locator('#problemText').getAttribute('data-answer'),
+  );
+  expect(Number.isInteger(answer)).toBe(true);
+
+  await page.locator('#answerInput').fill(String(answer));
+  await page.locator('#submitBtn').click();
+
+  // Correct answer registers in the stats (regression: scoring must work).
+  await expect(page.locator('#feedbackText')).toContainText(/plank|bridge|animal/i);
+  await expect(page.locator('#scoreStat')).toHaveText('1');
+  await expect(page.locator('#bridgeStat')).toHaveText('1/6');
+  await expect(page.locator('#plankRow .plank-slot.filled')).toHaveCount(1);
+});
+
+test('bridge builder: a wrong answer wobbles and the worksheet still prints', async ({
+  page,
+}) => {
+  await page.goto('/tools/math-bridge-builder/');
+
+  const answer = Number(
+    await page.locator('#problemText').getAttribute('data-answer'),
+  );
+  await page.locator('#answerInput').fill(String(answer + 1));
+  await page.locator('#submitBtn').click();
+
+  await expect(page.locator('#feedbackText')).toContainText(/wobble/i);
+  await expect(page.locator('#streakStat')).toHaveText('0');
+  // The drawing tip appears on the wooden pier sign.
+  await expect(page.locator('#pierBoard.visible')).toBeVisible();
+  await expect(page.locator('#tipDrawing svg').first()).toBeVisible();
+
+  // Worksheet: a sheet generates and the Name line stays flexible on mobile
+  // (regression for the mobile overflow fix).
+  await page.locator('#generate-btn').click();
+  await expect(
+    page.locator('#worksheet-grid .sheet-problem').first(),
+  ).toBeVisible();
+  await expect(page.locator('.name-line')).toBeVisible();
+  await expect(page.locator('.name-line .name-blank').first()).toBeVisible();
 });

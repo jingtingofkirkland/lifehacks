@@ -61,6 +61,19 @@ const tools = [
     ),
     tag: 'Kids',
   },
+  {
+    title: 'Bridge Builder: Word Problem Game for Kids',
+    desc: 'Solve story problems to lay bridge planks, get drawing hints when stuck, and print custom worksheets.',
+    href: '/tools/math-bridge-builder',
+    icon: (
+      <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
+        <rect x="6" y="38" width="52" height="18" rx="4" fill="#BAE6FD" stroke="#0284C7" strokeWidth="2"/>
+        <path d="M10 38 Q32 16 54 38" stroke="#B45309" strokeWidth="5" fill="none" strokeLinecap="round"/>
+        <path d="M20 32v6M32 27v11M44 32v6" stroke="#B45309" strokeWidth="4" strokeLinecap="round"/>
+      </svg>
+    ),
+    tag: 'Kids',
+  },
 ];
 
 const businesses = [
