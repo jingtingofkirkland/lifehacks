@@ -6,17 +6,18 @@ import { UsefulnessFeedback } from '@/components/UsefulnessFeedback';
 import { MATH_TOOL_CSS, MATH_TOOL_HTML, MATH_TOOL_JS } from './tool-content';
 
 /**
- * Kids Math — Addition. Interactive addition practice (Learn / Practice /
- * Worksheet tabs) themed with the site's design tokens. The tool markup and
- * logic are adapted from the standalone artifact; all CSS is scoped under
- * `.math-tool` and mapped to the site's shadcn variables so light/dark mode
- * follows the rest of the site.
+ * Kids Math — Merge Racer. A racing game that teaches addition: kids tap two
+ * number cars that merge into the target number, with make-ten style racing
+ * tips when they get stuck, plus a printable worksheet. Themed with the
+ * site's design tokens; all CSS is scoped under `.math-tool` and mapped to
+ * the site's shadcn variables so light/dark mode follows the rest of the
+ * site.
  */
 export default function MathAdditionPage() {
   const mountRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    document.title = 'Addition Practice for Kids - Great Seattle Life Hacks';
+    document.title = 'Merge Racer: Addition Game for Kids - Great Seattle Life Hacks';
     const root = mountRef.current;
     if (!root) return;
 

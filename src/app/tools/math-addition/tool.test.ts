@@ -1,11 +1,11 @@
 /**
- * Behavioral regression tests for the Kids Math addition tool.
+ * Behavioral regression tests for the Merge Racer addition game.
  *
  * These tests run the *shipped* tool code (MATH_TOOL_HTML + MATH_TOOL_JS from
- * tool-content.ts) inside jsdom and simulate real user interactions: tab
- * switching, answering problems, hints, solutions, and worksheet generation.
- * If the generator (build-tool-content.py) ever breaks the tool's wiring,
- * these tests catch it before merge.
+ * tool-content.ts) inside jsdom and simulate real user interactions: picking
+ * number cars, getting tips when stuck, switching fields, and generating the
+ * printable worksheet. If the port ever breaks the game's wiring, these tests
+ * catch it before merge.
  */
 import { describe, expect, it } from 'vitest';
 import { JSDOM } from 'jsdom';
@@ -26,42 +26,52 @@ function freshPage() {
     if (!el) throw new Error(`expected element #${id} to exist`);
     return el;
   };
+  const cars = (): HTMLElement[] =>
+    Array.from(document.querySelectorAll('.number-car'));
   const click = (el: HTMLElement) =>
     el.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
-  const submitAnswer = (value: string) => {
-    ( $('answer') as HTMLInputElement ).value = value;
-    $('answer-form').dispatchEvent(
-      new window.Event('submit', { bubbles: true, cancelable: true }),
-    );
+  const readRound = (): { target: number; values: number[] } => {
+    const target = Number($('targetNumber').textContent);
+    if (!Number.isFinite(target)) throw new Error('target is not a number');
+    const values = cars().map((c) => Number(c.textContent));
+    return { target, values };
   };
-  const readProblem = (): { a: number; b: number } => {
-    const text = $('problem').textContent ?? '';
-    const m = text.match(/(\d+)\s*\+\s*(\d+)/);
-    if (!m) throw new Error(`unexpected problem text: "${text}"`);
-    return { a: Number(m[1]), b: Number(m[2]) };
+  /** Find two car indexes whose values do (or do not) add to the target. */
+  const findPair = (target: number, values: number[], correct: boolean): [number, number] => {
+    for (let i = 0; i < values.length; i += 1) {
+      for (let j = i + 1; j < values.length; j += 1) {
+        const sums = values[i] + values[j] === target;
+        if (sums === correct) return [i, j];
+      }
+    }
+    throw new Error(`no ${correct ? 'correct' : 'wrong'} pair found`);
   };
-  return { window, document, $, click, submitAnswer, readProblem };
+  const pickPair = (pair: [number, number]) => {
+    click(cars()[pair[0]]);
+    click(cars()[pair[1]]);
+  };
+  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  return { window, document, $, cars, click, readRound, findPair, pickPair, wait };
 }
 
-describe('math addition tool', () => {
-  it('switches between Learn / Practice / Worksheet tabs', () => {
-    const { $, click } = freshPage();
-    click($('tab-worksheet'));
-    expect($('tab-worksheet').getAttribute('aria-selected')).toBe('true');
-    expect($('worksheet').classList.contains('active')).toBe(true);
-    expect($('practice').classList.contains('active')).toBe(false);
-    click($('tab-practice'));
-    expect($('practice').classList.contains('active')).toBe(true);
+describe('merge racer game', () => {
+  it('renders a target number and six number cars', () => {
+    const { $, cars, readRound } = freshPage();
+    const { target, values } = readRound();
+    expect(target).toBeGreaterThan(0);
+    expect(cars()).toHaveLength(6);
+    expect(values.every((v) => Number.isFinite(v))).toBe(true);
+    expect($('mergeBay')).toBeTruthy();
+    expect($('tipBtn').textContent).toMatch(/tip/i);
   });
 
-  it('accepts a correct answer, updates stats, and persists progress', () => {
-    const { $, window, submitAnswer, readProblem } = freshPage();
-    const { a, b } = readProblem();
-    submitAnswer(String(a + b));
-    expect($('feedback').className).toContain('good');
-    expect($('correct-stat').textContent).toBe('1');
-    expect($('streak-stat').textContent).toBe('1');
-    expect(($('next-btn') as HTMLButtonElement).hidden).toBe(false);
+  it('accepts a correct pair, advances the race, and persists progress', () => {
+    const { $, window, readRound, findPair, pickPair } = freshPage();
+    const { target, values } = readRound();
+    pickPair(findPair(target, values, true));
+    expect($('feedbackText').textContent).toContain('Turbo merge!');
+    expect($('streakStat').textContent).toBe('1');
+    expect($('lapStat').textContent).toBe('2');
     // Regression guard: progress must go to localStorage (not memory) on the site.
     const saved = JSON.parse(
       window.localStorage.getItem('kids-math-addition-progress') ?? 'null',
@@ -71,48 +81,56 @@ describe('math addition tool', () => {
     expect(saved.streak).toBe(1);
   });
 
-  it('rejects a wrong answer with try-again feedback and resets the streak', () => {
-    const { $, submitAnswer, readProblem } = freshPage();
-    const { a, b } = readProblem();
-    submitAnswer(String(a + b + 1));
-    expect($('feedback').className).toContain('try');
-    expect($('correct-stat').textContent).toBe('0');
+  it('rejects a wrong pair with try-again feedback and resets the streak', () => {
+    const { $, readRound, findPair, pickPair } = freshPage();
+    const { target, values } = readRound();
+    pickPair(findPair(target, values, false));
+    expect($('feedback').className).toContain('error');
+    expect($('feedbackText').textContent).toContain('Close');
+    expect($('streakStat').textContent).toBe('0');
   });
 
-  it('asks for a whole number on empty input', () => {
-    const { $, submitAnswer } = freshPage();
-    submitAnswer('');
-    expect($('feedback').textContent).toContain('whole number');
-  });
-
-  it('reveals a hint without marking the question answered', () => {
+  it('shows a racing tip on demand', () => {
     const { $, click } = freshPage();
-    click($('hint-btn'));
-    expect($('feedback').className).toContain('info');
-    expect(($('feedback').textContent ?? '').length).toBeGreaterThan(20);
-    expect(($('answer') as HTMLInputElement).disabled).toBe(false);
+    click($('tipBtn'));
+    expect($('feedback').className).toContain('tip');
+    expect($('feedbackText').textContent).toContain('Pit-stop tip');
   });
 
-  it('reveals the worked solution and locks the answer box', () => {
-    const { $, click } = freshPage();
-    click($('solution-btn'));
-    expect($('feedback').textContent).toContain('Worked solution');
-    expect(($('answer') as HTMLInputElement).disabled).toBe(true);
+  it('auto-shows a tip after two wrong picks (stuck player)', async () => {
+    const { $, readRound, findPair, pickPair, wait } = freshPage();
+    const { target, values } = readRound();
+    pickPair(findPair(target, values, false));
+    await wait(750); // wrong-pair shake + unlock
+    pickPair(findPair(target, values, false));
+    await wait(750);
+    expect($('feedback').className).toContain('tip');
+    expect($('feedbackText').textContent).toContain('Pit-stop tip');
   });
 
-  it('loads a fresh problem after clicking next', () => {
-    const { $, click, submitAnswer, readProblem } = freshPage();
-    const { a, b } = readProblem();
-    submitAnswer(String(a + b));
-    click($('next-btn'));
-    expect(($('answer') as HTMLInputElement).disabled).toBe(false);
-    expect(($('answer') as HTMLInputElement).value).toBe('');
-    expect($('problem').textContent).toMatch(/(\d+)\s*\+\s*(\d+)/);
+  it('switches between the Basic (to 20) and Advanced (to 100) fields', () => {
+    const { $, document, click, readRound } = freshPage();
+    const advanced = Array.from(document.querySelectorAll('.mode-btn')).find(
+      (b) => b.getAttribute('data-mode') === 'advanced',
+    ) as HTMLElement;
+    click(advanced);
+    const high = readRound().target;
+    expect(high).toBeGreaterThanOrEqual(32);
+    expect(high).toBeLessThanOrEqual(96);
+    const basic = Array.from(document.querySelectorAll('.mode-btn')).find(
+      (b) => b.getAttribute('data-mode') === 'basic',
+    ) as HTMLElement;
+    click(basic);
+    const low = readRound().target;
+    expect(low).toBeGreaterThanOrEqual(7);
+    expect(low).toBeLessThanOrEqual(20);
+    expect($('streakStat').textContent).toBe('0');
   });
+});
 
+describe('printable worksheet', () => {
   it('generates a printable worksheet grid', () => {
     const { $, click } = freshPage();
-    click($('tab-worksheet'));
     ($('count-select') as HTMLSelectElement).value = '10';
     click($('generate-btn'));
     expect($('worksheet-grid').children.length).toBeGreaterThanOrEqual(10);
@@ -121,7 +139,6 @@ describe('math addition tool', () => {
 
   it('toggles the answer key class on the worksheet', () => {
     const { $, window, click } = freshPage();
-    click($('tab-worksheet'));
     const toggle = $('answers-toggle') as HTMLInputElement;
     toggle.checked = true;
     toggle.dispatchEvent(new window.Event('change', { bubbles: true }));
@@ -129,6 +146,12 @@ describe('math addition tool', () => {
     toggle.checked = false;
     toggle.dispatchEvent(new window.Event('change', { bubbles: true }));
     expect($('sheet').classList.contains('show-answers')).toBe(false);
+  });
+
+  it('keeps the mobile name-line fix (flexible blank, no fixed underscores)', () => {
+    // PR #3 regression: the Name row must shrink instead of overflowing.
+    expect(MATH_TOOL_HTML).toContain('class="name-blank"');
+    expect(MATH_TOOL_HTML).not.toMatch(/Name:\s*_{5,}/);
   });
 });
 
@@ -148,9 +171,15 @@ describe('generated tool content (generator regression guards)', () => {
     expect(MATH_TOOL_CSS).toContain('.math-tool');
   });
 
-  it('ships the three expected panels', () => {
-    expect(MATH_TOOL_HTML).toContain('id="learn"');
-    expect(MATH_TOOL_HTML).toContain('id="practice"');
-    expect(MATH_TOOL_HTML).toContain('id="worksheet"');
+  it('follows the site theme (shadcn tokens, .dark class, no webfont imports)', () => {
+    expect(MATH_TOOL_CSS).toContain('hsl(var(--background))');
+    expect(MATH_TOOL_CSS).toContain('.dark .math-tool');
+    expect(MATH_TOOL_CSS).not.toContain('fonts.googleapis.com');
+    expect(MATH_TOOL_CSS).not.toContain('prefers-color-scheme');
+  });
+
+  it('has no separate Learn section (learn-through-practice only)', () => {
+    expect(MATH_TOOL_HTML).not.toContain('id="learn"');
+    expect(MATH_TOOL_HTML).not.toMatch(/>\s*Learn\s*</);
   });
 });

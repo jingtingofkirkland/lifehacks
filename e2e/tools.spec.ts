@@ -7,7 +7,7 @@ test('tools index lists the key tools', async ({ page }) => {
     page.getByRole('heading', { name: /tip calculator/i }),
   ).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: /math addition for kids/i }),
+    page.getByRole('heading', { name: /merge racer/i }),
   ).toBeVisible();
 });
 
@@ -28,26 +28,62 @@ test('tip calculator computes tip and total for a bill', async ({ page }) => {
   await expect(page.getByText('$59.00', { exact: true }).first()).toBeVisible();
 });
 
-test('math addition tool: answering practice problems updates stats', async ({
+test('merge racer: tapping a correct number-car pair advances the race', async ({
   page,
 }) => {
   await page.goto('/tools/math-addition/');
 
-  // Practice lives behind the "Practice" tab; the default tab is "Learn".
-  await page.locator('#tab-practice').click();
+  const target = page.locator('#targetNumber');
+  await expect(target).toContainText(/\d+/);
+  const targetNum = Number(await target.textContent());
 
-  const problem = page.locator('#problem');
-  await expect(problem).toContainText(/\+/);
+  const values = (await page.locator('.number-car').allTextContents()).map((t) =>
+    Number(t),
+  );
+  expect(values).toHaveLength(6);
 
-  const text = (await problem.textContent()) ?? '';
-  const m = text.match(/(\d+)\s*\+\s*(\d+)/);
-  expect(m).not.toBeNull();
-  const answer = String(Number(m![1]) + Number(m![2]));
+  let pair: [number, number] | null = null;
+  for (let i = 0; i < values.length && !pair; i += 1) {
+    for (let j = i + 1; j < values.length; j += 1) {
+      if (values[i] + values[j] === targetNum) pair = [i, j];
+    }
+  }
+  expect(pair).not.toBeNull();
 
-  await page.locator('#answer').fill(answer);
-  await page.locator('#answer').press('Enter');
+  await page.locator('.number-car').nth(pair![0]).click();
+  await page.locator('.number-car').nth(pair![1]).click();
 
-  // Correct answer registers in the stats (regression: scoring must work).
-  await expect(page.locator('#correct-stat')).toHaveText('1');
-  await expect(page.locator('#streak-stat')).toHaveText('1');
+  // Correct merge registers in the stats (regression: scoring must work).
+  await expect(page.locator('#feedbackText')).toContainText('Turbo merge!');
+  await expect(page.locator('#streakStat')).toHaveText('1');
+});
+
+test('merge racer: a wrong pair bounces and the worksheet still prints', async ({
+  page,
+}) => {
+  await page.goto('/tools/math-addition/');
+
+  const targetNum = Number(await page.locator('#targetNumber').textContent());
+  const values = (await page.locator('.number-car').allTextContents()).map((t) =>
+    Number(t),
+  );
+  let pair: [number, number] | null = null;
+  for (let i = 0; i < values.length && !pair; i += 1) {
+    for (let j = i + 1; j < values.length; j += 1) {
+      if (values[i] + values[j] !== targetNum) pair = [i, j];
+    }
+  }
+  expect(pair).not.toBeNull();
+  await page.locator('.number-car').nth(pair![0]).click();
+  await page.locator('.number-car').nth(pair![1]).click();
+  await expect(page.locator('#feedbackText')).toContainText('Close');
+
+  // Worksheet: a sheet generates and the Name line stays flexible on mobile
+  // (regression for the mobile overflow fix).
+  await page.locator('#generate-btn').click();
+  await expect(
+    page.locator('#worksheet-grid .sheet-problem').first(),
+  ).toBeVisible();
+  await expect(page.locator('.name-line')).toBeVisible();
+  await expect(page.locator('.name-line .name-blank')).toBeVisible();
 });
