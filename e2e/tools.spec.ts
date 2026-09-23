@@ -156,7 +156,7 @@ test('bubble pop: a wrong tap wobbles and the worksheet still prints', async ({
     page.locator('#worksheet-grid .sheet-problem').first(),
   ).toBeVisible();
   await expect(page.locator('.name-line')).toBeVisible();
-  await expect(page.locator('.name-line .name-blank')).toBeVisible();
+  await expect(page.locator('.name-line .name-blank').first()).toBeVisible();
 });
 
 test('bridge builder: a correct answer lays a plank', async ({ page }) => {
