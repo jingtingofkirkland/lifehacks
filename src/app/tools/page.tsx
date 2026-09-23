@@ -37,8 +37,8 @@ const tools = [
   },
 
   {
-    title: 'Math Addition for Kids',
-    desc: 'See addition three ways (ten frame, number line, bar model), practice with instant feedback, and print custom worksheets.',
+    title: 'Merge Racer: Addition Game for Kids',
+    desc: 'Tap two number cars to merge into the target number, get racing tips when stuck, and print custom worksheets.',
     href: '/tools/math-addition',
     icon: (
       <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
