@@ -192,7 +192,7 @@ test('bridge builder: a wrong answer wobbles and the worksheet still prints', as
   await expect(page.locator('#streakStat')).toHaveText('0');
   // The drawing tip appears on the wooden pier sign.
   await expect(page.locator('#pierBoard.visible')).toBeVisible();
-  await expect(page.locator('#tipDrawing svg')).toBeVisible();
+  await expect(page.locator('#tipDrawing svg').first()).toBeVisible();
 
   // Worksheet: a sheet generates and the Name line stays flexible on mobile
   // (regression for the mobile overflow fix).

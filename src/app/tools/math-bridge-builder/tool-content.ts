@@ -667,7 +667,7 @@ export const MATH_TOOL_JS = `
     'Great building! A new plank is down! \\uD83E\\uDEB5',
     'Awesome! The bridge is growing! \\uD83C\\uDF09',
     'Perfect! An animal trots across! \\uD83D\\uDC3E',
-    'Super work! Keep building! \\uD83D\\uDCAA'
+    'Super work! The bridge keeps growing! \\uD83D\\uDCAA'
   ];
   function onCorrect() {
     state.planks += 1;
