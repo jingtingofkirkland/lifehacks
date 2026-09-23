@@ -1,33 +1,33 @@
 name: CI
 
-# Gate for auto-merge: every PR must pass tests and a full production build
-# with no regressions before it can be merged into master.
 on:
   push:
     branches: [master]
   pull_request:
-
-permissions:
-  contents: read
+    branches: [master]
 
 jobs:
-  test:
+  tests:
     name: Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: 20
           cache: npm
 
       - name: Install dependencies
         run: npm ci --ignore-scripts
-        env:
-          PUPPETEER_SKIP_DOWNLOAD: true
+
+      # --ignore-scripts skips esbuild's postinstall, which downloads its
+      # platform binary. Without it, vitest (via vite) cannot transform
+      # anything. Run just esbuild's installer instead of all scripts.
+      - name: Install esbuild binary
+        run: node node_modules/esbuild/install.js
 
       - name: Typecheck
         run: npx tsc --noEmit
@@ -40,18 +40,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: 20
           cache: npm
 
       - name: Install dependencies
         run: npm ci --ignore-scripts
-        env:
-          PUPPETEER_SKIP_DOWNLOAD: true
 
-      - name: Build with Next.js
+      - name: Build static site
         run: npm run build
+
+  e2e:
+    name: End-to-end tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Build static site
+        run: npm run build
+
+      - name: Run Playwright tests
+        run: npx playwright test
