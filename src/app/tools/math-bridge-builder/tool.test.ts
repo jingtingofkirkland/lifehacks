@@ -184,4 +184,16 @@ describe('bridge builder worksheet', () => {
     // No global leaks: the shipped CSS must not style bare body/html.
     expect(MATH_TOOL_CSS).not.toMatch(/(^|\n)\s*body\s*\{/);
   });
+
+  it('stacks worksheet controls vertically on phones (mobile overflow fix)', () => {
+    // Regression guard: on ~390px phones the controls must stack instead of
+    // squeezing side by side and overflowing the worksheet card.
+    expect(MATH_TOOL_CSS).toMatch(
+      /@media\s*\(\s*max-width:\s*560px\s*\)[\s\S]*?\.math-tool \.generator \.controls\{\s*flex-direction:\s*column;/,
+    );
+    // The sheet header (title + Name/Date/Score line) must also stack on phones.
+    expect(MATH_TOOL_CSS).toMatch(
+      /@media\s*\(\s*max-width:\s*560px\s*\)[\s\S]*?\.math-tool \.sheet-head\{\s*display:\s*block;/,
+    );
+  });
 });

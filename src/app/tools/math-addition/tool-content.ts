@@ -510,6 +510,11 @@ export const MATH_TOOL_CSS = `
       .math-tool .sheet-head{ display: block; }
       .math-tool .name-line{ margin-top: 12px; }
     }
+    @media (max-width: 560px){
+      .math-tool .controls{ grid-template-columns: 1fr; }
+      .math-tool .controls .primary{ grid-column: auto; }
+      .math-tool .controls label, .math-tool .controls select, .math-tool .controls .primary{ min-width: 0; width: 100%; max-width: 100%; }
+    }
     @media print{
       @page{ margin: .55in; }
       .math-tool{ background: #fff !important; color: #000 !important; }

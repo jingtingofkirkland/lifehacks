@@ -182,4 +182,11 @@ describe('generated tool content (generator regression guards)', () => {
     expect(MATH_TOOL_HTML).not.toContain('id="learn"');
     expect(MATH_TOOL_HTML).not.toMatch(/>\s*Learn\s*</);
   });
+
+  it('stacks worksheet controls in one column on phones (mobile overflow fix)', () => {
+    // Regression: the two-column control grid overflowed the card on ~390px phones.
+    expect(MATH_TOOL_CSS).toMatch(
+      /@media\s*\(\s*max-width:\s*560px\s*\)[\s\S]*?\.math-tool \.controls\{\s*grid-template-columns:\s*1fr;/,
+    );
+  });
 });
