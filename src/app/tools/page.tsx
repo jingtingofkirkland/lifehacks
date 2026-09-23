@@ -1,13 +1,22 @@
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 import { Metadata } from 'next';
 import { UsefulnessFeedback } from '@/components/UsefulnessFeedback';
 
 export const metadata: Metadata = {
   title: 'Life Saver Tools - Great Seattle Life Hacks',
-  description: 'Printable calendars, handy tools, and local gems to make everyday life easier.',
+  description: 'Printable calendars, handy tools, kids learning games, and local gems to make everyday life easier.',
 };
 
-const tools = [
+interface ToolItem {
+  title: string;
+  desc: string;
+  href: string;
+  icon: ReactNode;
+  tag: string;
+}
+
+const handyTools: ToolItem[] = [
   {
     title: '2026 Calendar',
     desc: 'Printable calendar with US holidays, BSD school days, cute stickers, month & year views.',
@@ -35,7 +44,9 @@ const tools = [
     ),
     tag: 'Calculator',
   },
+];
 
+const eduGames: ToolItem[] = [
   {
     title: 'Merge Racer: Addition Game for Kids',
     desc: 'Tap two number cars to merge into the target number, get racing tips when stuck, and print custom worksheets.',
@@ -101,6 +112,57 @@ const LeafSvg = () => (
   </svg>
 );
 
+type CardAccent = 'amber' | 'emerald';
+
+const cardAccents: Record<CardAccent, { card: string; tag: string; iconWrap: string; title: string; cta: string }> = {
+  amber: {
+    card: 'border-amber-200/80 dark:border-amber-800/40 hover:shadow-amber-200/40 dark:hover:shadow-amber-900/20 hover:border-amber-300 dark:hover:border-amber-600',
+    tag: 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300',
+    iconWrap: 'from-amber-50 to-orange-50 dark:from-amber-950/50 dark:to-orange-950/50 border-amber-100 dark:border-amber-900/30',
+    title: 'group-hover:text-amber-700 dark:group-hover:text-amber-400',
+    cta: 'text-amber-600 dark:text-amber-400',
+  },
+  emerald: {
+    card: 'border-emerald-200/80 dark:border-emerald-800/40 hover:shadow-emerald-200/40 dark:hover:shadow-emerald-900/20 hover:border-emerald-300 dark:hover:border-emerald-600',
+    tag: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300',
+    iconWrap: 'from-emerald-50 to-teal-50 dark:from-emerald-950/50 dark:to-teal-950/50 border-emerald-100 dark:border-emerald-900/30',
+    title: 'group-hover:text-emerald-700 dark:group-hover:text-emerald-400',
+    cta: 'text-emerald-600 dark:text-emerald-400',
+  },
+};
+
+function ToolCard({ item, accent, ctaLabel }: { item: ToolItem; accent: CardAccent; ctaLabel: string }) {
+  const a = cardAccents[accent];
+  return (
+    <Link
+      href={item.href}
+      className={`group relative block p-6 rounded-2xl border bg-white/80 dark:bg-card/80 backdrop-blur-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 ${a.card}`}
+    >
+      {/* tag */}
+      {item.tag && (
+        <span className={`absolute top-3 right-3 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${a.tag}`}>
+          {item.tag}
+        </span>
+      )}
+      <div className="flex items-start gap-4">
+        <div className={`shrink-0 mt-0.5 p-2 rounded-xl bg-gradient-to-br border group-hover:scale-110 transition-transform duration-300 ${a.iconWrap}`}>
+          {item.icon}
+        </div>
+        <div>
+          <h3 className={`font-semibold text-lg transition-colors ${a.title}`}>
+            {item.title}
+          </h3>
+          <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{item.desc}</p>
+          <span className={`inline-flex items-center gap-1 mt-3 text-xs font-medium group-hover:gap-2 transition-all ${a.cta}`}>
+            {ctaLabel}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 export default function ToolsPage() {
   return (
     <article className="min-h-screen bg-gradient-to-b from-orange-50 via-amber-50/80 to-background dark:from-orange-950/30 dark:via-amber-950/20 dark:to-background relative overflow-hidden">
@@ -133,6 +195,29 @@ export default function ToolsPage() {
           </p>
         </div>
 
+        {/* ── Education section ── */}
+        <section className="mb-14">
+          <div className="flex items-center justify-between gap-3 mb-5">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="w-8 h-8 shrink-0 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/><path d="M22 10v6"/></svg>
+              </span>
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 truncate">
+                Education &middot; Learning Games for Kids
+              </h2>
+            </div>
+            <Link href="/tools/education" className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:gap-2 transition-all">
+              View all learning games
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </Link>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {eduGames.map((game) => (
+              <ToolCard key={game.href} item={game} accent="emerald" ctaLabel="Play now" />
+            ))}
+          </div>
+        </section>
+
         {/* ── Tools section ── */}
         <section className="mb-14">
           <div className="flex items-center gap-2 mb-5">
@@ -144,39 +229,8 @@ export default function ToolsPage() {
             </h2>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            {tools.map((tool) => (
-              <Link
-                key={tool.href}
-                href={tool.href}
-                className="group relative block p-6 rounded-2xl border border-amber-200/80 dark:border-amber-800/40
-                  bg-white/80 dark:bg-card/80 backdrop-blur-sm
-                  hover:shadow-xl hover:shadow-amber-200/40 dark:hover:shadow-amber-900/20
-                  hover:border-amber-300 dark:hover:border-amber-600
-                  hover:-translate-y-0.5
-                  transition-all duration-300"
-              >
-                {/* tag */}
-                {tool.tag && (
-                  <span className="absolute top-3 right-3 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300">
-                    {tool.tag}
-                  </span>
-                )}
-                <div className="flex items-start gap-4">
-                  <div className="shrink-0 mt-0.5 p-2 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/50 dark:to-orange-950/50 border border-amber-100 dark:border-amber-900/30 group-hover:scale-110 transition-transform duration-300">
-                    {tool.icon}
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">
-                      {tool.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{tool.desc}</p>
-                    <span className="inline-flex items-center gap-1 mt-3 text-xs font-medium text-amber-600 dark:text-amber-400 group-hover:gap-2 transition-all">
-                      Open tool
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                    </span>
-                  </div>
-                </div>
-              </Link>
+            {handyTools.map((tool) => (
+              <ToolCard key={tool.href} item={tool} accent="amber" ctaLabel="Open tool" />
             ))}
           </div>
         </section>
