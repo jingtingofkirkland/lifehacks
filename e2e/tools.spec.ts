@@ -201,5 +201,5 @@ test('bridge builder: a wrong answer wobbles and the worksheet still prints', as
     page.locator('#worksheet-grid .sheet-problem').first(),
   ).toBeVisible();
   await expect(page.locator('.name-line')).toBeVisible();
-  await expect(page.locator('.name-line .name-blank')).toBeVisible();
+  await expect(page.locator('.name-line .name-blank').first()).toBeVisible();
 });
