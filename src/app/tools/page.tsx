@@ -48,6 +48,19 @@ const tools = [
     ),
     tag: 'Kids',
   },
+  {
+    title: 'Bubble Pop: Missing Number Game for Kids',
+    desc: 'Pop the bubble holding the missing number, get ten-frame tips when stuck, and print custom worksheets.',
+    href: '/tools/math-bubble-pop',
+    icon: (
+      <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="30" r="20" fill="#E0F2FE" stroke="#0284C7" strokeWidth="2"/>
+        <ellipse cx="25" cy="23" rx="6" ry="4" fill="#FFFFFF" opacity="0.8" transform="rotate(-24 25 23)"/>
+        <text x="32" y="38" textAnchor="middle" fontSize="20" fontWeight="bold" fill="#0284C7">?</text>
+      </svg>
+    ),
+    tag: 'Kids',
+  },
 ];
 
 const businesses = [
