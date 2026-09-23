@@ -17,6 +17,36 @@ test('tools index lists the key tools', async ({ page }) => {
   ).toBeVisible();
 });
 
+test('tools index features the education section', async ({ page }) => {
+  await page.goto('/tools/');
+
+  await expect(
+    page.getByRole('heading', { name: /learning games for kids/i }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('link', { name: /view all learning games/i }),
+  ).toHaveAttribute('href', '/tools/education');
+});
+
+test('education page lists the three learning games', async ({ page }) => {
+  await page.goto('/tools/education/');
+
+  await expect(
+    page.getByRole('heading', { name: /^education$/i }),
+  ).toBeVisible();
+
+  const games: Array<[RegExp, string]> = [
+    [/merge racer/i, '/tools/math-addition'],
+    [/bubble pop/i, '/tools/math-bubble-pop'],
+    [/bridge builder/i, '/tools/math-bridge-builder'],
+  ];
+  for (const [name, href] of games) {
+    const card = page.getByRole('link', { name });
+    await expect(card).toBeVisible();
+    await expect(card).toHaveAttribute('href', href);
+  }
+});
+
 test('tip calculator computes tip and total for a bill', async ({ page }) => {
   await page.goto('/tools/tip-calculator/');
 
