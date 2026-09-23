@@ -192,7 +192,9 @@ export const MATH_TOOL_CSS = `
     .math-tool .sheet{ background: #fff; color: #15211e; border: 1px solid #cad5d1; padding: 30px; }
     .math-tool .sheet-head{ display: flex; justify-content: space-between; gap: 20px; border-bottom: 2px solid #15211e; padding-bottom: 12px; margin-bottom: 22px; }
     .math-tool .sheet-head h3{ margin: 0; }
-    .math-tool .name-line{ white-space: nowrap; }
+    .math-tool .name-line{ display: flex; align-items: flex-end; gap: 8px; min-width: 0; }
+    .math-tool .sheet-head .name-line{ flex: 0 1 300px; }
+    .math-tool .name-blank{ flex: 1 1 160px; min-width: 60px; border-bottom: 2px solid currentColor; height: 1.1em; }
     .math-tool .problem-grid{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px 44px; counter-reset: item; }
     .math-tool .sheet-problem{ counter-increment: item; display: flex; align-items: flex-end; min-height: 54px; font-weight: 700; font-size: 1.25rem; line-height: 1.3; border-bottom: 1px solid #9da9a5; padding-bottom: 8px; }
     .math-tool .sheet-problem::before{ content: counter(item) "."; width: 38px; color: #53625d; font-weight: 400; }
@@ -417,7 +419,7 @@ export const MATH_TOOL_HTML = `
         <div class="sheet" id="sheet">
           <div class="sheet-head">
             <h3>Addition Practice</h3>
-            <span class="name-line">Name: ____________________</span>
+            <span class="name-line"><span>Name:</span><span class="name-blank" aria-hidden="true"></span></span>
           </div>
           <div class="problem-grid" id="worksheet-grid"></div>
           <div class="answer-key-label">Answers are shown in green.</div>
