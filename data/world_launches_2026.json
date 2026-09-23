@@ -2489,11 +2489,22 @@
     "flight": 227,
     "time": "20 September 04:03 ",
     "rocket": "Kinetica 1",
-    "mission": "Y16",
+    "mission": "Y18",
     "site": "Jiuquan LS-130",
     "org": {
       "country": "China",
       "info": "CAS Space"
+    }
+  },
+  {
+    "flight": 228,
+    "time": "23 September 13:32:00 ",
+    "rocket": "Long March 8A",
+    "mission": "",
+    "site": "Wenchang Commercial LC-1",
+    "org": {
+      "country": "China",
+      "info": "CASC"
     }
   }
 ]
