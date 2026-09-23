@@ -217,5 +217,9 @@ describe('generated tool content (generator regression guards)', () => {
     expect(MATH_TOOL_CSS).toMatch(
       /@media\s*\(\s*max-width:\s*560px\s*\)[\s\S]*?\.math-tool \.generator \.controls\{\s*flex-direction:\s*column;/,
     );
+    // The sheet header (title + Name line) must also stack on phones.
+    expect(MATH_TOOL_CSS).toMatch(
+      /@media\s*\(\s*max-width:\s*560px\s*\)[\s\S]*?\.math-tool \.sheet-head\{\s*display:\s*block;/,
+    );
   });
 });

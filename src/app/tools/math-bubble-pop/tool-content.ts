@@ -245,6 +245,9 @@ export const MATH_TOOL_CSS = `
   .math-tool .generator .controls{ flex-direction: column; align-items: stretch; }
   .math-tool .generator .controls > *{ min-width: 0; width: 100%; max-width: 100%; }
   .math-tool .generator .controls select{ width: 100%; }
+  .math-tool .sheet{ padding: 20px 16px; }
+  .math-tool .sheet-head{ display: block; }
+  .math-tool .sheet-head h3{ margin-bottom: 12px; }
 }
 @media print{
   .math-tool .bubble-shell, .math-tool .generator .controls, .math-tool .toggle-row,
