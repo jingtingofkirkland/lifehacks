@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { UsefulnessFeedback } from '@/components/UsefulnessFeedback';
+import { GameCard } from './GameCard';
 
 export const metadata: Metadata = {
   title: 'Education: Learning Games for Kids - Great Seattle Life Hacks',
@@ -13,6 +14,7 @@ const games = [
     title: 'Merge Racer: Addition Game for Kids',
     desc: 'Tap two number cars to merge into the target number, get racing tips when stuck, and print custom worksheets.',
     href: '/tools/math-addition',
+    game: 'merge_racer',
     icon: (
       <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
         <circle cx="32" cy="32" r="24" fill="#D1FAE5" stroke="#059669" strokeWidth="2"/>
@@ -25,6 +27,7 @@ const games = [
     title: 'Bubble Pop: Missing Number Game for Kids',
     desc: 'Pop the bubble holding the missing number, get ten-frame tips when stuck, and print custom worksheets.',
     href: '/tools/math-bubble-pop',
+    game: 'bubble_pop',
     icon: (
       <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
         <circle cx="32" cy="30" r="20" fill="#E0F2FE" stroke="#0284C7" strokeWidth="2"/>
@@ -38,6 +41,7 @@ const games = [
     title: 'Bridge Builder: Word Problem Game for Kids',
     desc: 'Solve story problems to lay bridge planks, get drawing hints when stuck, and print custom worksheets.',
     href: '/tools/math-bridge-builder',
+    game: 'bridge_builder',
     icon: (
       <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
         <rect x="6" y="38" width="52" height="18" rx="4" fill="#BAE6FD" stroke="#0284C7" strokeWidth="2"/>
@@ -105,9 +109,10 @@ export default function EducationPage() {
         <section className="mb-12">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {games.map((game) => (
-              <Link
+              <GameCard
                 key={game.href}
                 href={game.href}
+                game={game.game}
                 className="group relative block p-6 rounded-2xl border border-emerald-200/80 dark:border-emerald-800/40
                   bg-white/80 dark:bg-card/80 backdrop-blur-sm
                   hover:shadow-xl hover:shadow-emerald-200/40 dark:hover:shadow-emerald-900/20
@@ -136,7 +141,7 @@ export default function EducationPage() {
                     </span>
                   </div>
                 </div>
-              </Link>
+              </GameCard>
             ))}
           </div>
         </section>

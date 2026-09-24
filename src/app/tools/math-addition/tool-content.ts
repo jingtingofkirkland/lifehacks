@@ -1,4 +1,5 @@
 // Merged from the Merge Racer game artifact; do not hand-edit.
+import { PIXEL_TRACK_SNIPPET } from '@/lib/pixel';
 // Theme: CSS is scoped under .math-tool and mapped to the site's shadcn
 // tokens so the page follows the main site design (dark mode via the
 // .dark class from next-themes). Progress persists in localStorage.
@@ -654,6 +655,7 @@ export const MATH_TOOL_HTML = `
 `;
 
 export const MATH_TOOL_JS = `
+${PIXEL_TRACK_SNIPPET}
 
     (function () {
       'use strict';
@@ -807,6 +809,10 @@ export const MATH_TOOL_JS = `
 
       function selectCar(index) {
         if (state.locked) return;
+        if (!state.pixelStarted) {
+          state.pixelStarted = true;
+          trackPixelEvent('GameStarted', { game: 'merge_racer' });
+        }
         var found = state.selected.indexOf(index);
         if (found !== -1) {
           state.selected.splice(found, 1);
@@ -952,6 +958,7 @@ export const MATH_TOOL_JS = `
       }
 
       function finishRace() {
+        trackPixelEvent('GameCompleted', { game: 'merge_racer', score: state.score, streak: state.streak });
         els.finishSummary.textContent = 'Eight smart merges' + (state.streak >= 4 ? ' and a ' + state.streak + '-answer streak.' : '. That was fast thinking.');
         els.finish.hidden = false;
         var done = progressStore.load();
@@ -1041,7 +1048,10 @@ export const MATH_TOOL_JS = `
         worksheetGrid.innerHTML = out;
       }
 
-      document.getElementById("generate-btn").addEventListener("click", generateWorksheet);
+      document.getElementById("generate-btn").addEventListener("click", function () {
+        trackPixelEvent('WorksheetPrinted', { game: 'merge_racer' });
+        generateWorksheet();
+      });
       document.getElementById("answers-toggle").addEventListener("change", function (event) {
         sheet.classList.toggle("show-answers", event.target.checked);
       });
