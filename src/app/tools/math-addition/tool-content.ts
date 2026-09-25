@@ -232,6 +232,17 @@ export const MATH_TOOL_CSS = `
       25% { transform: translateY(-48%) translateX(-10px) rotate(-1deg); }
       60% { transform: translateY(-48%) translateX(12px) rotate(1deg); }
     }
+    /* Idle "driving" feel: the racer bobs while the lane dashes scroll by. */
+    .math-tool .racer-wrap img{ animation: idleBob 1.8s ease-in-out infinite; }
+    @keyframes idleBob{
+      0%, 100%{ transform: rotate(-1deg) translateY(0); }
+      50%{ transform: rotate(-1deg) translateY(-5px); }
+    }
+    .math-tool .track::before, .math-tool .track::after{ animation: dashScroll 1.1s linear infinite; }
+    @keyframes dashScroll{
+      from{ background-position-x: 0; }
+      to{ background-position-x: -48px; }
+    }
     .math-tool .speed-line{
       position: absolute;
       height: 3px;
@@ -588,7 +599,7 @@ export const MATH_TOOL_HTML = `
           <span class="operator">+</span>
           <div class="slot empty" id="slotB" aria-label="Second number not selected"></div>
           <span class="operator">=</span>
-          <div class="slot sum-slot" id="sumSlot">?</div>
+          <div class="slot sum-slot" id="sumSlot" aria-label="Target sum">?</div>
         </div>
 
         <div class="cars" id="cars" aria-label="Choose two number cars"></div>
@@ -832,7 +843,13 @@ export const MATH_TOOL_JS = `
         var b = state.selected.length > 1 ? state.values[state.selected[1]] : null;
         setSlot(els.slotA, a, 'First');
         setSlot(els.slotB, b, 'Second');
-        els.sum.textContent = a !== null && b !== null ? a + b : '?';
+        if (a !== null && b !== null) {
+          els.sum.textContent = a + b;
+          els.sum.setAttribute('aria-label', 'Your sum ' + (a + b));
+        } else {
+          els.sum.textContent = state.target;
+          els.sum.setAttribute('aria-label', 'Target sum ' + state.target);
+        }
       }
 
       function setSlot(el, value, label) {

@@ -65,6 +65,14 @@ describe('merge racer game', () => {
     expect($('tipBtn').textContent).toMatch(/tip/i);
   });
 
+  it('pre-fills the merge bay result slot with the target number', () => {
+    const { $, readRound } = freshPage();
+    const { target } = readRound();
+    // "? + ? = <target>": the goal is visible before any car is tapped.
+    expect($('sumSlot').textContent).toBe(String(target));
+    expect($('sumSlot').getAttribute('aria-label')).toContain(String(target));
+  });
+
   it('accepts a correct pair, advances the race, and persists progress', () => {
     const { $, window, readRound, findPair, pickPair } = freshPage();
     const { target, values } = readRound();
