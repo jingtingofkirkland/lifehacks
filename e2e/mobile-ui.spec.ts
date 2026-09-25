@@ -102,4 +102,43 @@ test.describe('merge racer equation + car animation', () => {
       .evaluate((el) => getComputedStyle(el).animationName);
     expect(animName).toContain('idleBob');
   });
+
+  test('racer sits straight on the track (base rotation applied)', async ({
+    page,
+  }) => {
+    await page.goto('/tools/math-addition/');
+    // The tool HTML/CSS is injected by a React effect after hydration, so
+    // wait for the racer before reading the injected stylesheet.
+    await page.locator('#racer img').waitFor();
+    // The car sprite is drawn tilted; the CSS must counter-rotate it so the
+    // nose points along the horizontal track. The idleBob keyframes bake the
+    // same base rotation in so the animation never clobbers it.
+    const cssText = await page.evaluate(() => {
+      const hits: string[] = [];
+      for (const sheet of Array.from(document.styleSheets)) {
+        let rules: CSSRuleList | null = null;
+        try {
+          rules = sheet.cssRules;
+        } catch {
+          continue; // cross-origin sheet
+        }
+        for (const rule of Array.from(rules)) {
+          if (
+            (rule instanceof CSSKeyframesRule && rule.name === 'idleBob') ||
+            (rule instanceof CSSStyleRule &&
+              rule.selectorText === '.math-tool .racer-wrap img' &&
+              /transform/.test(rule.cssText))
+          ) {
+            hits.push(rule.cssText);
+          }
+        }
+      }
+      return hits.join('\n');
+    });
+    expect(cssText).toContain('rotate(-29.5deg)');
+    const animName = await page
+      .locator('#racer img')
+      .evaluate((el) => getComputedStyle(el).animationName);
+    expect(animName).toContain('idleBob');
+  });
 });
