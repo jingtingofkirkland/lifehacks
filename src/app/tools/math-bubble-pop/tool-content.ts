@@ -1,4 +1,5 @@
 // Merged from the Bubble Pop game; do not hand-edit.
+import { PIXEL_TRACK_SNIPPET } from '@/lib/pixel';
 // Theme: CSS is scoped under .math-tool and mapped to the site's shadcn
 // tokens so the page follows the main site design (dark mode via the
 // .dark class from next-themes). Progress persists in localStorage.
@@ -334,6 +335,7 @@ export const MATH_TOOL_HTML = `
 </main>`;
 
 export const MATH_TOOL_JS = `
+${PIXEL_TRACK_SNIPPET}
 (function () {
   'use strict';
 
@@ -569,12 +571,19 @@ export const MATH_TOOL_JS = `
   /* ---------- gameplay ---------- */
   function onBubbleTap(bubble) {
     if (state.locked || !state.round) return;
+    if (!state.pixelStarted) {
+      state.pixelStarted = true;
+      trackPixelEvent('GameStarted', { game: 'bubble_pop' });
+    }
     var val = Number(bubble.getAttribute('data-value'));
     if (val === state.round.eq.answer) {
       state.locked = true;
       bubble.classList.add('popped');
       state.score += 1;
       state.correct += 1;
+      if (state.correct % 10 === 0) {
+        trackPixelEvent('GameCompleted', { game: 'bubble_pop', correct: state.correct });
+      }
       state.streak += 1;
       state.wrongStreak = 0;
       if (state.streak > state.best) state.best = state.streak;
@@ -675,7 +684,10 @@ export const MATH_TOOL_JS = `
     btn.addEventListener('click', function () { setMode(btn.getAttribute('data-mode')); });
   });
   els.tipBtn.addEventListener('click', showTip);
-  els['generate-btn'].addEventListener('click', generateWorksheet);
+  els['generate-btn'].addEventListener('click', function () {
+    trackPixelEvent('WorksheetPrinted', { game: 'bubble_pop' });
+    generateWorksheet();
+  });
   els['answers-toggle'].addEventListener('change', function (event) {
     els.sheet.classList.toggle('show-answers', event.target.checked);
   });

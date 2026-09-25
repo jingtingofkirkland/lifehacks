@@ -1,4 +1,5 @@
 // Merged from the Bridge Builder game; do not hand-edit.
+import { PIXEL_TRACK_SNIPPET } from '@/lib/pixel';
 // Theme: CSS is scoped under .math-tool and mapped to the site's shadcn
 // tokens so the page follows the main site design (dark mode via the
 // .dark class from next-themes). Progress persists in localStorage.
@@ -389,6 +390,7 @@ export const MATH_TOOL_HTML = `
 `;
 
 export const MATH_TOOL_JS = `
+${PIXEL_TRACK_SNIPPET}
 (function () {
   'use strict';
 
@@ -720,10 +722,15 @@ export const MATH_TOOL_JS = `
       return;
     }
     if (!state.problem) return;
+    if (!state.pixelStarted) {
+      state.pixelStarted = true;
+      trackPixelEvent('GameStarted', { game: 'bridge_builder' });
+    }
     if (parseInt(raw, 10) === state.problem.answer) onCorrect();
     else onWrong();
   }
   function celebrate() {
+    trackPixelEvent('GameCompleted', { game: 'bridge_builder', score: state.score });
     store.bridges = (store.bridges || 0) + 1;
     saveStore();
     updateStats();
@@ -835,7 +842,10 @@ export const MATH_TOOL_JS = `
         });
       })(modes[i]);
     }
-    $('generate-btn').addEventListener('click', generateWorksheet);
+    $('generate-btn').addEventListener('click', function () {
+      trackPixelEvent('WorksheetPrinted', { game: 'bridge_builder' });
+      generateWorksheet();
+    });
     $('answer-key-toggle').addEventListener('change', applyAnswerKey);
     $('print-btn').addEventListener('click', function () { window.print(); });
   }

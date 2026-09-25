@@ -8,7 +8,7 @@
  * worksheet. If the port ever breaks the game's wiring, these tests catch it
  * before merge.
  */
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { JSDOM } from 'jsdom';
 import { MATH_TOOL_CSS, MATH_TOOL_HTML, MATH_TOOL_JS } from './tool-content';
 
@@ -195,5 +195,38 @@ describe('bridge builder worksheet', () => {
     expect(MATH_TOOL_CSS).toMatch(
       /@media\s*\(\s*max-width:\s*560px\s*\)[\s\S]*?\.math-tool \.sheet-head\{\s*display:\s*block;/,
     );
+  });
+});
+
+describe('meta pixel events', () => {
+  it('fires GameStarted on first submit, GameCompleted on bridge finish, WorksheetPrinted on generate', () => {
+    const { window, $, click, solveCurrent } = freshPage();
+    const fbq = vi.fn();
+    (window as unknown as { fbq: unknown }).fbq = fbq;
+    solveCurrent(true);
+    const started = fbq.mock.calls.filter((c) => c[1] === 'GameStarted');
+    expect(started).toHaveLength(1);
+    expect(started[0]).toEqual([
+      'trackCustom',
+      'GameStarted',
+      { game: 'bridge_builder' },
+    ]);
+    for (let i = 1; i < 6; i += 1) solveCurrent(true);
+    expect(fbq).toHaveBeenCalledWith('trackCustom', 'GameCompleted', {
+      game: 'bridge_builder',
+      score: 6,
+    });
+    click($('generate-btn'));
+    expect(fbq).toHaveBeenCalledWith('trackCustom', 'WorksheetPrinted', {
+      game: 'bridge_builder',
+    });
+  });
+
+  it('does not fire pixel events when fbq is missing (ad blocker)', () => {
+    const { click, $, solveCurrent } = freshPage();
+    expect(() => {
+      solveCurrent(true);
+      click($('generate-btn'));
+    }).not.toThrow();
   });
 });
