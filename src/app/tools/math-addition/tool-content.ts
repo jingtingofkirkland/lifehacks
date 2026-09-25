@@ -227,7 +227,7 @@ export const MATH_TOOL_CSS = `
       transition: left 650ms cubic-bezier(.16,.83,.36,1.25);
       filter: drop-shadow(0 15px 10px rgba(0,0,0,.34));
     }
-    .math-tool .racer-wrap img{ display: block; width: 100%; height: auto; transform: rotate(-1deg); }
+    .math-tool .racer-wrap img{ display: block; width: 100%; height: auto; transform: rotate(-29.5deg); }
     .math-tool .racer-wrap.boost{ animation: boost .65s ease both; }
     @keyframes boost {
       25% { transform: translateY(-48%) translateX(-10px) rotate(-1deg); }
@@ -236,8 +236,8 @@ export const MATH_TOOL_CSS = `
     /* Idle "driving" feel: the racer bobs while the lane dashes scroll by. */
     .math-tool .racer-wrap img{ animation: idleBob 1.8s ease-in-out infinite; }
     @keyframes idleBob{
-      0%, 100%{ transform: rotate(-1deg) translateY(0); }
-      50%{ transform: rotate(-1deg) translateY(-5px); }
+      0%, 100%{ transform: translateY(0) rotate(-29.5deg); }
+      50%{ transform: translateY(-5px) rotate(-29.5deg); }
     }
     .math-tool .track::before, .math-tool .track::after{ animation: dashScroll 1.1s linear infinite; }
     @keyframes dashScroll{
