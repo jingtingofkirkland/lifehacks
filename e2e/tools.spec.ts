@@ -151,9 +151,11 @@ test('bubble pop: popping the correct bubble scores a point', async ({
   expect(values).toHaveLength(5);
   expect(values).toContain(answer);
 
+  // Bubbles drift continuously, so force the click: Playwright's
+  // stability check can never pass on a moving target.
   await page
     .locator('.bubble', { hasText: new RegExp(`^${answer}$`) })
-    .click();
+    .click({ force: true });
 
   // Correct pop registers in the stats (regression: scoring must work).
   await expect(page.locator('#feedbackText')).toContainText('Pop!');
@@ -175,7 +177,7 @@ test('bubble pop: a wrong tap wobbles and the worksheet still prints', async ({
 
   await page
     .locator('.bubble', { hasText: new RegExp(`^${wrong}$`) })
-    .click();
+    .click({ force: true });
   await expect(page.locator('#feedbackText')).toContainText('try again');
   await expect(page.locator('#streakStat')).toHaveText('0');
 
