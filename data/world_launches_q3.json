@@ -823,5 +823,16 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 76,
+    "time": "24 September 08:46:00",
+    "rocket": "Long March 6A",
+    "mission": "6A-Y27",
+    "site": "Taiyuan LA-9A",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
