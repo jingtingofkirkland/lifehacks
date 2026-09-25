@@ -124,8 +124,11 @@ export const MATH_TOOL_CSS = `
   background: linear-gradient(180deg, var(--sky-2), var(--sky-1));
   border: 1px solid var(--line); overflow: hidden; box-shadow: var(--shadow);
 }
+.math-tool .bubble-drift{
+  position: absolute; left: 0; top: 0; will-change: transform;
+}
 .math-tool .bubble{
-  position: absolute; width: 84px; height: 84px; border-radius: 50%;
+  position: relative; width: 84px; height: 84px; border-radius: 50%;
   background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.95), var(--bubble) 55%, rgba(255,255,255,.25));
   border: 2px solid var(--bubble-ring);
   box-shadow: inset -6px -8px 14px rgba(124,196,239,.35), 0 8px 18px rgba(31,127,193,.25);
@@ -467,31 +470,143 @@ ${PIXEL_TRACK_SNIPPET}
     setFeedback('', 'Pop the bubble with the missing number!');
   }
 
+  /* ---------- bubble drift ---------- */
+  // Bubbles slowly drift around the field. Positioning lives on a wrapper
+  // element (transform-only, GPU-friendly); the button inside keeps all of
+  // its own animations (bob, pop, wobble, hover) untouched.
+  var drifters = [];
+  var fieldSize = { w: 0, h: 0 };
+  var driftRunning = false;
+  var reduceMotion = !!(
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+  var DRIFT_TOP_PAD = 20; // headroom so the bob never clips at the field top
+
+  function measureField() {
+    fieldSize.w = els.bubbleField.clientWidth || 0;
+    fieldSize.h = els.bubbleField.clientHeight || 0;
+  }
+
+  function clampDrifter(d) {
+    var maxX = Math.max(0, fieldSize.w - d.s);
+    var maxY = Math.max(0, fieldSize.h - d.s);
+    if (d.x < 0) { d.x = 0; d.vx = Math.abs(d.vx); }
+    else if (d.x > maxX) { d.x = maxX; d.vx = -Math.abs(d.vx); }
+    if (d.y < DRIFT_TOP_PAD) { d.y = DRIFT_TOP_PAD; d.vy = Math.abs(d.vy); }
+    else if (d.y > maxY) { d.y = maxY; d.vy = -Math.abs(d.vy); }
+  }
+
+  function driftTick(now) {
+    if (!driftRunning) return;
+    var last = driftTick.last || now;
+    driftTick.last = now;
+    var dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
+    for (var i = 0; i < drifters.length; i += 1) {
+      var d = drifters[i];
+      d.x += d.vx * dt;
+      d.y += d.vy * dt;
+      // Bounce off the field edges, keeping the whole bubble visible.
+      var maxX = Math.max(0, fieldSize.w - d.s);
+      var maxY = Math.max(0, fieldSize.h - d.s);
+      if (d.x <= 0) { d.x = 0; d.vx = Math.abs(d.vx); }
+      else if (d.x >= maxX) { d.x = maxX; d.vx = -Math.abs(d.vx); }
+      if (d.y <= DRIFT_TOP_PAD) { d.y = DRIFT_TOP_PAD; d.vy = Math.abs(d.vy); }
+      else if (d.y >= maxY) { d.y = maxY; d.vy = -Math.abs(d.vy); }
+      d.wrap.style.transform =
+        'translate3d(' + d.x.toFixed(1) + 'px,' + d.y.toFixed(1) + 'px,0)';
+    }
+    window.requestAnimationFrame(driftTick);
+  }
+
+  function startDrift() {
+    if (driftRunning || reduceMotion) return;
+    if (typeof window.requestAnimationFrame !== 'function') return;
+    driftRunning = true;
+    driftTick.last = 0;
+    window.requestAnimationFrame(driftTick);
+  }
+
+  // Initial spots with no significant overlap (rejection sampling on centers).
+  // Returns null when there is no layout info (e.g. jsdom) so the caller can
+  // fall back to static grid slots.
+  function placeBubbles(count, s) {
+    var W = fieldSize.w, H = fieldSize.h;
+    if (W < s + 20 || H < s + 40) return null;
+    var placed = [];
+    var minDist = s * 0.95;
+    for (var i = 0; i < count; i += 1) {
+      var spot = null;
+      for (var attempt = 0; attempt < 80 && !spot; attempt += 1) {
+        var x = Math.random() * (W - s);
+        var y = DRIFT_TOP_PAD + Math.random() * Math.max(0, H - s - DRIFT_TOP_PAD);
+        var ok = true;
+        for (var j = 0; j < placed.length; j += 1) {
+          var dx = placed[j].x - x;
+          var dy = placed[j].y - y;
+          if (Math.sqrt(dx * dx + dy * dy) < minDist) { ok = false; break; }
+        }
+        if (ok) spot = { x: x, y: y };
+      }
+      if (!spot) {
+        // Extremely unlikely: spread along the middle as a last resort.
+        spot = {
+          x: (i * (W - s)) / Math.max(1, count - 1),
+          y: DRIFT_TOP_PAD + Math.max(0, H - s - DRIFT_TOP_PAD) / 2
+        };
+      }
+      placed.push(spot);
+    }
+    return placed;
+  }
+
   function renderBubbles(values, advanced) {
     var field = els.bubbleField;
     field.innerHTML = '';
-    var W = 84, H = 84;
-    values.forEach(function (v, i) {
+    drifters = [];
+    measureField();
+    var items = values.map(function (v) {
+      var wrap = document.createElement('div');
+      wrap.className = 'bubble-drift';
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'bubble';
       b.setAttribute('data-value', String(v));
       b.setAttribute('aria-label', 'Bubble with number ' + v);
       b.textContent = String(v);
-      // Scatter without heavy overlap: grid-ish slots with jitter.
-      var cols = 3;
-      var col = i % cols;
-      var row = Math.floor(i / cols);
-      var left = 6 + col * 30 + randomInt(-4, 4);
-      var top = 8 + row * 42 + randomInt(-6, 6);
-      b.style.left = left + '%';
-      b.style.top = top + 'px';
       var speed = advanced ? (2.2 + Math.random() * 1.6) : (3.6 + Math.random() * 2.2);
       b.style.animationDuration = speed.toFixed(2) + 's';
       b.style.animationDelay = (-Math.random() * speed).toFixed(2) + 's';
       b.addEventListener('click', function () { onBubbleTap(b); });
-      field.appendChild(b);
+      wrap.appendChild(b);
+      field.appendChild(wrap);
+      return { wrap: wrap, btn: b };
     });
+    var s = (items.length && items[0].btn.offsetWidth) || 84;
+    var spots = placeBubbles(items.length, s);
+    if (!spots) {
+      // No layout info (e.g. jsdom): legacy static grid slots, no drift.
+      items.forEach(function (it, i) {
+        var cols = 3;
+        var col = i % cols;
+        var row = Math.floor(i / cols);
+        it.wrap.style.left = (6 + col * 30 + randomInt(-4, 4)) + '%';
+        it.wrap.style.top = (8 + row * 42 + randomInt(-6, 6)) + 'px';
+      });
+      return;
+    }
+    items.forEach(function (it, i) {
+      var angle = Math.random() * Math.PI * 2;
+      var speed = 14 + Math.random() * 18; // px/s: a slow, calm drift
+      drifters.push({
+        wrap: it.wrap, s: s,
+        x: spots[i].x, y: spots[i].y,
+        vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed
+      });
+      it.wrap.style.transform =
+        'translate3d(' + spots[i].x.toFixed(1) + 'px,' + spots[i].y.toFixed(1) + 'px,0)';
+    });
+    startDrift();
   }
 
   /* ---------- feedback + tips ---------- */
@@ -690,6 +805,11 @@ ${PIXEL_TRACK_SNIPPET}
   });
   els['answers-toggle'].addEventListener('change', function (event) {
     els.sheet.classList.toggle('show-answers', event.target.checked);
+  });
+
+  window.addEventListener('resize', function () {
+    measureField();
+    for (var i = 0; i < drifters.length; i += 1) clampDrifter(drifters[i]);
   });
 
   loadProgress();
