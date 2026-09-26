@@ -2517,5 +2517,27 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 230,
+    "time": "26 September 00:39",
+    "rocket": "Electron",
+    "mission": "Owlright, Owlright, Owlright",
+    "site": "Mahia LC-1B",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
+  },
+  {
+    "flight": 231,
+    "time": "26 September 14:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
