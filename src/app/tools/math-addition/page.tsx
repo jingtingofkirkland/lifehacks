@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { UsefulnessFeedback } from '@/components/UsefulnessFeedback';
+import { MessengerButton } from '@/components/MessengerButton';
 import { MATH_TOOL_CSS, MATH_TOOL_HTML, MATH_TOOL_JS } from './tool-content';
 
 /**
@@ -77,6 +78,7 @@ export default function MathAdditionPage() {
           <p className="text-xs text-muted-foreground/50">
             Progress is saved in this browser only. No data collected. Runs entirely on your device.
           </p>
+          <MessengerButton />
         </div>
       </div>
     </article>
