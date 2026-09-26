@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { Metadata } from 'next';
 import { UsefulnessFeedback } from '@/components/UsefulnessFeedback';
+import { MessengerButton } from '@/components/MessengerButton';
 
 export const metadata: Metadata = {
   title: 'Life Saver Tools - Great Seattle Life Hacks',
@@ -303,6 +304,7 @@ export default function ToolsPage() {
         {/* ── Footer accent ── */}
         <div className="text-center pb-8">
           <p className="text-xs text-muted-foreground/50">More tools coming soon.</p>
+          <MessengerButton />
         </div>
       </div>
     </article>
