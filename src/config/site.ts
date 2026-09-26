@@ -56,6 +56,7 @@ export const siteConfig = {
     { title: "Space", url: "/space" },
     { title: "AI Techs", url: "/tech" },
     { title: "Nextdoor", url: "https://nextdoor.com/profile/01NtDbxtQJw45GwN4" },
+    { title: "Chat with us on Messenger", url: "https://m.me/100077216003847" },
     { title: "Subscribe", url: "/subscribe" },
   ],
 

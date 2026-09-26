@@ -29,6 +29,13 @@ export default function AboutPage() {
           </a>{' '}
           to get latest life hack information!
         </p>
+        <p>
+          Chat with us on{' '}
+          <a href="https://m.me/100077216003847" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+            Messenger
+          </a>
+          !
+        </p>
         <p>Email us: austinhao2018@gmail.com</p>
       </div>
     </article>
