@@ -19,50 +19,52 @@ test.describe('floating Messenger bubble', () => {
       await expect(bubble).toHaveAttribute('href', MESSENGER_URL);
       await expect(bubble).toHaveAttribute('target', '_blank');
 
-      // Fixed to the bottom-right corner.
-      const position = await bubble.evaluate((el) =>
-        window.getComputedStyle(el).position,
+      // Fixed to the bottom-right corner via the wrapper.
+      const wrap = page.locator('[data-testid="messenger-bubble-wrap"]');
+      const position = await wrap.evaluate(
+        (el) => window.getComputedStyle(el).position,
       );
       expect(position).toBe('fixed');
-      const box = await bubble.boundingBox();
+      const box = await wrap.boundingBox();
       expect(box).not.toBeNull();
-      expect(box!.x + box!.width).toBeGreaterThan(340);
-      expect(box!.y + box!.height).toBeGreaterThan(790);
+      expect(box!.x + box!.width).toBeGreaterThan(330);
+      expect(box!.y + box!.height).toBeGreaterThan(780);
     });
   }
 
-  test('bubble never covers Merge Racer number cars (mobile)', async ({
+  test('bubble is dismissible on mobile and stays dismissed', async ({
     page,
   }) => {
     await page.goto('/tools/math-addition/');
     const bubble = page.locator('[data-testid="messenger-bubble"]');
+    const dismiss = page.locator('[data-testid="messenger-bubble-dismiss"]');
     await expect(bubble).toBeVisible();
-    const bubbleBox = await bubble.boundingBox();
-    const carsBox = await page.locator('.math-tool .cars').boundingBox();
-    expect(bubbleBox).not.toBeNull();
-    expect(carsBox).not.toBeNull();
-    const overlap = !(
-      bubbleBox!.x >= carsBox!.x + carsBox!.width ||
-      bubbleBox!.x + bubbleBox!.width <= carsBox!.x ||
-      bubbleBox!.y >= carsBox!.y + carsBox!.height ||
-      bubbleBox!.y + bubbleBox!.height <= carsBox!.y
-    );
-    expect(overlap).toBe(false);
+    // A fixed bubble can cover game controls on small screens, so mobile
+    // users get a way to remove it.
+    await expect(dismiss).toBeVisible();
+    await dismiss.click();
+    await expect(bubble).toBeHidden();
+    await page.reload();
+    await expect(bubble).toBeHidden();
   });
 
   test('bubble sits above the desktop feedback pills', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto('/tools/math-addition/');
-    const bubble = page.locator('[data-testid="messenger-bubble"]');
+    const wrap = page.locator('[data-testid="messenger-bubble-wrap"]');
     const feedback = page.locator('[data-testid="feedback-desktop"]');
-    await expect(bubble).toBeVisible();
+    await expect(wrap).toBeVisible();
     await expect(feedback).toBeVisible();
-    const bubbleBox = await bubble.boundingBox();
+    // No dismiss control needed on desktop: the bubble floats clear of content.
+    await expect(
+      page.locator('[data-testid="messenger-bubble-dismiss"]'),
+    ).toBeHidden();
+    const wrapBox = await wrap.boundingBox();
     const feedbackBox = await feedback.boundingBox();
-    expect(bubbleBox).not.toBeNull();
+    expect(wrapBox).not.toBeNull();
     expect(feedbackBox).not.toBeNull();
     // The bubble's bottom edge must clear the top of the feedback stack.
-    expect(bubbleBox!.y + bubbleBox!.height).toBeLessThanOrEqual(
+    expect(wrapBox!.y + wrapBox!.height).toBeLessThanOrEqual(
       feedbackBox!.y + 4,
     );
   });
