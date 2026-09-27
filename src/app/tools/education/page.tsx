@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { UsefulnessFeedback } from '@/components/UsefulnessFeedback';
-import { MessengerButton } from '@/components/MessengerButton';
 import { GameCard } from './GameCard';
 
 export const metadata: Metadata = {
@@ -159,7 +158,6 @@ export default function EducationPage() {
         {/* ── Footer accent ── */}
         <div className="text-center pb-8">
           <p className="text-xs text-muted-foreground/50">More learning games coming soon.</p>
-          <MessengerButton />
         </div>
       </div>
     </article>
