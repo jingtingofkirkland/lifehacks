@@ -11,9 +11,9 @@ import { describe, expect, it, vi } from 'vitest';
 import { JSDOM } from 'jsdom';
 import { MATH_TOOL_CSS, MATH_TOOL_HTML, MATH_TOOL_JS } from './tool-content';
 
-function freshPage() {
+function freshPage(pageUrl = 'https://example.org/') {
   const dom = new JSDOM(`<!DOCTYPE html><html><body>${MATH_TOOL_HTML}</body></html>`, {
-    url: 'https://example.org/',
+    url: pageUrl,
     runScripts: 'outside-only',
   });
   const { window } = dom;
@@ -226,7 +226,10 @@ describe('generated tool content (generator regression guards)', () => {
 
 describe('meta pixel events', () => {
   it('fires GameStarted once on first tap and WorksheetPrinted on generate', () => {
-    const { window, click, answerBubble, wrongBubble, $ } = freshPage();
+    // Production host: the pixel gate lets events through.
+    const { window, click, answerBubble, wrongBubble, $ } = freshPage(
+      'https://lifehacks.zeey-app.net/tools/math-bubble-pop/',
+    );
     const fbq = vi.fn();
     (window as unknown as { fbq: unknown }).fbq = fbq;
     click(answerBubble());
@@ -242,6 +245,19 @@ describe('meta pixel events', () => {
     expect(fbq).toHaveBeenCalledWith('trackCustom', 'WorksheetPrinted', {
       game: 'bubble_pop',
     });
+  });
+
+  it('stays silent on non-production hostnames even when fbq exists', () => {
+    // Non-production host (default example.org): the pixel gate must
+    // swallow every event so test/dev traffic never pollutes analytics.
+    const { window, click, answerBubble, $ } = freshPage();
+    const fbq = vi.fn();
+    (window as unknown as { fbq: unknown }).fbq = fbq;
+    expect(() => {
+      click(answerBubble());
+      click($('generate-btn'));
+    }).not.toThrow();
+    expect(fbq).not.toHaveBeenCalled();
   });
 
   it('does not fire pixel events when fbq is missing (ad blocker)', () => {

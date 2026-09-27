@@ -45,9 +45,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={`${poppins.variable} ${inter.variable} ${robotoMono.variable}`}>
       <head>
-        {/* Meta Pixel Code */}
+        {/* Meta Pixel Code — production host only. Local dev, CI e2e, and
+            previews must never initialize the pixel or send events: test
+            traffic once polluted the production dataset. Hostname (not
+            NODE_ENV) is the check because local `next start` also runs in
+            production mode. */}
         <Script id="meta-pixel" strategy="afterInteractive">
           {`
+            if (window.location.hostname === 'lifehacks.zeey-app.net') {
             !function(f,b,e,v,n,t,s)
             {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
             n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -104,6 +109,9 @@ export default function RootLayout({
               _pushState.apply(history, arguments);
               fbq('track', 'PageView', withUtm());
             };
+            } else if (window.console && typeof window.console.debug === 'function') {
+              window.console.debug('[pixel] disabled on non-production host: ' + window.location.hostname);
+            }
           `}
         </Script>
         {/* End Meta Pixel Code */}
