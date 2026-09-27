@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
+import type { ReactNode } from 'react';
 import { UsefulnessFeedback } from '@/components/UsefulnessFeedback';
 import { GameCard } from './GameCard';
 
@@ -9,7 +10,18 @@ export const metadata: Metadata = {
     'Mini learning games for kids: learn through practice, get tips the moment you get stuck, no separate lessons. Printable worksheets included.',
 };
 
-const games = [
+interface GameEntry {
+  title: string;
+  desc: string;
+  href: string;
+  game: string;
+  icon: ReactNode;
+  tag: string;
+  /** Card call-to-action; defaults to 'Play now'. */
+  cta?: string;
+}
+
+const games: GameEntry[] = [
   {
     title: 'Merge Racer: Addition Game for Kids',
     desc: 'Tap two number cars to merge into the target number, get racing tips when stuck, and print custom worksheets.',
@@ -50,6 +62,22 @@ const games = [
       </svg>
     ),
     tag: 'Word problems',
+  },
+  {
+    title: 'Math Kangaroo Prep: Practice for Grades 3–4',
+    desc: 'Kangaroo-style practice problems: a daily challenge, timed quizzes with explanations, and printable worksheets.',
+    href: '/tools/kangaroo',
+    game: 'kangaroo_prep',
+    icon: (
+      <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="38" r="16" fill="#FEF3C7" stroke="#D97706" strokeWidth="2"/>
+        <path d="M27 38l4 4 7-8" stroke="#D97706" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M24 24 L32 32 L40 24" stroke="#D97706" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M20 14 L26 26 M44 14 L38 26" stroke="#B45309" strokeWidth="4" strokeLinecap="round"/>
+      </svg>
+    ),
+    tag: 'Contest prep',
+    cta: 'Start practicing',
   },
 ];
 
@@ -136,7 +164,7 @@ export default function EducationPage() {
                     </h3>
                     <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{game.desc}</p>
                     <span className="inline-flex items-center gap-1 mt-3 text-xs font-medium text-emerald-600 dark:text-emerald-400 group-hover:gap-2 transition-all">
-                      Play now
+                      {game.cta ?? 'Play now'}
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </span>
                   </div>
