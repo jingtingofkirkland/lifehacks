@@ -1,121 +1,91 @@
 import { test, expect, Page } from '@playwright/test';
 
 /**
- * Meta Pixel tracking assertions.
+ * Meta Pixel must stay completely silent outside production.
  *
- * The pixel snippet in the root layout defines window.fbq as a call queue
- * until fbevents.js loads. We abort the fbevents.js request so no call ever
- * leaves the browser, then assert on the queued calls.
+ * The root layout only initializes fbq when
+ * window.location.hostname === 'lifehacks.zeey-app.net', and every
+ * trackEvent call is gated the same way. CI serves the static export on
+ * localhost, so these tests assert the disabled path: no fbq, no requests
+ * to Meta, and the site still works.
  */
 
-async function blockPixelScript(page: Page) {
-  await page.route('**/fbevents.js', (route) => route.abort());
-}
+const META_HOSTS = ['connect.facebook.net', 'www.facebook.com'];
 
-async function fbqQueue(page: Page): Promise<unknown[][]> {
-  return page.evaluate(() => {
-    const w = window as unknown as { fbq?: { queue?: unknown[][] } };
-    return w.fbq?.queue ?? [];
+async function watchMetaRequests(page: Page): Promise<string[]> {
+  const hits: string[] = [];
+  page.on('request', (req) => {
+    if (META_HOSTS.some((h) => req.url().includes(h))) hits.push(req.url());
   });
+  return hits;
 }
 
-function hasCall(
-  queue: unknown[][],
-  method: string,
-  event: string,
-  params?: Record<string, unknown>,
-): boolean {
-  return queue.some((args) => {
-    if (args[0] !== method || args[1] !== event) return false;
-    if (!params) return true;
-    const p = (args[2] ?? {}) as Record<string, unknown>;
-    return Object.entries(params).every(([k, v]) => p[k] === v);
+async function fbqType(page: Page): Promise<string> {
+  return page.evaluate(
+    () => typeof (window as unknown as { fbq?: unknown }).fbq,
+  );
+}
+
+test('pixel never initializes on non-production hosts', async ({ page }) => {
+  const hits = await watchMetaRequests(page);
+  const debugLogs: string[] = [];
+  page.on('console', (msg) => {
+    if (msg.type() === 'debug') debugLogs.push(msg.text());
   });
-}
 
-test('education page fires PageView on load', async ({ page }) => {
-  await blockPixelScript(page);
   await page.goto('/tools/education/');
-
   await expect(
     page.getByRole('heading', { name: /^education$/i }),
   ).toBeVisible();
 
-  const queue = await fbqQueue(page);
-  expect(hasCall(queue, 'track', 'PageView')).toBe(true);
+  // fbq is never defined off production, so no PageView can be queued…
+  expect(await fbqType(page)).toBe('undefined');
+  // …and no request ever leaves for Meta.
+  expect(hits).toEqual([]);
+  // The disabled branch logs once for debuggability.
+  expect(debugLogs.some((t) => t.includes('[pixel] disabled'))).toBe(true);
 });
 
-test('game page fires PageView on load', async ({ page }) => {
-  await blockPixelScript(page);
-  await page.goto('/tools/math-bubble-pop/');
-
-  await expect(page.locator('.bubble').first()).toBeVisible();
-
-  const queue = await fbqQueue(page);
-  expect(hasCall(queue, 'track', 'PageView')).toBe(true);
-});
-
-test('bubble pop: first tap fires GameStarted exactly once', async ({
+test('game interactions stay silent off production and the game still works', async ({
   page,
 }) => {
-  await blockPixelScript(page);
-  await page.goto('/tools/math-bubble-pop/');
+  const hits = await watchMetaRequests(page);
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(String(e)));
 
+  await page.goto('/tools/math-bubble-pop/');
   await expect(page.locator('.bubble').first()).toBeVisible();
 
-  // Tap two bubbles with synthetic clicks: the game's handlers fire without
-  // Playwright's actionability waits (the float animation never settles).
+  // Tapping bubbles would fire GameStarted on production; here it must
+  // no-op without breaking the game.
   await page.evaluate(() => {
-    const bubbles = document.querySelectorAll('.bubble');
-    for (const el of [bubbles[0], bubbles[1]]) {
-      el?.dispatchEvent(
-        new MouseEvent('click', { bubbles: true, cancelable: true }),
-      );
-    }
+    document
+      .querySelector('.bubble')
+      ?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
   });
 
-  const queue = await fbqQueue(page);
-  const started = queue.filter(
-    (args) => args[0] === 'trackCustom' && args[1] === 'GameStarted',
-  );
-  expect(started).toHaveLength(1);
-  expect((started[0][2] as Record<string, unknown>)['game']).toBe(
-    'bubble_pop',
-  );
+  expect(await fbqType(page)).toBe('undefined');
+  expect(hits).toEqual([]);
+  expect(errors).toEqual([]);
 });
 
-test('bubble pop: generating a worksheet fires WorksheetPrinted', async ({
+test('messenger bubble click sends no pixel request off production', async ({
   page,
 }) => {
-  await blockPixelScript(page);
-  await page.goto('/tools/math-bubble-pop/');
+  const hits = await watchMetaRequests(page);
 
-  await page.locator('#generate-btn').click();
+  await page.goto('/');
+  const bubble = page.getByRole('link', { name: /chat with us on messenger/i });
+  await expect(bubble).toBeVisible();
 
-  const queue = await fbqQueue(page);
-  expect(
-    hasCall(queue, 'trackCustom', 'WorksheetPrinted', { game: 'bubble_pop' }),
-  ).toBe(true);
-});
-
-test('education game card click fires GameCardClick', async ({ page }) => {
-  await blockPixelScript(page);
-  await page.goto('/tools/education/');
-
-  const card = page.getByRole('link', { name: /merge racer/i });
-  await expect(card).toBeVisible();
-
-  // Dispatch the click and read the queue synchronously: React's onClick
-  // handler runs during dispatch, before the client-side navigation.
-  const queue = await page.evaluate(() => {
+  // Dispatch the click (would fire Reachout on production); the popup
+  // target is irrelevant here — only pixel silence is asserted.
+  await page.evaluate(() => {
     document
-      .querySelector('a[href="/tools/math-addition/"]')
+      .querySelector('a[aria-label="Chat with us on Messenger"]')
       ?.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
-    const w = window as unknown as { fbq?: { queue?: unknown[][] } };
-    return w.fbq?.queue ?? [];
   });
 
-  expect(
-    hasCall(queue, 'trackCustom', 'GameCardClick', { game: 'merge_racer' }),
-  ).toBe(true);
+  expect(await fbqType(page)).toBe('undefined');
+  expect(hits).toEqual([]);
 });
