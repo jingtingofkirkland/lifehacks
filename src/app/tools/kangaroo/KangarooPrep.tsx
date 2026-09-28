@@ -654,6 +654,29 @@ export function KangarooPrep() {
           )}
         </div>
 
+        {/* SEO practice-problem library: crawlable per-problem pages */}
+        <div className="kq-no-print mt-10 rounded-2xl border border-violet-200/70 dark:border-violet-800/40 bg-violet-50/60 dark:bg-violet-950/20 p-6 text-center">
+          <p className="font-bold text-lg mb-1">📚 Browse all 40 practice problems</p>
+          <p className="text-sm text-muted-foreground mb-4">
+            Every problem as its own page — solve, reveal the answer, and
+            print. Pick your grade:
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link
+              href="/practice/kangaroo/grade-3/"
+              className="px-6 py-2.5 rounded-full bg-violet-600 text-white font-semibold hover:bg-violet-700"
+            >
+              Grade 3 problems →
+            </Link>
+            <Link
+              href="/practice/kangaroo/grade-4/"
+              className="px-6 py-2.5 rounded-full border border-violet-300 dark:border-violet-700 font-semibold hover:bg-violet-100 dark:hover:bg-violet-900/40"
+            >
+              Grade 4 problems →
+            </Link>
+          </div>
+        </div>
+
         <div className="kq-no-print mt-10 mb-6">
           <UsefulnessFeedback
             page="tools-kangaroo"
