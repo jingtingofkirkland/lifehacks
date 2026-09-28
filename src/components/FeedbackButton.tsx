@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { getStoredUtm } from '@/lib/utm';
 
 const EMAIL_HREF =
@@ -47,6 +48,14 @@ function FeedbackPills({ showLabels = false }: { showLabels?: boolean }) {
 }
 
 export function FeedbackButton() {
+  const pathname = usePathname();
+
+  // Embed pages (e.g. /embed/math-addition/) are iframed on partner sites:
+  // no floating site chrome there.
+  if (pathname?.startsWith('/embed/')) {
+    return null;
+  }
+
   return (
     <>
       {/* sm and up: floating pills, unchanged behavior */}
