@@ -1,11 +1,19 @@
 'use client';
 
 import { useTheme } from 'next-themes';
+import { usePathname } from 'next/navigation';
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const pathname = usePathname();
+
+  // Embed pages (e.g. /embed/math-addition/) are iframed on partner sites:
+  // no floating site chrome there.
+  if (pathname?.startsWith('/embed/')) {
+    return null;
+  }
 
   return (
     <Button

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { siteConfig } from '@/config/site';
 import { getStoredUtm } from '@/lib/utm';
 
@@ -32,6 +33,7 @@ function trackMessengerClick() {
  */
 export function MessengerBubble() {
   const [dismissed, setDismissed] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     try {
@@ -43,7 +45,9 @@ export function MessengerBubble() {
     }
   }, []);
 
-  if (dismissed) {
+  // Embed pages (e.g. /embed/math-addition/) are iframed on partner sites:
+  // no floating site chrome there.
+  if (dismissed || pathname?.startsWith('/embed/')) {
     return null;
   }
 
