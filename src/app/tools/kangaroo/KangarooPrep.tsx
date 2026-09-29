@@ -677,6 +677,23 @@ export function KangarooPrep() {
           </div>
         </div>
 
+        {/* Newsletter CTA: weekly worksheet by email */}
+        <div className="kq-no-print mt-6 rounded-2xl border border-emerald-200/70 dark:border-emerald-800/40 bg-emerald-50/60 dark:bg-emerald-950/20 p-6 text-center">
+          <p className="font-bold text-lg mb-1">
+            📬 Get the weekly worksheet by email
+          </p>
+          <p className="text-sm text-muted-foreground mb-4">
+            One email every Friday — this week&apos;s best problems, a
+            printable worksheet, and a peek at next week. Free, no spam.
+          </p>
+          <Link
+            href="/newsletter/"
+            className="inline-block px-6 py-2.5 rounded-full bg-emerald-600 text-white font-semibold hover:bg-emerald-700"
+          >
+            Subscribe free →
+          </Link>
+        </div>
+
         <div className="kq-no-print mt-10 mb-6">
           <UsefulnessFeedback
             page="tools-kangaroo"
