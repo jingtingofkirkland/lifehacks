@@ -37,6 +37,8 @@ jobs:
 
       - name: Build with Next.js
         run: npm run build
+        env:
+          NEXT_PUBLIC_TALLY_FORM_URL: "https://tally.so/embed/J950MR?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
