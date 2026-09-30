@@ -1,6 +1,24 @@
 import { describe, expect, it } from 'vitest';
 import { siteConfig } from './site';
 
+describe('siteConfig nav entries', () => {
+  it('includes a Newsletter entry in the navbar linking to /newsletter/', () => {
+    const entry = siteConfig.navbarEntries.find(
+      (e) => e.title === 'Newsletter'
+    );
+    expect(entry).toBeDefined();
+    expect(entry!.url).toBe('/newsletter/');
+  });
+
+  it('includes a Newsletter entry in the footer linking to /newsletter/', () => {
+    const entry = siteConfig.footerEntries.find(
+      (e) => e.title === 'Newsletter'
+    );
+    expect(entry).toBeDefined();
+    expect(entry!.url).toBe('/newsletter/');
+  });
+});
+
 describe('siteConfig contact channels', () => {
   it('exposes the official Messenger contact URL', () => {
     expect(siteConfig.messengerUrl).toBe('https://m.me/100077216003847');
