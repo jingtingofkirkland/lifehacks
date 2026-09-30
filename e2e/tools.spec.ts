@@ -47,6 +47,18 @@ test('education page lists the three learning games', async ({ page }) => {
   }
 });
 
+test('education page promotes the weekly newsletter', async ({ page }) => {
+  await page.goto('/tools/education/');
+
+  await expect(
+    page.getByRole('heading', { name: /weekly math worksheet/i }),
+  ).toBeVisible();
+
+  const cta = page.getByRole('link', { name: /subscribe free/i });
+  await expect(cta).toBeVisible();
+  await expect(cta).toHaveAttribute('href', '/newsletter/');
+});
+
 test('tip calculator computes tip and total for a bill', async ({ page }) => {
   await page.goto('/tools/tip-calculator/');
 

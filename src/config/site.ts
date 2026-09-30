@@ -13,6 +13,7 @@ export const siteConfig = {
   navbarEntries: [
     { title: "About", url: "/about" },
     { title: "Nextdoor", url: "https://nextdoor.com/profile/01NtDbxtQJw45GwN4" },
+    { title: "Newsletter", url: "/newsletter/" },
     { title: "Subscribe", url: "/subscribe" },
   ],
 
@@ -60,6 +61,7 @@ export const siteConfig = {
     { title: "Life Saver Tools", url: "/tools" },
     { title: "Space", url: "/space" },
     { title: "AI Techs", url: "/tech" },
+    { title: "Newsletter", url: "/newsletter/" },
     { title: "Nextdoor", url: "https://nextdoor.com/profile/01NtDbxtQJw45GwN4" },
     { title: "Chat with us on Messenger", url: MESSENGER_URL },
     { title: "Subscribe", url: "/subscribe" },
