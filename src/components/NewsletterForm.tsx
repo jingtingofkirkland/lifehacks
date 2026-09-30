@@ -35,7 +35,7 @@ export function NewsletterForm() {
         src={formUrl}
         title="Weekly math worksheet newsletter signup"
         loading="lazy"
-        className="w-full min-h-[480px] border-0"
+        className="w-full min-h-[400px] border-0"
       />
     </div>
   );
