@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { FeedbackButton } from '@/components/FeedbackButton';
 import { MessengerBubble } from '@/components/MessengerBubble';
+import { EngagementTracker } from '@/components/EngagementTracker';
 import { siteConfig } from '@/config/site';
 
 const poppins = Poppins({
@@ -128,6 +129,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ThemeToggle />
+          <EngagementTracker />
           {children}
           <FeedbackButton />
           <MessengerBubble />
