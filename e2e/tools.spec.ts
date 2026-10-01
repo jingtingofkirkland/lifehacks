@@ -59,6 +59,15 @@ test('education page promotes the weekly newsletter', async ({ page }) => {
   await expect(cta).toHaveAttribute('href', '/newsletter/');
 });
 
+test('education page links to the Instagram account', async ({ page }) => {
+  await page.goto('/tools/education/');
+
+  const ig = page.getByRole('link', { name: /follow on instagram/i });
+  await expect(ig).toBeVisible();
+  await expect(ig).toHaveAttribute('href', 'https://www.instagram.com/zeehome2025/');
+  await expect(ig).toHaveAttribute('target', '_blank');
+});
+
 test('tip calculator computes tip and total for a bill', async ({ page }) => {
   await page.goto('/tools/tip-calculator/');
 

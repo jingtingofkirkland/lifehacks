@@ -166,6 +166,26 @@ export default function EducationPage() {
           </div>
         </section>
 
+        {/* ── Instagram follow ── */}
+        <div className="mb-10 -mt-6 text-center">
+          <a
+            href="https://www.instagram.com/zeehome2025/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+            </svg>
+            <span>
+              Follow on Instagram{' '}
+              <span className="font-semibold text-foreground/80 group-hover:text-foreground">@zeehome2025</span>
+            </span>
+          </a>
+        </div>
+
         {/* ── Games grid ── */}
         <section className="mb-12">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
