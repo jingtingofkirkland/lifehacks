@@ -65,7 +65,7 @@
     "rocket": "B1100‑2",
     "site": "Vandenberg, SLC‑4E",
     "mission": "NROL-105 (9 Starshield satellites)",
-    "mass": "6237",
+    "mass": "7590",
     "orbit": "LEO",
     "landing": "RTLS",
     "massEstimated": true,
@@ -726,7 +726,7 @@
     "rocket": "B1103‑3",
     "site": "Vandenberg, SLC‑4E",
     "mission": "NROL-179 (9 Starshield satellites)",
-    "mass": "6237",
+    "mass": "7590",
     "orbit": "LEO",
     "landing": "RTLS",
     "massEstimated": true,
@@ -904,7 +904,7 @@
     "rocket": "B1096‑7",
     "site": "Cape Canaveral, SLC‑40",
     "mission": "NROL-95",
-    "mass": "6237",
+    "mass": "7590",
     "orbit": "LEO",
     "landing": "RTLS",
     "massEstimated": true,
@@ -1132,5 +1132,15 @@
     "landing": "ASDS",
     "massEstimated": true,
     "massEstimateBasis": "orbit+landing:LEO+ASDS"
+  },
+  {
+    "flight": 693,
+    "time": "October 1, 2026 15:10",
+    "rocket": "B1101‑3",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Crew-13 (Crew Dragon C213-2 Grace)",
+    "mass": "13000",
+    "orbit": "LEO (ISS)",
+    "landing": "RTLS"
   }
 ]
