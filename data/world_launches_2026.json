@@ -2553,7 +2553,7 @@
   },
   {
     "flight": 233,
-    "time": "1 October 15:10 ",
+    "time": "1 October 15:10",
     "rocket": "Falcon 9 Block 5",
     "mission": "",
     "site": "Cape Canaveral SLC-40",
@@ -2568,6 +2568,17 @@
     "rocket": "Falcon 9 Block 5",
     "mission": "Transporter-18",
     "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 235,
+    "time": "2 October 03:53:00",
+    "rocket": "Falcon Heavy",
+    "mission": "",
+    "site": "Kennedy LC-39A",
     "org": {
       "country": "United States",
       "info": "SpaceX"

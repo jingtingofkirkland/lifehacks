@@ -1142,5 +1142,34 @@
     "mass": "13000",
     "orbit": "LEO (ISS)",
     "landing": "RTLS"
+  },
+  {
+    "flight": 694,
+    "time": "October 1, 2026 18:32",
+    "rocket": "B1082‑25",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "Transporter-18 (130 payloads smallsat rideshare)[82]",
+    "mass": "1018",
+    "orbit": "SSO",
+    "landing": "RTLS",
+    "massEstimated": true,
+    "massEstimateBasis": "orbit+landing:SSO+RTLS"
+  },
+  {
+    "flight": 695,
+    "time": "October 2, 2026 03:54",
+    "rocket": "B1106‑1 / B1072‑4 / B1104‑2",
+    "site": "Kennedy, LC‑39A",
+    "mission": "NROL-97",
+    "mass": "6591",
+    "orbit": "Classified",
+    "landing": "EXPENDED",
+    "boosterLandings": [
+      "EXPENDED",
+      "RTLS",
+      "RTLS"
+    ],
+    "massEstimated": true,
+    "massEstimateBasis": "landing:EXPENDED"
   }
 ]
