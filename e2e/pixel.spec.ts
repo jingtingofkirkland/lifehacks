@@ -78,7 +78,7 @@ test('messenger bubble click sends no pixel request off production', async ({
   const bubble = page.getByRole('link', { name: /chat with us on messenger/i });
   await expect(bubble).toBeVisible();
 
-  // Dispatch the click (would fire Reachout on production); the popup
+  // Dispatch the click (would fire ReachoutMessenger on production); the popup
   // target is irrelevant here — only pixel silence is asserted.
   await page.evaluate(() => {
     document

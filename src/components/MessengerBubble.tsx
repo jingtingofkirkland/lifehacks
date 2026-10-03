@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
 import { siteConfig } from '@/config/site';
 import { getStoredUtm } from '@/lib/utm';
 
@@ -12,7 +11,10 @@ function trackMessengerClick() {
     typeof window !== 'undefined' &&
     typeof (window as any).fbq === 'function'
   ) {
-    (window as any).fbq('trackCustom', 'Reachout', {
+    // Distinct event name (not the old merged `Reachout`) so daily
+    // reporting can attribute clicks per channel; `channel` param kept
+    // for backward compatibility.
+    (window as any).fbq('trackCustom', 'ReachoutMessenger', {
       channel: 'messenger',
       ...getStoredUtm(),
     });
@@ -33,7 +35,6 @@ function trackMessengerClick() {
  */
 export function MessengerBubble() {
   const [dismissed, setDismissed] = useState(false);
-  const pathname = usePathname();
 
   useEffect(() => {
     try {
@@ -45,9 +46,7 @@ export function MessengerBubble() {
     }
   }, []);
 
-  // Embed pages (e.g. /embed/math-addition/) are iframed on partner sites:
-  // no floating site chrome there.
-  if (dismissed || pathname?.startsWith('/embed/')) {
+  if (dismissed) {
     return null;
   }
 
