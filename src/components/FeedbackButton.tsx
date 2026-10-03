@@ -7,12 +7,20 @@ const EMAIL_HREF =
   'mailto:austinhao2018@gmail.com?subject=Feedback%20for%20Great%20Seattle%20Life%20Hacks';
 const NEXTDOOR_HREF = 'https://nextdoor.com/profile/01NtDbxtQJw45GwN4';
 
+// Each contact channel gets its own Pixel event so daily reporting can
+// attribute clicks without relying on the `channel` param. The param is
+// kept for backward compatibility with historical data breakdowns.
+const REACHOUT_EVENTS = {
+  email: 'ReachoutEmail',
+  nextdoor: 'ReachoutNextdoor',
+} as const;
+
 function trackReachout(channel: 'email' | 'nextdoor') {
   if (
     typeof window !== 'undefined' &&
     typeof (window as any).fbq === 'function'
   ) {
-    (window as any).fbq('trackCustom', 'Reachout', {
+    (window as any).fbq('trackCustom', REACHOUT_EVENTS[channel], {
       channel,
       ...getStoredUtm(),
     });

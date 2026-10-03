@@ -12,7 +12,10 @@ function trackMessengerClick() {
     typeof window !== 'undefined' &&
     typeof (window as any).fbq === 'function'
   ) {
-    (window as any).fbq('trackCustom', 'Reachout', {
+    // Distinct event name (not the old merged `Reachout`) so daily
+    // reporting can attribute clicks per channel; `channel` param kept
+    // for backward compatibility.
+    (window as any).fbq('trackCustom', 'ReachoutMessenger', {
       channel: 'messenger',
       ...getStoredUtm(),
     });
