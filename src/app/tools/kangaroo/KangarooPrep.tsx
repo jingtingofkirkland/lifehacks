@@ -11,6 +11,7 @@ import {
   scoreQuiz,
   type KangarooQuestion,
 } from './questions';
+import { ScoreCard } from './ScoreCard';
 
 type Tab = 'daily' | 'quiz' | 'worksheet';
 
@@ -315,6 +316,32 @@ function TimedQuiz({ today }: { today: Date }) {
               Back
             </button>
           </div>
+        </div>
+
+        {/* Score share card + a prominent newsletter CTA, right on the
+            completion state where parents are most likely to act. */}
+        <ScoreCard
+          earned={earned}
+          possible={possible}
+          correctCount={correctCount}
+          totalQuestions={questions.length}
+          secondsUsed={QUIZ_SECONDS - secondsLeft}
+        />
+        <div className="rounded-2xl border border-emerald-200/80 dark:border-emerald-800/40 bg-emerald-50/70 dark:bg-emerald-950/30 p-6 text-center mb-6">
+          <p className="font-bold text-lg mb-1">
+            📬 Get a free worksheet every week
+          </p>
+          <p className="text-sm text-muted-foreground mb-4">
+            One short email each week with a fresh printable Kangaroo-style
+            worksheet for grades 3–4. Free, no spam.
+          </p>
+          <Link
+            href="/newsletter/"
+            data-testid="kq-quiz-newsletter-cta"
+            className="inline-block px-6 py-2.5 rounded-full bg-emerald-600 text-white font-semibold hover:bg-emerald-700"
+          >
+            Subscribe free →
+          </Link>
         </div>
 
         <h3 className="font-bold text-lg mb-3">Review with explanations</h3>

@@ -60,6 +60,35 @@ test.describe('kangaroo prep', () => {
     ).toHaveCount(8);
   });
 
+  test('quiz completion shows a score card download and newsletter CTA', async ({
+    page,
+  }) => {
+    await page.goto('/tools/kangaroo/');
+    await page.getByTestId('kq-tab-quiz').click();
+    await page.getByTestId('kq-quiz-start').click();
+
+    // Answer all 8 questions (auto-advances after each pick).
+    for (let i = 0; i < 8; i++) {
+      const card = page.getByTestId('kq-quiz-question');
+      await expect(card).toBeVisible();
+      await card.locator('[role="group"] button').first().click();
+      // Brief pause for the auto-advance; last question lands on results.
+      await page.waitForTimeout(700);
+    }
+
+    await expect(page.getByText('Quiz complete!')).toBeVisible();
+    // Score share card renders with a one-tap PNG download...
+    await expect(page.getByTestId('kq-score-card-canvas')).toBeVisible();
+    await expect(page.getByTestId('kq-score-card-download')).toBeVisible();
+    // ...and the completion state carries its own newsletter CTA.
+    const cta = page.getByTestId('kq-quiz-newsletter-cta');
+    await expect(cta).toBeVisible();
+    await expect(cta).toHaveAttribute('href', '/newsletter/');
+    await expect(
+      page.getByText('Get a free worksheet every week').first(),
+    ).toBeVisible();
+  });
+
   test('worksheet tab offers a print button and an answer key', async ({
     page,
   }) => {
