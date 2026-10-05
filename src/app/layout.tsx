@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
-import { Poppins, Inter, Roboto_Mono } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -9,22 +9,38 @@ import { MessengerBubble } from '@/components/MessengerBubble';
 import { EngagementTracker } from '@/components/EngagementTracker';
 import { siteConfig } from '@/config/site';
 
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
+// Self-hosted fonts (next/font/local) instead of next/font/google:
+// Builds must not depend on fetching Google Fonts at build time — a
+// transient fonts.googleapis.com / fonts.gstatic.com failure during
+// `next build` killed the GitHub Pages deploy on 2026-10-05 (run
+// 37347666094, "Build with Next.js" failed in ~12s) while the same
+// commit built green in CI and locally. The woff2 files live next to
+// this layout under ./fonts/ (latin subset, same families/weights as
+// before: Poppins 400–800, Inter variable, Roboto Mono variable).
+const poppins = localFont({
+  src: [
+    { path: './fonts/poppins-400.woff2', weight: '400', style: 'normal' },
+    { path: './fonts/poppins-500.woff2', weight: '500', style: 'normal' },
+    { path: './fonts/poppins-600.woff2', weight: '600', style: 'normal' },
+    { path: './fonts/poppins-700.woff2', weight: '700', style: 'normal' },
+    { path: './fonts/poppins-800.woff2', weight: '800', style: 'normal' },
+  ],
   variable: '--font-poppins',
   display: 'swap',
 });
 
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '600', '700', '800'],
+const inter = localFont({
+  src: './fonts/inter-latin.woff2',
+  weight: '100 900',
+  style: 'normal',
   variable: '--font-inter',
   display: 'swap',
 });
 
-const robotoMono = Roboto_Mono({
-  subsets: ['latin'],
+const robotoMono = localFont({
+  src: './fonts/roboto-mono-latin.woff2',
+  weight: '100 700',
+  style: 'normal',
   variable: '--font-roboto-mono',
   display: 'swap',
 });
