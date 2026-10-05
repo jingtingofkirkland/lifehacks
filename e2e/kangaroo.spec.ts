@@ -60,6 +60,53 @@ test.describe('kangaroo prep', () => {
     ).toHaveCount(8);
   });
 
+  test('quiz completion offers a downloadable score card and newsletter CTA', async ({
+    page,
+  }) => {
+    await page.goto('/tools/kangaroo/');
+    await page.getByTestId('kq-tab-quiz').click();
+    await page.getByTestId('kq-quiz-start').click();
+
+    for (let i = 0; i < 8; i++) {
+      const card = page.getByTestId('kq-quiz-question');
+      await expect(card).toBeVisible();
+      await card.locator('[role="group"] button').first().click();
+      await page.waitForTimeout(700);
+    }
+
+    await expect(page.getByText('Quiz complete!')).toBeVisible();
+
+    // Score card: canvas rendered with the watermark, plus a download button.
+    const scoreCard = page.getByTestId('kq-score-card');
+    await expect(scoreCard).toBeVisible();
+    await expect(
+      page.getByTestId('kq-score-card-watermark'),
+    ).toHaveText('lifehacks.zeey-app.net');
+    const painted = await scoreCard.evaluate((el) => {
+      const c = el as HTMLCanvasElement;
+      const ctx = c.getContext('2d');
+      if (!ctx) return false;
+      const px = ctx.getImageData(0, 0, c.width, c.height).data;
+      // Any non-transparent pixel means the card actually drew.
+      for (let i = 3; i < px.length; i += 4) {
+        if (px[i] > 0) return true;
+      }
+      return false;
+    });
+    expect(painted).toBe(true);
+
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      page.getByTestId('kq-score-card-download').click(),
+    ]);
+    expect(await download.suggestedFilename()).toBe('kangaroo-score-card.png');
+
+    // Newsletter CTA on the completion state links to the subscribe page.
+    const cta = page.getByTestId('kq-quiz-newsletter-cta');
+    await expect(cta).toBeVisible();
+    await expect(cta).toHaveAttribute('href', '/newsletter/');
+  });
+
   test('worksheet tab offers a print button and an answer key', async ({
     page,
   }) => {
