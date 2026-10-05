@@ -174,6 +174,193 @@ function DailyChallenge({ today }: { today: Date }) {
   );
 }
 
+/* ═══════════════ Score Share Card (canvas PNG) ═══════════════ */
+/** 4:5 portrait share card: 1080×1350. */
+const CARD_W = 1080;
+const CARD_H = 1350;
+
+interface ScoreCardData {
+  earned: number;
+  possible: number;
+  correctCount: number;
+  totalQuestions: number;
+  secondsUsed: number;
+}
+
+function drawScoreCard(
+  ctx: CanvasRenderingContext2D,
+  d: ScoreCardData,
+): void {
+  // Backdrop: soft violet paper with a gentle diagonal wash.
+  ctx.fillStyle = '#faf5ff';
+  ctx.fillRect(0, 0, CARD_W, CARD_H);
+  const wash = ctx.createLinearGradient(0, 0, CARD_W, CARD_H);
+  wash.addColorStop(0, 'rgba(167,139,250,0.18)');
+  wash.addColorStop(1, 'rgba(52,211,153,0.14)');
+  ctx.fillStyle = wash;
+  ctx.fillRect(0, 0, CARD_W, CARD_H);
+
+  // Frame.
+  ctx.strokeStyle = '#a78bfa';
+  ctx.lineWidth = 10;
+  ctx.strokeRect(28, 28, CARD_W - 56, CARD_H - 56);
+
+  // Header band.
+  const band = ctx.createLinearGradient(0, 0, CARD_W, 0);
+  band.addColorStop(0, '#7c3aed');
+  band.addColorStop(0.55, '#9333ea');
+  band.addColorStop(1, '#059669');
+  ctx.fillStyle = band;
+  ctx.fillRect(28, 28, CARD_W - 56, 210);
+
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 64px system-ui, -apple-system, sans-serif';
+  ctx.fillText('🦘 Math Kangaroo Prep', CARD_W / 2, 130);
+
+  ctx.font = '500 34px system-ui, -apple-system, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.fillText('Grades 3–4 · Timed Practice Quiz', CARD_W / 2, 192);
+
+  // Big kangaroo.
+  ctx.font = '170px system-ui, sans-serif';
+  ctx.fillText('🦘', CARD_W / 2, 480);
+
+  ctx.fillStyle = '#6d28d9';
+  ctx.font = '600 38px system-ui, -apple-system, sans-serif';
+  ctx.fillText('M Y  S C O R E', CARD_W / 2, 560);
+
+  // Score: earned / possible, plus a correct-count line right below.
+  ctx.fillStyle = '#4c1d95';
+  ctx.font = '900 170px system-ui, -apple-system, sans-serif';
+  ctx.fillText(
+    `${d.earned}/${d.possible}`,
+    CARD_W / 2,
+    740,
+  );
+  ctx.fillStyle = '#6d28d9';
+  ctx.font = '600 44px system-ui, -apple-system, sans-serif';
+  ctx.fillText('points', CARD_W / 2, 806);
+
+  const perfect = d.correctCount === d.totalQuestions;
+  ctx.fillStyle = '#334155';
+  ctx.font = 'bold 52px system-ui, -apple-system, sans-serif';
+  ctx.fillText(
+    perfect
+      ? `🎉 Perfect — ${d.correctCount} of ${d.totalQuestions} correct!`
+      : `✅ ${d.correctCount} of ${d.totalQuestions} questions correct`,
+    CARD_W / 2,
+    905,
+  );
+
+  // Stats row: time used + date.
+  const dateStr = new Date().toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+  ctx.fillStyle = '#475569';
+  ctx.font = '500 46px system-ui, -apple-system, sans-serif';
+  ctx.fillText(
+    `⏱ Time: ${fmtTime(d.secondsUsed)}    📅 ${dateStr}`,
+    CARD_W / 2,
+    1000,
+  );
+
+  // Cheer line.
+  ctx.fillStyle = '#059669';
+  ctx.font = 'bold 46px system-ui, -apple-system, sans-serif';
+  ctx.fillText(
+    perfect ? 'Superstar hopper! 🌟' : 'Great hopping — keep it up! 🌟',
+    CARD_W / 2,
+    1090,
+  );
+
+  // Watermark footer (inside the frame).
+  ctx.fillStyle = '#7c3aed';
+  ctx.font = 'bold 44px system-ui, -apple-system, sans-serif';
+  ctx.fillText('lifehacks.zeey-app.net', CARD_W / 2, 1215);
+  ctx.fillStyle = '#64748b';
+  ctx.font = '400 30px system-ui, -apple-system, sans-serif';
+  ctx.fillText(
+    'Free Kangaroo-style practice for grades 3–4',
+    CARD_W / 2,
+    1268,
+  );
+}
+
+function ScoreShareCard(props: ScoreCardData) {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    drawScoreCard(ctx, props);
+    // props are plain numbers + a fresh render each completion; redraw when
+    // any of them change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    props.earned,
+    props.possible,
+    props.correctCount,
+    props.totalQuestions,
+    props.secondsUsed,
+  ]);
+
+  const download = () => {
+    const canvas = canvasRef.current;
+    if (!canvas || typeof canvas.toBlob !== 'function') return;
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'kangaroo-score-card.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }, 'image/png');
+  };
+
+  return (
+    <div className="rounded-2xl border border-violet-200/80 dark:border-violet-800/40 bg-violet-50/60 dark:bg-violet-950/20 p-6 text-center mt-6">
+      <h3 className="font-bold text-lg mb-1">🏆 Your score card</h3>
+      <p className="text-sm text-muted-foreground mb-4">
+        Save it, print it, or share it with family — nice work deserves to be
+        shown off!
+      </p>
+      <canvas
+        ref={canvasRef}
+        width={CARD_W}
+        height={CARD_H}
+        data-testid="kq-score-card"
+        role="img"
+        aria-label={`Score card: ${props.earned} of ${props.possible} points, ${props.correctCount} of ${props.totalQuestions} correct`}
+        className="w-full max-w-[280px] mx-auto rounded-xl border border-violet-200 dark:border-violet-800 shadow"
+      />
+      <div className="mt-4">
+        <button
+          type="button"
+          onClick={download}
+          data-testid="kq-score-card-download"
+          className="px-6 py-2.5 rounded-full bg-violet-600 hover:bg-violet-700 text-white font-semibold shadow transition-all hover:-translate-y-0.5"
+        >
+          ⬇ Download score card
+        </button>
+      </div>
+      <p
+        className="text-xs text-muted-foreground/70 mt-3"
+        data-testid="kq-score-card-watermark"
+      >
+        lifehacks.zeey-app.net
+      </p>
+    </div>
+  );
+}
+
 /* ═══════════════ Timed Quiz ═══════════════ */
 type QuizPhase = 'intro' | 'running' | 'done';
 
@@ -299,6 +486,9 @@ function TimedQuiz({ today }: { today: Date }) {
                 ? ' — so close!'
                 : ' — keep practicing!'}
           </p>
+          <p className="text-sm text-muted-foreground mt-2">
+            ⏱ Finished in {fmtTime(QUIZ_SECONDS - secondsLeft)}
+          </p>
           <div className="flex flex-wrap justify-center gap-3 mt-5">
             <button
               type="button"
@@ -315,6 +505,31 @@ function TimedQuiz({ today }: { today: Date }) {
               Back
             </button>
           </div>
+        </div>
+
+        <ScoreShareCard
+          earned={earned}
+          possible={possible}
+          correctCount={correctCount}
+          totalQuestions={questions.length}
+          secondsUsed={QUIZ_SECONDS - secondsLeft}
+        />
+
+        <div className="rounded-2xl border border-emerald-200/80 dark:border-emerald-800/40 bg-emerald-50/70 dark:bg-emerald-950/30 p-6 text-center mt-6">
+          <p className="font-bold text-lg mb-1">
+            📬 Get a free printable worksheet every week
+          </p>
+          <p className="text-sm text-muted-foreground mb-4">
+            One short email each week with fresh Kangaroo-style problems and a
+            printable practice sheet. Free — no spam, unsubscribe anytime.
+          </p>
+          <Link
+            href="/newsletter/"
+            data-testid="kq-quiz-newsletter-cta"
+            className="inline-block px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow transition-all hover:-translate-y-0.5"
+          >
+            Get the weekly worksheet →
+          </Link>
         </div>
 
         <h3 className="font-bold text-lg mb-3">Review with explanations</h3>
