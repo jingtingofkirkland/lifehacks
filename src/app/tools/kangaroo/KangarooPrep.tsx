@@ -677,6 +677,24 @@ export function KangarooPrep() {
           </div>
         </div>
 
+        {/* Kangaroo 2027 parent guide: dates, registration, prep plan */}
+        <div className="kq-no-print mt-6 rounded-2xl border border-amber-200/70 dark:border-amber-800/40 bg-amber-50/60 dark:bg-amber-950/20 p-6 text-center">
+          <p className="font-bold text-lg mb-1">
+            🗓️ Competing in 2027? Start with the parent guide
+          </p>
+          <p className="text-sm text-muted-foreground mb-4">
+            Key dates (register by Dec 31, competition Mar 18, 2027), how
+            registration works, and a week-by-week prep plan from now to
+            competition day.
+          </p>
+          <Link
+            href="/kangaroo-2027/"
+            className="inline-block px-6 py-2.5 rounded-full bg-amber-500 text-white font-semibold hover:bg-amber-600"
+          >
+            Open the 2027 parent guide →
+          </Link>
+        </div>
+
         {/* Newsletter CTA: weekly worksheet by email */}
         <div className="kq-no-print mt-6 rounded-2xl border border-emerald-200/70 dark:border-emerald-800/40 bg-emerald-50/60 dark:bg-emerald-950/20 p-6 text-center">
           <p className="font-bold text-lg mb-1">
