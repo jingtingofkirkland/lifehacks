@@ -73,6 +73,28 @@ export default function BeastAcademyIndexPage() {
         ))}
       </ul>
 
+      <h2 className="text-xl font-bold mb-4">陪学小工具</h2>
+      <ul className="grid gap-4 mb-10">
+        <li>
+          <Link
+            href="/learn/math-word-cards/"
+            className="block rounded-2xl border border-slate-200 dark:border-slate-700 p-5 hover:border-emerald-400 hover:bg-emerald-50/40 dark:hover:bg-emerald-950/20 transition-colors"
+          >
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+              工具 · 中英对照 · 可打印
+            </p>
+            <p className="font-semibold mb-1">
+              <span aria-hidden>🗂️ </span>
+              数学英文词卡：应用题里最常见的 40 个词
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              孩子卡住的往往不是计算，是题里的词：altogether、more than、left
+              over……40 个高频词的中文意思、地道例句和易错提示，打印出来贴书桌边。
+            </p>
+          </Link>
+        </li>
+      </ul>
+
       <p className="text-sm text-muted-foreground mb-10 leading-relaxed">
         更多章节陆续更新中。想第一时间收到新篇和每周练习单，
         可以<Link href="/newsletter/" className="text-emerald-700 dark:text-emerald-300 font-semibold hover:underline">免费订阅我们的每周邮件</Link>。
