@@ -60,6 +60,20 @@ const handyTools: ToolItem[] = [
     ),
     tag: 'Seasonal',
   },
+  {
+    title: 'For Teachers: 5-Day Math Challenge Pack',
+    desc: 'Free printable week of Kangaroo-style problems for grades 3–4 classrooms: one problem a day, full answer key, and a class star poster.',
+    href: '/for-teachers',
+    icon: (
+      <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
+        <rect x="14" y="10" width="36" height="46" rx="4" fill="#ECFDF5" stroke="#059669" strokeWidth="2"/>
+        <rect x="24" y="6" width="16" height="8" rx="3" fill="#A7F3D0" stroke="#059669" strokeWidth="2"/>
+        <path d="M22 26h20M22 36h20" stroke="#059669" strokeWidth="3" strokeLinecap="round"/>
+        <path d="M22 47l4 4 8-9" stroke="#059669" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+    tag: 'Classroom',
+  },
 ];
 
 const eduGames: ToolItem[] = [
