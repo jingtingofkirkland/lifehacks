@@ -44,6 +44,22 @@ const handyTools: ToolItem[] = [
     ),
     tag: 'Calculator',
   },
+  {
+    title: 'Halloween: Free Printable Pumpkin Stencils',
+    desc: 'Print three kid-friendly pumpkin carving patterns — classic face, spider, and bat — then tape, poke, and carve.',
+    href: '/halloween/pumpkin-stencils',
+    icon: (
+      <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
+        <ellipse cx="32" cy="37" rx="22" ry="18" fill="#FFF7ED" stroke="#EA580C" strokeWidth="2"/>
+        <path d="M22 23c-4 8-4 20 0 28M42 23c4 8 4 20 0 28" stroke="#FDBA74" strokeWidth="2"/>
+        <path d="M30 20c1-7 6-10 12-9-2 5-5 8-8 10Z" fill="#22C55E" stroke="#15803D" strokeWidth="2" strokeLinejoin="round"/>
+        <path d="M21 35l5-7 5 7Z" fill="#7C2D12"/>
+        <path d="M37 35l5-7 5 7Z" fill="#7C2D12"/>
+        <path d="M22 44l5 4 5-5 5 5 5-5 3 4-5 5H28Z" fill="#7C2D12" strokeLinejoin="round"/>
+      </svg>
+    ),
+    tag: 'Seasonal',
+  },
 ];
 
 const eduGames: ToolItem[] = [
