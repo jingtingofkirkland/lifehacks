@@ -9,10 +9,12 @@ export const metadata = {
 };
 
 export default async function TechPage() {
-  // Load all MD file contents at build/request time
-  const contentPaths = techPosts
-    .filter(post => post.contentPath)
-    .map(post => post.contentPath!);
+  // Load all MD file contents at build/request time (incl. optional English versions)
+  const contentPaths = techPosts.flatMap((post) =>
+    [post.contentPath, post.contentPathEn].filter(
+      (p): p is string => typeof p === 'string'
+    )
+  );
 
   const postContents = await getAllPostContents(contentPaths);
 
@@ -77,6 +79,7 @@ export default async function TechPage() {
                 key={post.id}
                 post={post}
                 content={post.contentPath ? postContents[post.contentPath] : undefined}
+                contentEn={post.contentPathEn ? postContents[post.contentPathEn] : undefined}
               />
             ))}
           </div>

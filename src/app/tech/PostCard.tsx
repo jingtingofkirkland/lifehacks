@@ -9,19 +9,25 @@ import { TechPost } from '@/config/techPosts';
 interface PostCardProps {
   post: TechPost;
   content?: string;
+  // Optional English version. The 中文 / English toggle is rendered only
+  // when both the primary content and this English content exist.
+  contentEn?: string;
 }
 
-export function PostCard({ post, content }: PostCardProps) {
+export function PostCard({ post, content, contentEn }: PostCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [lang, setLang] = useState<'primary' | 'en'>('primary');
   const hasContent = content && content.length > 0;
+  const hasEn = !!contentEn && contentEn.length > 0;
+  const activeContent = lang === 'en' && hasEn ? contentEn : content;
 
   // Strip the first H1 line (already shown as card title)
   const markdownContent = hasContent
-    ? content.replace(/^# .+\n?/, '')
+    ? (activeContent ?? '').replace(/^# .+\n?/, '')
     : '';
 
   return (
-    <div className={`group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 ${hasContent ? 'col-span-1 md:col-span-2 lg:col-span-3' : ''}`}>
+    <div id={post.id} className={`group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 ${hasContent ? 'col-span-1 md:col-span-2 lg:col-span-3' : ''}`}>
       {/* Category Badge */}
       <span className="inline-block px-3 py-1 text-xs font-medium bg-blue-500/20 text-blue-300 rounded-full mb-4">
         {post.category}
@@ -59,6 +65,30 @@ export function PostCard({ post, content }: PostCardProps) {
 
           {isExpanded && (
             <div className="bg-white/5 rounded-lg p-6 border border-white/10 prose prose-invert prose-sm max-w-none animate-in fade-in slide-in-from-top-2 duration-300">
+              {hasEn && (
+                <div className="not-prose flex justify-end gap-2 mb-4">
+                  <button
+                    onClick={() => setLang('primary')}
+                    className={`px-3 py-1 text-xs font-medium rounded-full transition-all duration-300 ${
+                      lang === 'primary'
+                        ? 'bg-white text-slate-900'
+                        : 'bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10'
+                    }`}
+                  >
+                    中文
+                  </button>
+                  <button
+                    onClick={() => setLang('en')}
+                    className={`px-3 py-1 text-xs font-medium rounded-full transition-all duration-300 ${
+                      lang === 'en'
+                        ? 'bg-white text-slate-900'
+                        : 'bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10'
+                    }`}
+                  >
+                    English
+                  </button>
+                </div>
+              )}
               <ReactMarkdown>{markdownContent}</ReactMarkdown>
             </div>
           )}
