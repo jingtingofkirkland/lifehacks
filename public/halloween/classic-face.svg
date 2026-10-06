@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Classic jack-o'-lantern face pumpkin carving stencil">
+  <title>Classic Jack-o'-Lantern Face</title>
+  <defs>
+    <pattern id="hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="9" height="9" fill="#ffffff"/>
+      <line x1="0" y1="0" x2="0" y2="9" stroke="#000000" stroke-width="2.4"/>
+    </pattern>
+  </defs>
+  <rect x="0" y="0" width="200" height="200" fill="#ffffff"/>
+  <g fill="url(#hatch)" stroke="#000000" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+    <polygon points="48,62 80,62 64,34"/>
+    <polygon points="120,62 152,62 136,34"/>
+    <polygon points="100,74 84,106 116,106"/>
+    <path d="M 36 134 L 56 156 L 70 142 L 84 160 L 100 144 L 116 160 L 130 142 L 144 156 L 164 134 L 158 164 Q 100 184 42 164 Z"/>
+  </g>
+</svg>
