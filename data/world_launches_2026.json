@@ -2583,5 +2583,16 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 236,
+    "time": "7 October 03:23:00",
+    "rocket": "Nuri",
+    "mission": "",
+    "site": "Naro LC-2",
+    "org": {
+      "country": "South Korea",
+      "info": "KARI"
+    }
   }
 ]
