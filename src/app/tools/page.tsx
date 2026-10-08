@@ -61,6 +61,18 @@ const handyTools: ToolItem[] = [
     tag: 'Seasonal',
   },
   {
+    title: 'Math Kangaroo 2027: Washington Parent Guide',
+    desc: 'WA deadlines, how invitation-only school centers work, Eastside center options, and the five pitfalls local parents hit every season.',
+    href: '/kangaroo-2027-wa',
+    icon: (
+      <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="32" r="24" fill="#FEF3C7" stroke="#D97706" strokeWidth="2"/>
+        <text x="32" y="39" textAnchor="middle" fontSize="17" fontWeight="bold" fill="#92400E">WA</text>
+      </svg>
+    ),
+    tag: 'Local',
+  },
+  {
     title: 'For Teachers: 5-Day Math Challenge Pack',
     desc: 'Free printable week of Kangaroo-style problems for grades 3–4 classrooms: one problem a day, full answer key, and a class star poster.',
     href: '/for-teachers',
@@ -338,3 +350,4 @@ export default function ToolsPage() {
     </article>
   );
 }
+

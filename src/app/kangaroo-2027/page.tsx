@@ -159,6 +159,24 @@ export default function Kangaroo2027Page() {
         by Math Kangaroo USA, not by us.
       </p>
 
+      <div className="rounded-2xl border border-orange-200 dark:border-orange-800/50 bg-orange-50 dark:bg-orange-950/30 p-5 mb-10">
+        <p className="font-semibold mb-1">
+          📍 Washington state? Read the local layer too
+        </p>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Centers, invitation codes, and seat pressure play out differently
+          on the ground in WA. Our{' '}
+          <Link
+            href="/kangaroo-2027-wa/"
+            className="font-semibold text-primary hover:underline"
+          >
+            Washington Math Kangaroo 2027 guide
+          </Link>{' '}
+          covers Eastside center options, how invitation-only school centers
+          work, and the five pitfalls WA parents hit every season.
+        </p>
+      </div>
+
       <h2 className="text-xl font-bold mb-4">How to register in 5 steps</h2>
       <ol className="space-y-4 mb-10">
         {REGISTRATION_STEPS.map((step, i) => (
@@ -271,3 +289,4 @@ export default function Kangaroo2027Page() {
     </div>
   );
 }
+
