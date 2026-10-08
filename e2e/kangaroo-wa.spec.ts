@@ -48,7 +48,7 @@ test.describe('kangaroo 2027 WA war room', () => {
     page,
   }) => {
     await page.goto('/tools');
-    const card = page.locator('a[href="/kangaroo-2027-wa"]');
+    const card = page.locator('a[href="/kangaroo-2027-wa/"]');
     await expect(card).toBeVisible();
     await expect(card).toContainText('Washington Parent Guide');
   });
