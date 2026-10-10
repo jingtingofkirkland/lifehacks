@@ -79,6 +79,23 @@ const games: GameEntry[] = [
     tag: 'Contest prep',
     cta: 'Start practicing',
   },
+  {
+    title: 'Kangaroo Readiness Check: Is Your Child Ready? (Grades 3–4)',
+    desc: 'Nine quick Kangaroo-style questions with instant topic-by-topic strengths, a recommended practice path, and a printable 4-week plan.',
+    href: '/tools/kangaroo/readiness',
+    game: 'kangaroo_readiness',
+    icon: (
+      <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="32" r="24" fill="#EDE9FE" stroke="#7C3AED" strokeWidth="2"/>
+        <path d="M32 32 L32 18" stroke="#7C3AED" strokeWidth="4" strokeLinecap="round"/>
+        <path d="M32 32 L43 38" stroke="#DB2777" strokeWidth="4" strokeLinecap="round"/>
+        <circle cx="32" cy="32" r="3.5" fill="#7C3AED"/>
+        <path d="M14 44a22 22 0 0 0 36 0" stroke="#A78BFA" strokeWidth="3" strokeLinecap="round" strokeDasharray="4 5"/>
+      </svg>
+    ),
+    tag: 'Readiness check',
+    cta: 'Take the free check',
+  },
 ];
 
 /* decorative SVGs */
