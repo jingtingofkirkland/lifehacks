@@ -42,5 +42,27 @@
       "country": "South Korea",
       "info": "KARI"
     }
+  },
+  {
+    "flight": 5,
+    "time": "9 October 19:27:58",
+    "rocket": "Long March 12",
+    "mission": "Y10 / SatNet LEO Group 27",
+    "site": "Wenchang LC-2",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 6,
+    "time": "10 October 07:39:00",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]

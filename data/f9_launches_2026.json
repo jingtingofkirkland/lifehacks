@@ -1171,5 +1171,17 @@
     ],
     "massEstimated": true,
     "massEstimateBasis": "landing:EXPENDED"
+  },
+  {
+    "flight": 696,
+    "time": "October 10, 2026 07:39",
+    "rocket": "B1103‑6",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "SDA Tranche 1 Transport Layer A (21 satellites)",
+    "mass": "5125",
+    "orbit": "Polar LEO",
+    "landing": "RTLS",
+    "massEstimated": true,
+    "massEstimateBasis": "landing:RTLS"
   }
 ]
