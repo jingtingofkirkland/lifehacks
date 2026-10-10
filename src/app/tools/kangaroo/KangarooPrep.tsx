@@ -61,16 +61,20 @@ function DailyChallenge({ today }: { today: Date }) {
   const startedRef = useRef(false);
 
   useEffect(() => {
-    if (!startedRef.current) {
-      startedRef.current = true;
-      trackEvent('GameStarted', { game: 'kangaroo_daily' });
-    }
     const s = readJSON('kq-streak') as { last?: string; count?: number } | null;
     setStreak(typeof s?.count === 'number' ? s.count : 0);
   }, []);
 
   const answer = (idx: number) => {
     if (picked !== null) return;
+    // GameStarted semantics (changed 2026-10-10): "started" means the child
+    // actually answered, not that the page was opened. The old page-open
+    // firing inflated starts and could not be compared with post-change
+    // counts. See hidden experiment log entry dated 2026-10-10.
+    if (!startedRef.current) {
+      startedRef.current = true;
+      trackEvent('GameStarted', { game: 'kangaroo_daily' });
+    }
     setPicked(idx);
     const correct = idx === q.answer;
     trackEvent('GameCompleted', { game: 'kangaroo_daily', correct });
@@ -869,8 +873,24 @@ export function KangarooPrep() {
           )}
         </div>
 
+        {/* Readiness check entry */}
+        <div className="kq-no-print mt-10 rounded-2xl border border-violet-300/80 dark:border-violet-700/60 bg-gradient-to-br from-violet-100/80 to-fuchsia-100/60 dark:from-violet-950/40 dark:to-fuchsia-950/30 p-6 text-center">
+          <p className="font-bold text-lg mb-1">🧭 New: Kangaroo Readiness Check</p>
+          <p className="text-sm text-muted-foreground mb-4 max-w-lg mx-auto">
+            Not sure where your child stands? Nine quick questions show which
+            topics are strong, which need practice, and give you a 4-week plan.
+          </p>
+          <Link
+            href="/tools/kangaroo/readiness/"
+            data-testid="kq-readiness-card"
+            className="inline-block px-6 py-2.5 rounded-full bg-violet-600 text-white font-semibold hover:bg-violet-700"
+          >
+            Take the free readiness check →
+          </Link>
+        </div>
+
         {/* SEO practice-problem library: crawlable per-problem pages */}
-        <div className="kq-no-print mt-10 rounded-2xl border border-violet-200/70 dark:border-violet-800/40 bg-violet-50/60 dark:bg-violet-950/20 p-6 text-center">
+        <div className="kq-no-print mt-6 rounded-2xl border border-violet-200/70 dark:border-violet-800/40 bg-violet-50/60 dark:bg-violet-950/20 p-6 text-center">
           <p className="font-bold text-lg mb-1">📚 Browse all 40 practice problems</p>
           <p className="text-sm text-muted-foreground mb-4">
             Every problem as its own page — solve, reveal the answer, and
