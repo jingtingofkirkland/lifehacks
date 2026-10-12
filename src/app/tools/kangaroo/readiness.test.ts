@@ -4,6 +4,7 @@ import {
   buildPracticePlan,
   readinessQuestions,
   recommendedPractice,
+  reportSummary,
   summarizeTopics,
   topicVerdict,
 } from './readiness';
@@ -90,5 +91,30 @@ describe('buildPracticePlan', () => {
     const plan = buildPracticePlan(stats);
     expect(plan).toHaveLength(4);
     expect(plan[3].tasks.join(' ')).toMatch(/retake/i);
+  });
+});
+
+describe('reportSummary', () => {
+  it('encodes a perfect run as full score and all-strong topics', () => {
+    const questions = readinessQuestions();
+    const stats = summarizeTopics(questions, answersFor(new Set(READINESS_QUESTION_IDS)));
+    const summary = reportSummary(stats, 36, 36);
+    expect(summary.score).toBe('36/36');
+    const pairs = summary.topics.split(',');
+    expect(pairs).toHaveLength(6);
+    for (const pair of pairs) expect(pair).toMatch(/^.+ :?S$|^.+ :S$|^[A-Za-z &]+:S$/);
+    expect(summary.topics).toContain('Arithmetic:S');
+  });
+
+  it('marks untouched topics as focus (F) and partial ones as growing (G)', () => {
+    const questions = readinessQuestions();
+    // Answer only the first question (Arithmetic) correctly.
+    const stats = summarizeTopics(questions, answersFor(new Set(['k34-001'])));
+    const summary = reportSummary(stats, 3, 36);
+    expect(summary.score).toBe('3/36');
+    expect(summary.topics).toContain('Arithmetic:S');
+    expect(summary.topics).toContain('Geometry:F');
+    // Logic has two questions (4pts + 5pts), both missed here -> focus, not growing.
+    expect(summary.topics).toContain('Logic:F');
   });
 });

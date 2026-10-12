@@ -12,3 +12,22 @@ export function getNewsletterFormUrl(): string | null {
   const url = raw?.trim();
   return url ? url : null;
 }
+
+/**
+ * Merge extra query parameters into a Tally form URL. Used to carry
+ * hidden-field values into a submission — e.g. the readiness check passes
+ * a compact report summary (`score`, `topics`) so the emailed report can
+ * be assembled from the submission record by hand. Per Tally's hidden
+ * fields docs, a value is only recorded when the form has a hidden field
+ * with the same name, so the names used here must exist in the form.
+ */
+export function appendTallyParams(
+  url: string,
+  params: Record<string, string>,
+): string {
+  const merged = new URL(url);
+  for (const [key, value] of Object.entries(params)) {
+    merged.searchParams.set(key, value);
+  }
+  return merged.toString();
+}

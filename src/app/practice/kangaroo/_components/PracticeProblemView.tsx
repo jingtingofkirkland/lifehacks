@@ -13,6 +13,7 @@
  */
 import { useState } from 'react';
 import Link from 'next/link';
+import { SubscribeCta } from '@/components/SubscribeCta';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E'];
 
@@ -228,6 +229,12 @@ export function PracticeProblemView({
         >
           Open Kangaroo Prep →
         </Link>
+      </div>
+
+      {/* Subscribe card (Top 2): every printable problem page offers the
+          Friday email too. */}
+      <div className="mb-8 print:hidden">
+        <SubscribeCta />
       </div>
 
       <p className="text-xs text-muted-foreground leading-relaxed">

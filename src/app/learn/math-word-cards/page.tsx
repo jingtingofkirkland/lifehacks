@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PrintButton } from '../beast-academy/_components/PrintButton';
+import { SubscribeCta } from '@/components/SubscribeCta';
 
 export const metadata: Metadata = {
   title: '数学英文词卡（3–4 年级）：应用题里最常见的 40 个词 - Great Seattle Life Hacks',
@@ -351,19 +352,7 @@ export default function MathWordCardsPage() {
 
       {/* CTA */}
       <div className="print:hidden grid gap-4 sm:grid-cols-2 mb-8">
-        <div className="rounded-2xl border p-6 bg-gradient-to-br from-sky-50 to-indigo-50 dark:from-sky-950/40 dark:to-indigo-950/40 border-sky-200/60 dark:border-sky-800/40">
-          <p className="font-bold text-lg mb-1">📬 免费拿更多打印资源</p>
-          <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-            这张词卡是我们每周邮件的免费赠品之一。订阅后，每周五收到精选题目 +
-            一份可打印练习单，新资源第一时间发你。免费，随时退订。
-          </p>
-          <Link
-            href="/newsletter/"
-            className="inline-block px-5 py-2.5 rounded-full bg-sky-600 text-white font-semibold hover:bg-sky-700"
-          >
-            订阅每周练习单 →
-          </Link>
-        </div>
+        <SubscribeCta className="h-full" />
         <div className="rounded-2xl border p-6 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/40 dark:to-teal-950/40 border-emerald-200/60 dark:border-emerald-800/40">
           <p className="font-bold text-lg mb-1">📖 配套：Beast Academy 中文陪学</p>
           <p className="text-sm text-muted-foreground mb-4 leading-relaxed">

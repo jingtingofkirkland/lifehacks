@@ -34,7 +34,7 @@ test.describe('newsletter signup', () => {
   test('kangaroo hub links to the newsletter page', async ({ page }) => {
     await page.goto('/tools/kangaroo/');
     await expect(
-      page.getByText(/Get the weekly worksheet by email/),
+      page.getByText(/3 new problems every Friday/),
     ).toBeVisible();
     const cta = page.locator('a[href="/newsletter/"]');
     await expect(cta.first()).toBeVisible();

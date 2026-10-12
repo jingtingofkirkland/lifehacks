@@ -84,6 +84,28 @@ export function topicVerdict(stat: TopicStat): 'focus' | 'growing' | 'strong' {
   return 'growing';
 }
 
+const VERDICT_CODE = { strong: 'S', growing: 'G', focus: 'F' } as const;
+
+/**
+ * Compact summary of a finished check, carried into the Tally signup as
+ * hidden fields (`score`, `topics`) by the "email my report" option, so
+ * the report can be re-assembled from the submission record. Kept short
+ * on purpose — it rides in the form URL. Verdict codes: S = strong,
+ * G = growing, F = focus next.
+ */
+export function reportSummary(
+  stats: TopicStat[],
+  totalPoints: number,
+  totalPossible: number,
+): { score: string; topics: string } {
+  return {
+    score: `${totalPoints}/${totalPossible}`,
+    topics: stats
+      .map((s) => `${s.category}:${VERDICT_CODE[topicVerdict(s)]}`)
+      .join(','),
+  };
+}
+
 export interface PracticePick {
   category: KangarooCategory;
   /** Up to 3 extra bank questions in this topic, not used by the diagnostic. */

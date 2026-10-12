@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { SubscribeCta } from '@/components/SubscribeCta';
 
 export const metadata: Metadata = {
   title:
@@ -356,21 +357,12 @@ export default function Kangaroo2027WaPage() {
         </section>
       </div>
 
-      <div className="rounded-2xl border border-orange-200 dark:border-orange-800/50 bg-orange-50 dark:bg-orange-950/30 p-6 mb-10">
-        <p className="font-semibold mb-1">
-          📬 Get the free printable Kangaroo 2027 pack
+      <div className="mb-10">
+        <SubscribeCta />
+        <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+          Subscribers also get the one-page WA registration checklist — the
+          center questions to ask your school — in their first Friday email.
         </p>
-        <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-          The one-page registration checklist (with the WA center questions to
-          ask your school), a week-by-week prep tracker, and a fresh printable
-          worksheet every Friday — free, no spam, unsubscribe anytime.
-        </p>
-        <Link
-          href="/newsletter/"
-          className="inline-block rounded-full bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 py-2.5 text-sm"
-        >
-          Get the free printable pack + weekly worksheet
-        </Link>
       </div>
 
       <h2 className="text-xl font-bold mb-4">Washington parent FAQ</h2>

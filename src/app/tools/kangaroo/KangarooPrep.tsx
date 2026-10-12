@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { UsefulnessFeedback } from '@/components/UsefulnessFeedback';
+import { SubscribeCta } from '@/components/SubscribeCta';
 import { trackEvent } from '@/lib/pixel';
 import {
   dayNumber,
@@ -170,6 +171,14 @@ function DailyChallenge({ today }: { today: Date }) {
             <p className="text-xs text-muted-foreground/70 mt-3">
               Come back tomorrow for a new challenge — a fresh problem every
               day.
+            </p>
+            <p className="text-sm mt-3">
+              <Link
+                href="/newsletter/"
+                className="font-semibold text-emerald-700 dark:text-emerald-300 hover:underline"
+              >
+                Or get 3 new problems in your inbox every Friday — free →
+              </Link>
             </p>
           </div>
         )}
@@ -519,21 +528,8 @@ function TimedQuiz({ today }: { today: Date }) {
           secondsUsed={QUIZ_SECONDS - secondsLeft}
         />
 
-        <div className="rounded-2xl border border-emerald-200/80 dark:border-emerald-800/40 bg-emerald-50/70 dark:bg-emerald-950/30 p-6 text-center mt-6">
-          <p className="font-bold text-lg mb-1">
-            📬 Get a free printable worksheet every week
-          </p>
-          <p className="text-sm text-muted-foreground mb-4">
-            One short email each week with fresh Kangaroo-style problems and a
-            printable practice sheet. Free — no spam, unsubscribe anytime.
-          </p>
-          <Link
-            href="/newsletter/"
-            data-testid="kq-quiz-newsletter-cta"
-            className="inline-block px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow transition-all hover:-translate-y-0.5"
-          >
-            Get the weekly worksheet →
-          </Link>
+        <div className="mt-6">
+          <SubscribeCta linkTestId="kq-quiz-newsletter-cta" />
         </div>
 
         <h3 className="font-bold text-lg mb-3">Review with explanations</h3>
@@ -912,21 +908,9 @@ export function KangarooPrep() {
           </div>
         </div>
 
-        {/* Newsletter CTA: weekly worksheet by email */}
-        <div className="kq-no-print mt-6 rounded-2xl border border-emerald-200/70 dark:border-emerald-800/40 bg-emerald-50/60 dark:bg-emerald-950/20 p-6 text-center">
-          <p className="font-bold text-lg mb-1">
-            📬 Get the weekly worksheet by email
-          </p>
-          <p className="text-sm text-muted-foreground mb-4">
-            One email every Friday — this week&apos;s best problems, a
-            printable worksheet, and a peek at next week. Free, no spam.
-          </p>
-          <Link
-            href="/newsletter/"
-            className="inline-block px-6 py-2.5 rounded-full bg-emerald-600 text-white font-semibold hover:bg-emerald-700"
-          >
-            Subscribe free →
-          </Link>
+        {/* Newsletter CTA: shared subscribe card (Top 2) */}
+        <div className="kq-no-print mt-6">
+          <SubscribeCta />
         </div>
 
         <div className="kq-no-print mt-10 mb-6">

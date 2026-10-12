@@ -41,6 +41,12 @@ test.describe('Kangaroo readiness check', () => {
     await expect(page.getByTestId('kr-print')).toBeVisible();
     await expect(page.getByText('Your 4-week practice plan')).toBeVisible();
     await expect(page.getByText('Question review')).toBeVisible();
+
+    // Below the report sits the optional email-my-report block (Top 2):
+    // it offers an emailed copy without ever gating the report itself.
+    const emailBlock = page.getByTestId('kr-email-report');
+    await expect(emailBlock).toBeVisible();
+    await expect(emailBlock).toContainText(/Want this report in your inbox/);
   });
 
   test('kangaroo hub links to the readiness check', async ({ page }) => {

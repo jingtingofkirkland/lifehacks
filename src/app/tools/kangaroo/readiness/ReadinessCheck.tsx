@@ -4,11 +4,15 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { trackEvent } from '@/lib/pixel';
 import { UsefulnessFeedback } from '@/components/UsefulnessFeedback';
+import { NewsletterForm } from '@/components/NewsletterForm';
+import { SubscribeCta } from '@/components/SubscribeCta';
+import { appendTallyParams, getNewsletterFormUrl } from '@/lib/newsletter';
 import {
   READINESS_GAME,
   buildPracticePlan,
   readinessQuestions,
   recommendedPractice,
+  reportSummary,
   summarizeTopics,
   topicVerdict,
 } from '../readiness';
@@ -44,6 +48,7 @@ export default function ReadinessCheck() {
   );
   const [submitted, setSubmitted] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
+  const [emailFormOpen, setEmailFormOpen] = useState(false);
   const startedRef = useRef(false);
   const completedRef = useRef(false);
 
@@ -64,6 +69,17 @@ export default function ReadinessCheck() {
   const correctCount = stats.reduce((n, s) => n + s.correct, 0);
   const picks = useMemo(() => recommendedPractice(stats), [stats]);
   const plan = useMemo(() => buildPracticePlan(stats), [stats]);
+
+  // "Email my report" (Top 2): the same Tally signup form, with this
+  // child's report summary riding along as hidden fields (score/topics)
+  // so the emailed report can be assembled from the submission record.
+  const baseFormUrl = getNewsletterFormUrl();
+  const reportFormUrl = baseFormUrl
+    ? appendTallyParams(
+        baseFormUrl,
+        reportSummary(stats, totalPoints, TOTAL_POINTS),
+      )
+    : null;
 
   const pick = (qIdx: number, optIdx: number) => {
     if (submitted) return;
@@ -483,6 +499,47 @@ export default function ReadinessCheck() {
               </div>
             )}
 
+            {/* Email-my-report (Top 2): a purely optional extra below the
+                report — the report itself stays fully on this page. The
+                form is the regular signup form plus this child's summary
+                as hidden fields, so leaving an email both subscribes to
+                the Weekly Worksheet and tells us which report to send. */}
+            <div
+              data-testid="kr-email-report"
+              className="kr-no-print rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-card/70 p-6 mb-6"
+            >
+              <p className="font-bold text-lg mb-1">
+                📧 Want this report in your inbox?
+              </p>
+              <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+                Everything on this page stays free — read it here, print it,
+                keep it. Want a copy by email too? Leave your email and
+                we&apos;ll send your full report — and you&apos;ll get the
+                Weekly Worksheet every Friday. Free, unsubscribe anytime.
+              </p>
+              {reportFormUrl ? (
+                emailFormOpen ? (
+                  <NewsletterForm formUrl={reportFormUrl} />
+                ) : (
+                  <button
+                    type="button"
+                    data-testid="kr-email-report-open"
+                    onClick={() => setEmailFormOpen(true)}
+                    className="px-6 py-2.5 rounded-full bg-violet-600 text-white font-semibold hover:bg-violet-700"
+                  >
+                    Email me my report →
+                  </button>
+                )
+              ) : (
+                <Link
+                  href="/newsletter/"
+                  className="inline-block px-6 py-2.5 rounded-full bg-violet-600 text-white font-semibold hover:bg-violet-700"
+                >
+                  Email me my report →
+                </Link>
+              )}
+            </div>
+
             <div className="kr-no-print text-center mb-6">
               <button
                 type="button"
@@ -502,6 +559,10 @@ export default function ReadinessCheck() {
             prompt="Was this readiness check helpful?"
             helper="One click helps us build more free contest prep you'll actually use."
           />
+        </div>
+
+        <div className="kr-no-print mb-6">
+          <SubscribeCta />
         </div>
 
         <div className="kr-no-print text-center pb-8 space-y-2">
