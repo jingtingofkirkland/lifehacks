@@ -51,7 +51,7 @@ const FAQS = [
   },
   {
     q: 'How often will I hear from you?',
-    a: 'One email every Friday, and that is it. No daily nagging, no marketing blasts in between.',
+    a: 'Once a week, on Fridays — and that is it. No daily nagging, no marketing blasts in between.',
   },
   {
     q: 'How do I unsubscribe?',
