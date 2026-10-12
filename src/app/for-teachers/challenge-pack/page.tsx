@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { PrintButton } from '../_components/PrintButton';
+import { SubscribeCta } from '@/components/SubscribeCta';
 import { getPackQuestions } from './pack';
 
 export const metadata: Metadata = {
@@ -247,6 +248,9 @@ export default function ChallengePackPage() {
         </div>
 
         {/* ── Screen-only footer ── */}
+        <div className="ft-no-print mt-4 mb-6">
+          <SubscribeCta />
+        </div>
         <div className="ft-no-print text-center mt-4 pb-8 space-y-3">
           <p className="text-sm text-muted-foreground">
             Want the kids to practice on screens too? The same problems are in

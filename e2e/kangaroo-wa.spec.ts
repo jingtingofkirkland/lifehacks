@@ -41,7 +41,7 @@ test.describe('kangaroo 2027 WA war room', () => {
     ).toBeVisible();
     const newsletterCta = page.locator('a[href="/newsletter/"]').first();
     await expect(newsletterCta).toBeVisible();
-    await expect(newsletterCta).toContainText('free printable pack');
+    await expect(newsletterCta).toContainText('Subscribe free');
   });
 
   test('tools page links to the WA guide from the handy tools grid', async ({

@@ -30,8 +30,13 @@ function fallbackToStaticSrc() {
  * no fixed pixel heights. Until the URL is configured it renders an
  * honest "coming soon" placeholder — never a fake form.
  */
-export function NewsletterForm() {
-  const formUrl = getNewsletterFormUrl();
+export function NewsletterForm({
+  formUrl: formUrlOverride,
+}: {
+  /** Overrides the configured form URL (e.g. to carry hidden fields). */
+  formUrl?: string;
+} = {}) {
+  const formUrl = formUrlOverride ?? getNewsletterFormUrl();
 
   useEffect(() => {
     if (!formUrl) return;

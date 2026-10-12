@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { UsefulnessFeedback } from '@/components/UsefulnessFeedback';
+import { SubscribeCta } from '@/components/SubscribeCta';
 
 export const metadata: Metadata = {
   title:
@@ -207,34 +208,14 @@ export default function ForTeachersPage() {
           </p>
         </section>
 
-        {/* ── Newsletter CTA ── */}
+        {/* ── Newsletter CTA (shared subscribe card, Top 2) ── */}
         <section className="mb-12">
-          <div className="relative overflow-hidden p-6 sm:p-7 rounded-2xl border border-emerald-200/80 dark:border-emerald-800/40 bg-gradient-to-br from-emerald-100/90 via-teal-50/70 to-white/90 dark:from-emerald-950/70 dark:via-teal-950/40 dark:to-card/90 shadow-sm">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-5">
-              <div className="shrink-0 w-12 h-12 rounded-xl bg-emerald-600 dark:bg-emerald-500 flex items-center justify-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="4" width="20" height="16" rx="2" />
-                  <path d="m22 7-10 6L2 7" />
-                </svg>
-              </div>
-              <div className="flex-1 min-w-0">
-                <h2 className="text-xl font-bold">Teachers: a fresh worksheet every Friday</h2>
-                <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-                  Our weekly worksheet email is made for classrooms too —
-                  hand-picked problems and a fresh printable every Friday, so
-                  your next challenge week plans itself. Free, no spam,
-                  unsubscribe anytime.
-                </p>
-              </div>
-              <Link
-                href="/newsletter/"
-                className="inline-flex shrink-0 items-center justify-center gap-1.5 px-6 py-3 rounded-full bg-emerald-600 text-white font-semibold hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-400 dark:text-emerald-950 transition-colors"
-              >
-                Subscribe free
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-              </Link>
-            </div>
-          </div>
+          <SubscribeCta />
+          <p className="text-sm text-muted-foreground mt-3 leading-relaxed text-center">
+            Teachers: the same Friday email works for classrooms too — a
+            fresh printable every week, so your next challenge week plans
+            itself.
+          </p>
         </section>
 
         {/* ── Feedback ── */}
