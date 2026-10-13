@@ -64,5 +64,27 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 7,
+    "time": "13 October 00:28:11",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 15-25",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 8,
+    "time": "13 October 10:33:44",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
