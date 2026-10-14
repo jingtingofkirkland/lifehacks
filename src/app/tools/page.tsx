@@ -61,6 +61,18 @@ const handyTools: ToolItem[] = [
     tag: 'Seasonal',
   },
   {
+    title: 'Halloween Math Hunt: 12 Printable Problems',
+    desc: 'Play 6 spooky-but-friendly Kangaroo-style problems online, then print the full hunt — all 12 problems plus an answer key, for grades 3–4.',
+    href: '/tools/halloween-math',
+    icon: (
+      <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="32" r="24" fill="#FFEDD5" stroke="#EA580C" strokeWidth="2"/>
+        <text x="32" y="39" textAnchor="middle" fontSize="17" fontWeight="bold" fill="#9A3412">12</text>
+      </svg>
+    ),
+    tag: 'Seasonal',
+  },
+  {
     title: 'Math Kangaroo 2027: Washington Parent Guide',
     desc: 'WA deadlines, how invitation-only school centers work, Eastside center options, and the five pitfalls local parents hit every season.',
     href: '/kangaroo-2027-wa',

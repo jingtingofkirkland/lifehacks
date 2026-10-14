@@ -81,6 +81,14 @@ export default function PumpkinStencilsPage() {
         Three big, bold patterns for little pumpkin artists. Print one, tape it to your
         pumpkin, poke along the outline, and carve. Easy on ink, easy on small hands.
       </p>
+      <div className="mb-6 rounded-2xl border border-orange-300 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/30 px-4 py-3 leading-relaxed print:hidden">
+        🧮 <strong>Warm up those brains first:</strong> try the{' '}
+        <Link href="/tools/halloween-math/" className="underline underline-offset-2 font-medium">
+          Halloween Math Hunt
+        </Link>{' '}
+        — 12 free printable problems. See if you can spot the spider and the bat from
+        these stencils hiding in the puzzles!
+      </div>
       <p className="mb-10 inline-block rounded-full bg-orange-100 dark:bg-orange-950/40 text-orange-900 dark:text-orange-200 text-sm font-medium px-4 py-1.5 print:hidden">
         🎃 Hatched area = the part you cut out
       </p>
