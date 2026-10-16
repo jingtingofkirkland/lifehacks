@@ -348,12 +348,20 @@ export default function Kangaroo2027WaPage() {
             lives in the national war room — week 1 starts in October, so you
             are right on time.
           </p>
-          <Link
-            href="/kangaroo-2027/"
-            className="text-sm font-semibold text-primary hover:underline"
-          >
-            See the 20-week prep plan →
-          </Link>
+          <p className="flex flex-wrap gap-x-5 gap-y-1">
+            <Link
+              href="/kangaroo-2027/"
+              className="text-sm font-semibold text-primary hover:underline"
+            >
+              See the 20-week prep plan →
+            </Link>
+            <Link
+              href="/kangaroo-2027/cohort/"
+              className="text-sm font-semibold text-primary hover:underline"
+            >
+              Follow the 20-week cohort week by week →
+            </Link>
+          </p>
         </section>
       </div>
 
