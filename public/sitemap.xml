@@ -56,6 +56,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://lifehacks.zeey-app.net/kangaroo-2027/cohort/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://lifehacks.zeey-app.net/tools/kangaroo/readiness/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

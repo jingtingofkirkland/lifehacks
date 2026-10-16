@@ -885,6 +885,24 @@ export function KangarooPrep() {
           </Link>
         </div>
 
+        {/* 20-week cohort entry */}
+        <div className="kq-no-print mt-6 rounded-2xl border border-violet-200/70 dark:border-violet-800/40 bg-violet-50/60 dark:bg-violet-950/20 p-6 text-center">
+          <p className="font-bold text-lg mb-1">🗓️ New: The 20-Week Kangaroo Cohort</p>
+          <p className="text-sm text-muted-foreground mb-4 max-w-lg mx-auto">
+            Prep is easier with a calendar. Our free cohort walks grades
+            3–4 families from this week to contest day — Thursday,
+            March 18, 2027 — in four phases, one small move a week, paced
+            by the Friday email.
+          </p>
+          <Link
+            href="/kangaroo-2027/cohort/"
+            data-testid="kq-cohort-card"
+            className="inline-block px-6 py-2.5 rounded-full bg-violet-600 text-white font-semibold hover:bg-violet-700"
+          >
+            See the 20-week plan →
+          </Link>
+        </div>
+
         {/* SEO practice-problem library: crawlable per-problem pages */}
         <div className="kq-no-print mt-6 rounded-2xl border border-violet-200/70 dark:border-violet-800/40 bg-violet-50/60 dark:bg-violet-950/20 p-6 text-center">
           <p className="font-bold text-lg mb-1">📚 Browse all 40 practice problems</p>
