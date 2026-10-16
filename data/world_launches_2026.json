@@ -2649,5 +2649,16 @@
       "country": "China",
       "info": "LandSpace"
     }
+  },
+  {
+    "flight": 242,
+    "time": "16 October 00:01:05",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "",
+    "site": "Vandenberg Space Force Base SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]

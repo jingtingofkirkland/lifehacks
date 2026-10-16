@@ -1203,5 +1203,17 @@
     "mass": "3300",
     "orbit": "LEO (ISS)",
     "landing": "RTLS"
+  },
+  {
+    "flight": 699,
+    "time": "October 16, 2026 00:01",
+    "rocket": "B1081‑28",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "USSF-481 (TH-2) (17 Starshield satellites)[384]",
+    "mass": "14620",
+    "orbit": "Polar LEO",
+    "landing": "ASDS",
+    "massEstimated": true,
+    "massEstimateBasis": "landing:ASDS"
   }
 ]
