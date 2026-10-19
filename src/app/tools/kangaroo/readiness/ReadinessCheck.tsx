@@ -166,6 +166,15 @@ export default function ReadinessCheck() {
                 Not a contest score — a practice compass
               </span>
             </div>
+            <p className="mt-4 text-sm text-muted-foreground">
+              Training for the March 2027 contest?{' '}
+              <Link
+                href="/kangaroo-2027/cohort/"
+                className="font-semibold text-violet-700 dark:text-violet-300 hover:underline"
+              >
+                Follow the free 20-week cohort plan →
+              </Link>
+            </p>
           </div>
 
           {/* progress */}

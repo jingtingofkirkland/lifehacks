@@ -179,6 +179,30 @@ export default function NewsletterPage() {
           </section>
         ))}
       </div>
+
+      <h2 className="text-xl font-bold mb-4">Keep going</h2>
+      <div className="grid gap-4 sm:grid-cols-2 mb-8">
+        <Link
+          href="/tools/kangaroo/readiness/"
+          className="rounded-2xl border border-slate-200 dark:border-slate-700 p-5 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors"
+        >
+          <p className="font-semibold mb-1">🧭 Not sure where to start?</p>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Take the free 9-question readiness check and see exactly which
+            topics are strong — and which to practice next.
+          </p>
+        </Link>
+        <Link
+          href="/kangaroo-2027/cohort/"
+          className="rounded-2xl border border-slate-200 dark:border-slate-700 p-5 hover:border-emerald-400 dark:hover:border-emerald-600 transition-colors"
+        >
+          <p className="font-semibold mb-1">🦘 Training for March 2027?</p>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Follow the free 20-week cohort plan — this newsletter walks it
+            week by week, all the way to contest day.
+          </p>
+        </Link>
+      </div>
     </div>
   );
 }
