@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { getStoredUtm } from '@/lib/utm';
 
 const EMAIL_HREF =
-  'mailto:austinhao2018@gmail.com?subject=Feedback%20for%20Great%20Seattle%20Life%20Hacks';
+  'mailto:seattlelifehacks@gmail.com?subject=Feedback%20for%20Great%20Seattle%20Life%20Hacks';
 const NEXTDOOR_HREF = 'https://nextdoor.com/profile/01NtDbxtQJw45GwN4';
 
 // Each contact channel gets its own Pixel event so daily reporting can
