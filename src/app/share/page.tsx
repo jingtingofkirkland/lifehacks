@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Product Shares - Great Seattle Life Hacks',
+  alternates: { canonical: 'https://lifehacks.zeey-app.net/share/' },
 };
 
 const deals = [

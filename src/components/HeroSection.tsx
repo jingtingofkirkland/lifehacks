@@ -112,12 +112,22 @@ export function HeroSections({ sections }: HeroSectionsProps) {
 
             {/* Content */}
             <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
-              <h1
-                className="text-5xl sm:text-6xl md:text-7xl font-bold text-white mb-4 tracking-tight
-                  animate-in fade-in slide-in-from-bottom-8 duration-700"
-              >
-                {section.title}
-              </h1>
+              {index === 0 ? (
+                <h1
+                  className="text-5xl sm:text-6xl md:text-7xl font-bold text-white mb-4 tracking-tight
+                    animate-in fade-in slide-in-from-bottom-8 duration-700"
+                >
+                  {section.title}
+                </h1>
+              ) : (
+                <p
+                  className="text-5xl sm:text-6xl md:text-7xl font-bold text-white mb-4 tracking-tight
+                    animate-in fade-in slide-in-from-bottom-8 duration-700"
+                  aria-hidden="true"
+                >
+                  {section.title}
+                </p>
+              )}
 
               <p
                 className="text-xl sm:text-2xl text-white/80 mb-6 font-light tracking-wide

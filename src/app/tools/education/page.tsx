@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: 'Education: Learning Games for Kids - Great Seattle Life Hacks',
   description:
     'Mini learning games for kids: learn through practice, get tips the moment you get stuck, no separate lessons. Printable worksheets included.',
+  alternates: { canonical: 'https://lifehacks.zeey-app.net/tools/education/' },
 };
 
 interface GameEntry {
