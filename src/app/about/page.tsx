@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'About - Great Seattle Life Hacks',
+  alternates: { canonical: 'https://lifehacks.zeey-app.net/about/' },
 };
 
 export default function AboutPage() {

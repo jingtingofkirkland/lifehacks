@@ -46,11 +46,28 @@ const robotoMono = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://lifehacks.zeey-app.net'),
   title: siteConfig.title,
   description: 'Great Seattle Life Hacks - Local businesses, services, and deals in Seattle',
   icons: {
     icon: '/logo.png',
     apple: '/logo.png',
+  },
+  openGraph: {
+    type: 'website',
+    siteName: 'Great Seattle Life Hacks',
+    title: siteConfig.title,
+    description:
+      'Great Seattle Life Hacks - Local businesses, services, and deals in Seattle',
+    url: 'https://lifehacks.zeey-app.net/',
+    images: [{ url: '/logo.png' }],
+  },
+  twitter: {
+    card: 'summary',
+    title: siteConfig.title,
+    description:
+      'Great Seattle Life Hacks - Local businesses, services, and deals in Seattle',
+    images: ['/logo.png'],
   },
 };
 

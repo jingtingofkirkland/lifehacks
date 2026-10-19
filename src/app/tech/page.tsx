@@ -6,6 +6,9 @@ import { PostCard } from './PostCard';
 
 export const metadata = {
   title: 'AI Techs - Great Seattle Life Hacks',
+  description:
+    'Explore cutting-edge technology articles, tutorials, and insights for everyday learning and professional growth.',
+  alternates: { canonical: 'https://lifehacks.zeey-app.net/tech/' },
 };
 
 export default async function TechPage() {

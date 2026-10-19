@@ -36,11 +36,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://lifehacks.zeey-app.net/subscribe/</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.4</priority>
-  </url>
-  <url>
     <loc>https://lifehacks.zeey-app.net/newsletter/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -304,6 +299,41 @@
     <loc>https://lifehacks.zeey-app.net/learn/math-word-cards/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://lifehacks.zeey-app.net/tools/education/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lifehacks.zeey-app.net/tools/kangaroo/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lifehacks.zeey-app.net/tools/math-addition/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://lifehacks.zeey-app.net/tools/math-bubble-pop/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://lifehacks.zeey-app.net/tools/math-bridge-builder/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://lifehacks.zeey-app.net/tools/tip-calculator/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://lifehacks.zeey-app.net/for-teachers/challenge-pack/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>
 

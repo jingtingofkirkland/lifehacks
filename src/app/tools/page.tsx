@@ -6,6 +6,7 @@ import { UsefulnessFeedback } from '@/components/UsefulnessFeedback';
 export const metadata: Metadata = {
   title: 'Life Saver Tools - Great Seattle Life Hacks',
   description: 'Printable calendars, handy tools, kids learning games, and local gems to make everyday life easier.',
+  alternates: { canonical: 'https://lifehacks.zeey-app.net/tools/' },
 };
 
 interface ToolItem {
