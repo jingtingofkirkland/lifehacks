@@ -36,7 +36,7 @@ export default function AboutPage() {
           </a>
           !
         </p>
-        <p>Email us: austinhao2018@gmail.com</p>
+        <p>Email us: seattlelifehacks@gmail.com</p>
       </div>
     </article>
   );
