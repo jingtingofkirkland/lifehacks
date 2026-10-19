@@ -20,14 +20,19 @@ export function PostCard({ post, content, contentEn }: PostCardProps) {
   const hasContent = content && content.length > 0;
   const hasEn = !!contentEn && contentEn.length > 0;
   const activeContent = lang === 'en' && hasEn ? contentEn : content;
+  const contentRegionId = `${post.id}-full-content`;
 
   // Strip the first H1 line (already shown as card title)
   const markdownContent = hasContent
     ? (activeContent ?? '').replace(/^# .+\n?/, '')
     : '';
 
-  return (
-    <div id={post.id} className={`group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 ${hasContent ? 'col-span-1 md:col-span-2 lg:col-span-3' : ''}`}>
+  // Preview header (badge + title + description). When the post has full
+  // content, the whole preview is rendered inside one big button so readers
+  // can open the article by clicking anywhere on the preview — not only via
+  // the small "Read More" text control below it.
+  const previewHeader = (
+    <>
       {/* Category Badge */}
       <span className="inline-block px-3 py-1 text-xs font-medium bg-blue-500/20 text-blue-300 rounded-full mb-4">
         {post.category}
@@ -42,29 +47,57 @@ export function PostCard({ post, content, contentEn }: PostCardProps) {
       <p className="text-white/60 text-sm leading-relaxed mb-4">
         {post.description}
       </p>
+    </>
+  );
+
+  return (
+    <div id={post.id} className={`group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 ${hasContent ? 'col-span-1 md:col-span-2 lg:col-span-3' : ''}`}>
+      {hasContent ? (
+        <button
+          type="button"
+          onClick={() => setIsExpanded(!isExpanded)}
+          aria-expanded={isExpanded}
+          aria-controls={contentRegionId}
+          className="block w-full cursor-pointer text-left rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
+        >
+          {previewHeader}
+        </button>
+      ) : (
+        previewHeader
+      )}
 
       {/* Large Content Section */}
       {hasContent && (
         <div className="mb-4">
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center text-sm text-blue-400 hover:text-blue-300 transition-colors mb-3"
-          >
-            {isExpanded ? (
-              <>
-                <ChevronUp className="w-4 h-4 mr-1" />
-                Show Less
-              </>
-            ) : (
-              <>
-                <ChevronDown className="w-4 h-4 mr-1" />
-                Read More
-              </>
+          <div className="flex flex-wrap items-center gap-3 mb-3">
+            <button
+              type="button"
+              onClick={() => setIsExpanded(!isExpanded)}
+              aria-expanded={isExpanded}
+              aria-controls={contentRegionId}
+              className="inline-flex items-center rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
+            >
+              {isExpanded ? (
+                <>
+                  <ChevronUp className="w-4 h-4 mr-1" />
+                  Show Less
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-4 h-4 mr-1" />
+                  Read More
+                </>
+              )}
+            </button>
+            {hasEn && (
+              <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white/80">
+                双语全文 · 中文 / English
+              </span>
             )}
-          </button>
+          </div>
 
           {isExpanded && (
-            <div className="bg-white/5 rounded-lg p-6 border border-white/10 prose prose-invert prose-sm max-w-none animate-in fade-in slide-in-from-top-2 duration-300">
+            <div id={contentRegionId} role="region" aria-label={post.title} className="bg-white/5 rounded-lg p-6 border border-white/10 prose prose-invert prose-sm max-w-none animate-in fade-in slide-in-from-top-2 duration-300">
               {hasEn && (
                 <div className="not-prose flex justify-end gap-2 mb-4">
                   <button
