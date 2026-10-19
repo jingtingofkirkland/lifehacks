@@ -149,6 +149,22 @@ export default function RootLayout({
           `}
         </Script>
         {/* End Meta Pixel Code */}
+        {/* Cloudflare Web Analytics: cookieless pageview analytics, our
+            independent second view next to the Meta Pixel (decision:
+            hidden_files/analytics-decision-2026-10-19.md in the growth
+            workspace). Renders only when the build-time env var is set —
+            wired from the CLOUDFLARE_ANALYTICS_TOKEN repo variable in the
+            deploy workflow; unset means no beacon and no cost. */}
+        {process.env.NEXT_PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN ? (
+          <Script
+            defer
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon={JSON.stringify({
+              token: process.env.NEXT_PUBLIC_CLOUDFLARE_ANALYTICS_TOKEN,
+            })}
+            strategy="afterInteractive"
+          />
+        ) : null}
       </head>
       <body className="min-h-screen bg-background text-foreground">
         {/* Meta Pixel noscript fallback — uses dangerouslySetInnerHTML to
