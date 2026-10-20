@@ -1215,5 +1215,17 @@
     "landing": "ASDS",
     "massEstimated": true,
     "massEstimateBasis": "landing:ASDS"
+  },
+  {
+    "flight": 700,
+    "time": "October 20, 2026 11:04",
+    "rocket": "B1085‑19",
+    "site": "Cape Canaveral, SLC‑40",
+    "mission": "Bandwagon-5 (32 Payloads)",
+    "mass": "16273",
+    "orbit": "LEO",
+    "landing": "ASDS",
+    "massEstimated": true,
+    "massEstimateBasis": "orbit+landing:LEO+ASDS"
   }
 ]

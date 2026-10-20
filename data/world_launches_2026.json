@@ -2660,5 +2660,27 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 243,
+    "time": "19 October 19:41:03",
+    "rocket": "H3-24L",
+    "mission": "F10",
+    "site": "Tanegashima LA-Y2",
+    "org": {
+      "country": "Japan",
+      "info": "JAXA"
+    }
+  },
+  {
+    "flight": 244,
+    "time": "20 October 11:04",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Bandwagon 5",
+    "site": "Cape Canaveral SLC-40",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
