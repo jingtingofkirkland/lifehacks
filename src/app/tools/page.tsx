@@ -140,6 +140,19 @@ const eduGames: ToolItem[] = [
     ),
     tag: 'Kids',
   },
+  {
+    title: 'Draw & Guess: Pass-and-Play Drawing Game',
+    desc: 'One phone, one secret word, one drawing — everyone else guesses out loud. 140+ bilingual words, a big finger-friendly drawing board, and a peek-proof word card. 你画我猜，全家一起玩。',
+    href: '/tools/draw-guess',
+    icon: (
+      <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
+        <rect x="8" y="10" width="48" height="38" rx="5" fill="#DBEAFE" stroke="#2563EB" strokeWidth="2"/>
+        <path d="M18 38 Q26 20 34 30 T48 24" stroke="#2563EB" strokeWidth="4" fill="none" strokeLinecap="round"/>
+        <path d="M40 44l10-10 6 6-10 10H40v-6z" fill="#F59E0B" stroke="#B45309" strokeWidth="2" strokeLinejoin="round"/>
+      </svg>
+    ),
+    tag: 'Family',
+  },
 ];
 
 const businesses = [

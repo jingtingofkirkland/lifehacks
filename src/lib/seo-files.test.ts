@@ -22,6 +22,7 @@ describe('SEO files (public/robots.txt + public/sitemap.xml)', () => {
     '/tools/math-bubble-pop/',
     '/tools/math-bridge-builder/',
     '/tools/tip-calculator/',
+    '/tools/draw-guess/',
     '/for-teachers/challenge-pack/',
     '/kangaroo-2027/cohort/',
     '/newsletter/',
