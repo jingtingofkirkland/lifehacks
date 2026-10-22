@@ -15,6 +15,8 @@ interface ToolItem {
   href: string;
   icon: ReactNode;
   tag: string;
+  /** Card call-to-action; falls back to the section default. */
+  cta?: string;
 }
 
 const handyTools: ToolItem[] = [
@@ -153,6 +155,20 @@ const eduGames: ToolItem[] = [
     ),
     tag: 'Family',
   },
+  {
+    title: 'Beast Academy 中文陪学',
+    desc: '用中文陪孩子学 Beast Academy：把整数等难点概念讲透，配数学英文词卡和原创小练习，都能打印出来慢慢练。',
+    href: '/learn/beast-academy',
+    icon: (
+      <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="32" r="24" fill="#CCFBF1" stroke="#0D9488" strokeWidth="2"/>
+        <path d="M32 25c-3-2.6-7-3.7-11-3.2v17.6c4-.5 8 .6 11 3.2 3-2.6 7-3.7 11-3.2V21.8c-4-.5-8 .6-11 3.2z" fill="#F0FDFA" stroke="#0D9488" strokeWidth="2" strokeLinejoin="round"/>
+        <path d="M32 25v17.6" stroke="#0D9488" strokeWidth="2"/>
+      </svg>
+    ),
+    tag: '中文陪学',
+    cta: '开始陪学',
+  },
 ];
 
 const businesses = [
@@ -281,7 +297,7 @@ export default function ToolsPage() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {eduGames.map((game) => (
-              <ToolCard key={game.href} item={game} accent="emerald" ctaLabel="Play now" />
+              <ToolCard key={game.href} item={game} accent="emerald" ctaLabel={game.cta ?? 'Play now'} />
             ))}
           </div>
         </section>

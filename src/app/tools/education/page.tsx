@@ -245,6 +245,42 @@ export default function EducationPage() {
           </div>
         </section>
 
+        {/* ── Chinese companion learning (Beast Academy) ── */}
+        <section className="mb-12">
+          <Link
+            href="/learn/beast-academy"
+            className="group relative flex items-start gap-4 p-6 rounded-2xl border border-teal-200/80 dark:border-teal-800/40
+              bg-white/80 dark:bg-card/80 backdrop-blur-sm
+              hover:shadow-xl hover:shadow-teal-200/40 dark:hover:shadow-teal-900/20
+              hover:border-teal-300 dark:hover:border-teal-600
+              hover:-translate-y-0.5
+              transition-all duration-300"
+          >
+            <span className="absolute top-3 right-3 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-teal-100 text-teal-700 dark:bg-teal-900/50 dark:text-teal-300">
+              中文陪学
+            </span>
+            <div className="shrink-0 mt-0.5 p-2 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-950/50 dark:to-emerald-950/50 border border-teal-100 dark:border-teal-900/30 group-hover:scale-110 transition-transform duration-300">
+              <svg width="48" height="48" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="32" r="24" fill="#CCFBF1" stroke="#0D9488" strokeWidth="2"/>
+                <path d="M32 25c-3-2.6-7-3.7-11-3.2v17.6c4-.5 8 .6 11 3.2 3-2.6 7-3.7 11-3.2V21.8c-4-.5-8 .6-11 3.2z" fill="#F0FDFA" stroke="#0D9488" strokeWidth="2" strokeLinejoin="round"/>
+                <path d="M32 25v17.6" stroke="#0D9488" strokeWidth="2"/>
+              </svg>
+            </div>
+            <div>
+              <h3 className="font-semibold text-lg group-hover:text-teal-700 dark:group-hover:text-teal-400 transition-colors">
+                Beast Academy 中文陪学
+              </h3>
+              <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
+                用中文陪孩子学 Beast Academy：把整数等难点概念讲透，配数学英文词卡和原创小练习，都能打印出来慢慢练。
+              </p>
+              <span className="inline-flex items-center gap-1 mt-3 text-xs font-medium text-teal-600 dark:text-teal-400 group-hover:gap-2 transition-all">
+                开始陪学
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </span>
+            </div>
+          </Link>
+        </section>
+
         {/* ── Feedback ── */}
         <div className="mb-10">
           <UsefulnessFeedback
