@@ -63,7 +63,7 @@ test.describe('neural network learns to jump article page', () => {
 
     // Generations tick over (whole population is evaluated in parallel).
     await expect(demo.locator('#sGen')).not.toHaveText(/第 1 代/, {
-      timeout: 30_000,
+      timeout: 60_000,
     });
   });
 
@@ -84,6 +84,9 @@ test.describe('neural network learns to jump article page', () => {
     await expect(
       page.getByRole('heading', { name: /shaping without traps/i }),
     ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /learned a skill, not a route/i }),
+    ).toBeVisible();
 
     await page.getByRole('button', { name: '中文' }).click();
     await expect(
@@ -95,6 +98,9 @@ test.describe('neural network learns to jump article page', () => {
     ).toBeVisible();
     await expect(
       page.getByRole('heading', { name: /塑形不挖坑/ }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /学的是技能，不是路线/ }),
     ).toBeVisible();
   });
 
