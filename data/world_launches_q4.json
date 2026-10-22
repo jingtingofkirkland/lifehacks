@@ -130,5 +130,16 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 13,
+    "time": "21 October 03:39",
+    "rocket": "Ceres-1S",
+    "mission": "",
+    "site": "Haiyang Oriental Spaceport Rizhao Offshore Launch Location",
+    "org": {
+      "country": "China",
+      "info": "Galactic Energy"
+    }
   }
 ]
