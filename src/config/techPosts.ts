@@ -18,6 +18,22 @@ export interface TechPost {
 
 export const techPosts: TechPost[] = [
   {
+    id: "neural-network-learns-to-jump",
+    title: "A Hand-Built Neural Network Learns to Jump Stairs 手搓神经网络学跳台阶",
+    description: "A stick figure, a tiny hand-written neural network (43 numbers, no ML libraries) and a genetic algorithm: watch it teach itself to jump three stairs left → right → right, then read exactly how the fitness function, selection and mutation work — and why backpropagation cannot even run on this problem.",
+    category: "AI",
+    date: "2026-10-21",
+    links: [
+      { label: "Play the demo & read the article 玩互动版", url: "/tech/neural-network-learns-to-jump/" },
+    ],
+    highlights: [
+      "Live playable demo: train it yourself, then move the stairs and exam the champion",
+      "43 parameters, zero libraries — the whole brain fits on one screen",
+      "Fitness function dissected: why the progress term is the real teacher",
+      "Genetic algorithm vs. backpropagation: an honest applicability map",
+    ],
+  },
+  {
     id: "meta-muse-agent-race",
     title: "Meta Muse 爆火：但「第一个会干活的个人 AI 助理」，真不是它",
     description: "Muse 靠免费和 WhatsApp 分发爆火，但能订餐、付款、代发消息的 AI 早在 2025 年 1 月就出现了。这一篇把 Muse、OpenAI Dots、Manus、Grok Bot、Gemini Spark 等 11 款能「干活」的个人 AI 助理同台对比：自主等级、权限设计、价格、可用性的坑，以及热度数据的水分。",
