@@ -758,3 +758,96 @@ test('draw & guess: the sidebar ✕ close button only closes — no fullscreen, 
     .not.toContain('1:30');
   await expect(page.getByTestId('act-hit-btn')).toBeVisible();
 });
+
+test('draw & guess: no sidebar-close path ever changes the fullscreen state (portrait matrix)', async ({
+  page,
+}) => {
+  // Regression lock for the 2026-10-21 22:08 report: "in portrait the
+  // sidebar ✕ still slips into fullscreen; while already fullscreen it
+  // only closes". Root cause was a stale pre-#52 bundle cached on the
+  // user's device (the old startDraw auto-fullscreened, and its guard
+  // made it a no-op when already fullscreen — exactly that asymmetry);
+  // production code has exactly one fullscreen door, the top-bar
+  // button. This matrix pins the invariant for EVERY close path in
+  // BOTH states: closing the panel must never touch fullscreen.
+  // Open/closed is asserted on DOM state (aria-hidden + scrim), never
+  // on geometry: fullscreen resizes the viewport, so box positions are
+  // not a stable signal across environments.
+  test.setTimeout(180_000);
+  await page.setViewportSize({ width: 390, height: 844 });
+  const sidebar = page.getByTestId('word-sidebar');
+  const scrim = page.getByTestId('word-sidebar-scrim');
+  const expectClosed = async () => {
+    await expect(sidebar).toHaveAttribute('aria-hidden', 'true');
+    await expect(scrim).toHaveCount(0);
+  };
+  const expectOpen = async () => {
+    await expect(sidebar).toHaveAttribute('aria-hidden', 'false');
+    await expect(scrim).toHaveCount(1);
+  };
+  const fsOff = async () =>
+    expect(await page.evaluate(() => document.fullscreenElement)).toBeNull();
+  const fsOn = async () =>
+    expect(await page.evaluate(() => document.fullscreenElement)).not.toBeNull();
+  const gotoFresh = async () => {
+    await page.goto('/tools/draw-guess/');
+    await expectOpen();
+  };
+
+  // ── Windowed: every close path leaves fullscreen off ──────────
+  await gotoFresh();
+  await page.getByTestId('show-word-btn').click();
+  await page.getByTestId('word-sidebar-close').click();
+  await expectClosed();
+  await fsOff();
+
+  await gotoFresh();
+  await page.mouse.click(30, 400); // scrim strip left of the panel
+  await expectClosed();
+  await fsOff();
+
+  await gotoFresh();
+  await page.getByTestId('word-sidebar-handle').click();
+  await expectClosed();
+  await fsOff();
+
+  await gotoFresh();
+  await page.getByTestId('show-word-btn').click();
+  await page.getByTestId('start-draw-btn').click();
+  await expectClosed();
+  await fsOff();
+
+  // ── Fullscreen: every close path keeps fullscreen on ──────────
+  // (the round above is live; enter fullscreen via the ONE door)
+  await page.getByTestId('fullscreen-btn').click();
+  await expect
+    .poll(() => page.evaluate(() => document.fullscreenElement !== null))
+    .toBe(true);
+
+  await page.getByTestId('word-sidebar-handle').click(); // open panel
+  await expectOpen();
+  await page.getByTestId('word-sidebar-close').click();
+  await expectClosed();
+  await fsOn();
+
+  await page.getByTestId('word-sidebar-handle').click(); // open panel
+  await expectOpen();
+  await page.mouse.click(30, 400); // scrim
+  await expectClosed();
+  await fsOn();
+
+  await page.getByTestId('word-sidebar-handle').click(); // open panel
+  await expectOpen();
+  await page.getByTestId('word-sidebar-handle').click(); // close via handle
+  await expectClosed();
+  await fsOn();
+
+  await page.getByTestId('word-sidebar-handle').click(); // open panel
+  await expectOpen();
+  await page.getByTestId('skip-word-btn').click(); // fresh round, phase pass
+  await page.waitForTimeout(600); // swap-feedback overlay settles
+  await page.getByTestId('show-word-btn').click();
+  await page.getByTestId('start-draw-btn').click();
+  await expectClosed();
+  await fsOn();
+});
