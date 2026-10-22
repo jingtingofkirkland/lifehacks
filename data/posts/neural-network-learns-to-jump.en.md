@@ -135,6 +135,26 @@ Because the population is not a graduating class; it is a **search cloud**. Only
 
 Honestly: there is no formula and no theorem. The field runs on rules of thumb plus trial and error — the hidden layer must be wide enough to express the policy ("if the target is up-left and I'm grounded, jump left, gently") and narrow enough that evolution can still find good values for every parameter by random search. This page makes that tradeoff tangible instead of theoretical: switch between 0 / 4 / 6 / 12 and watch which learns fastest. The direct-connection version (0 hidden, 6 parameters) often learns surprisingly well, because the task's reaction rule is nearly linear; the 12-neuron version (85 parameters) can express more, but evolution has 85 numbers to get right instead of 43, and may well learn *slower*. More capacity is more potential and more search cost, in equal measure.
 
+## It learned a skill, not a route
+
+One honest clarification, because everything above could be misread: **the stair order — left, right, right — was never discovered by the network.** Which stair counts as "the next one" is decided by the environment's target pointer and fed to the network as input. The network does not plan, does not sequence, and could not tell you where the finish is.
+
+What it actually learned is a **local, closed-loop skill**: *given the relative position of one nearby target platform, produce a jump that lands on it.* That is a genuinely useful and genuinely limited thing. It is why the champion survives jittered spawns and the moved-stairs exam — the skill transfers to any platform placed within reach — and it is also the toy's real capability boundary: **the decomposition of the route into subgoals was done by a human.** The network learned to execute hops; nobody taught it, and it cannot perform, wayfinding.
+
+Two reasons the finish line could not simply have been the only target:
+
+- **Deceptive geometry.** Scored by distance to the finish alone, the population piles up against the wall directly below the finish platform — a local optimum that punishes every correct first move, as the shaping section above showed.
+- **No memory, in principle.** This is a feedforward network: each moment it sees only the five current inputs. It has no state in which to remember where it has been or what it intends to do next. Multi-step intentions are not merely unlearned here; they are unrepresentable. Route-finding has to live somewhere else — in this toy, in the environment's pointer.
+
+How does research get past this boundary? One line each:
+
+- **Hierarchical reinforcement learning** — a high-level policy chooses subgoals, a low-level policy executes the skill: in effect, the machine learns its own target pointer.
+- **Novelty search / quality-diversity** — reward visiting places the population has never been, instead of (or alongside) scoring progress; designed specifically to escape deceptive landscapes like the wall under the finish.
+- **Curriculum learning** — grow the terrain from easy to hard, so early skills become the scaffolding for later ones.
+- **Search and planning wrapped around a policy** — simulate candidate futures first, then act; the policy proposes, the search disposes.
+
+That last one is the other great family of game AI — the search-based game-playing line this site explores separately (minimax, alpha-beta pruning, and eventually a Chinese-chess engine). Learned policies and explicit planning are two different answers to "how does a machine decide what to do," and the strongest systems, AlphaGo being the famous example, are deliberate combinations of the two.
+
 ## Experiments to try
 
 - **Mutation rate 40% vs. 2%.** At 40% the population learns fast and keeps "unlearning" — watch the summit rate jitter. At 2% it is stable but slow: crossover shuffles existing genes and almost nothing new appears.
