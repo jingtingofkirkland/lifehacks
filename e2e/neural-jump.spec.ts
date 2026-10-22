@@ -87,6 +87,9 @@ test.describe('neural network learns to jump article page', () => {
     await expect(
       page.getByRole('heading', { name: /learned a skill, not a route/i }),
     ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /switch targets by itself/i }),
+    ).toBeVisible();
 
     await page.getByRole('button', { name: '中文' }).click();
     await expect(
@@ -101,6 +104,9 @@ test.describe('neural network learns to jump article page', () => {
     ).toBeVisible();
     await expect(
       page.getByRole('heading', { name: /学的是技能，不是路线/ }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /自己切换目标吗/ }),
     ).toBeVisible();
   });
 
