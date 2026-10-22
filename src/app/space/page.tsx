@@ -16,6 +16,7 @@ import { WorldChart } from './WorldChart';
 import { SpaceXChart } from './SpaceXChart';
 import { BoosterChart } from './BoosterChart';
 import { UsefulnessFeedback } from '@/components/UsefulnessFeedback';
+import { SubscribeCta } from '@/components/SubscribeCta';
 
 function YearTabs({
   selectedYear,
@@ -165,6 +166,46 @@ export default function SpacePage() {
             />
           </div>
         )}
+
+        {/* ── Keep exploring: cross-links + subscribe (this page used to be a dead end) ── */}
+        <section className="mt-12 space-y-6">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Link
+              href="/tools/kangaroo/readiness/"
+              className="group block rounded-2xl border border-slate-700 bg-slate-800/60 p-6 hover:border-cyan-400/60 hover:bg-slate-800 transition-colors"
+            >
+              <h2 className="font-semibold text-lg text-slate-100 group-hover:text-cyan-300 transition-colors">
+                Math Kangaroo Readiness Check
+              </h2>
+              <p className="text-sm text-slate-400 mt-1.5 leading-relaxed">
+                Visiting with a future rocket scientist? A short set of
+                Kangaroo-style questions shows where your child stands and
+                what to practice next.
+              </p>
+              <span className="inline-block mt-3 text-sm font-medium text-cyan-400">
+                Take the free check →
+              </span>
+            </Link>
+            <Link
+              href="/tools/education/"
+              className="group block rounded-2xl border border-slate-700 bg-slate-800/60 p-6 hover:border-cyan-400/60 hover:bg-slate-800 transition-colors"
+            >
+              <h2 className="font-semibold text-lg text-slate-100 group-hover:text-cyan-300 transition-colors">
+                Learning Games for Kids
+              </h2>
+              <p className="text-sm text-slate-400 mt-1.5 leading-relaxed">
+                Free math games that teach through play — helpful tips pop up
+                the moment a child gets stuck, and every game comes with a
+                printable worksheet.
+              </p>
+              <span className="inline-block mt-3 text-sm font-medium text-cyan-400">
+                Browse the games →
+              </span>
+            </Link>
+          </div>
+
+          <SubscribeCta />
+        </section>
 
         <footer className="mt-12 pt-8 border-t border-slate-700 text-center text-slate-400 text-sm">
           <p>Data sourced from Wikipedia Launch Tables | Visualization powered by Canvas API</p>

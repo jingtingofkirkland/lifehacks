@@ -14,7 +14,6 @@ export const siteConfig = {
     { title: "About", url: "/about" },
     { title: "Nextdoor", url: "https://nextdoor.com/profile/01NtDbxtQJw45GwN4" },
     { title: "Newsletter", url: "/newsletter/" },
-    { title: "Subscribe", url: "/subscribe" },
   ],
 
   // Full-page scrollable sections (SpaceX-style)
@@ -64,7 +63,6 @@ export const siteConfig = {
     { title: "Newsletter", url: "/newsletter/" },
     { title: "Nextdoor", url: "https://nextdoor.com/profile/01NtDbxtQJw45GwN4" },
     { title: "Chat with us on Messenger", url: MESSENGER_URL },
-    { title: "Subscribe", url: "/subscribe" },
   ],
 
   sectionTitles: {
