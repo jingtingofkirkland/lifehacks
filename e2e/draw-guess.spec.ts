@@ -92,6 +92,29 @@ async function holdToReadWord(page: Page): Promise<string> {
   return (text ?? '').trim();
 }
 
+/**
+ * The two-step start the local playtest version uses: 看词 (the word
+ * shows bilingually — main line + the other language under it) then
+ * 记住了，遮住开画. Asserts the bilingual pair in the show phase.
+ */
+async function lookThenStartDrawing(
+  page: Page,
+  expectedWord?: string,
+): Promise<void> {
+  await page.getByTestId('show-word-btn').click();
+  await expect(page.getByTestId('word-text')).toBeVisible();
+  if (expectedWord) {
+    await expect(page.getByTestId('word-text')).toHaveText(expectedWord);
+  }
+  // Bilingual, always: whichever language is primary, the other one is
+  // on screen at the same time — never a language toggle that hides it.
+  const alt = page.getByTestId('word-text-alt');
+  await expect(alt).toBeVisible();
+  expect((await alt.textContent())?.trim().length).toBeGreaterThan(0);
+  await page.getByTestId('start-draw-btn').click();
+  await expectSidebarOffscreen(page);
+}
+
 async function expectSidebarOffscreen(page: Page) {
   const sidebar = page.getByTestId('word-sidebar');
   const viewport = page.viewportSize();
@@ -131,7 +154,20 @@ test('draw & guess: sidebar-first round — peek, skip, draw, reveal, next', asy
   // The canvas is already full-size behind the sidebar.
   const canvasBefore = await canvasBox(page);
 
-  // Hold to peek; release re-masks immediately.
+  // Hold to peek — bilingually: while holding, the other language is
+  // right there under the main word; release re-masks immediately.
+  const peekArea = page.getByTestId('sidebar-peek-area');
+  const peekBox = await peekArea.boundingBox();
+  if (!peekBox) throw new Error('peek area has no bounding box');
+  await page.mouse.move(
+    peekBox.x + peekBox.width / 2,
+    peekBox.y + peekBox.height / 2,
+  );
+  await page.mouse.down();
+  await expect(page.getByTestId('word-text')).toBeVisible();
+  await expect(page.getByTestId('word-text-alt')).toBeVisible();
+  await page.mouse.up();
+  await expect(page.getByTestId('word-text')).toHaveCount(0);
   const word1 = await holdToReadWord(page);
   expect(word1.length).toBeGreaterThan(0);
   await expect(page.getByTestId('word-masked')).toBeVisible();
@@ -142,9 +178,9 @@ test('draw & guess: sidebar-first round — peek, skip, draw, reveal, next', asy
   const word2 = await holdToReadWord(page);
   expect(word2).not.toBe(word1);
 
-  // Start drawing: sidebar slides away, canvas does not move a pixel.
-  await page.getByTestId('start-draw-btn').click();
-  await expectSidebarOffscreen(page);
+  // Two-step start: 看词 (bilingual) → 遮住开画. The sidebar slides
+  // away and the canvas does not move a pixel.
+  await lookThenStartDrawing(page, word2);
   expectSameBox(await canvasBox(page), canvasBefore);
   await expect(page.getByTestId('timer-display')).toBeVisible();
 
@@ -176,10 +212,15 @@ test('draw & guess: sidebar-first round — peek, skip, draw, reveal, next', asy
   await expect(page.getByTestId('timer-display')).toContainText('⏸');
   expectSameBox(await canvasBox(page), canvasBefore);
 
-  // Reveal inside the sidebar: the word is finally plain text.
+  // Reveal inside the sidebar: the word is finally plain text — in
+  // both languages at once.
   await page.getByTestId('reveal-btn').click();
   await expect(page.getByTestId('reveal-word')).toBeVisible();
   await expect(page.getByTestId('word-text')).toHaveText(word2);
+  await expect(page.getByTestId('word-text-alt')).toBeVisible();
+  expect(
+    (await page.getByTestId('word-text-alt').textContent())?.trim().length,
+  ).toBeGreaterThan(0);
 
   // Tally +1, then next round: fresh masked word, cleared canvas.
   await page.getByTestId('tally-plus-btn').click();
@@ -232,24 +273,30 @@ test('draw & guess: stroke lands on open → close → draw, center maps correct
 test('draw & guess: rotation across orientations keeps the drawing and stays drawable', async ({
   page,
 }) => {
-  // Start landscape (workbench mode): close the sidebar, draw.
+  // Start landscape: close the sidebar (closing = start drawing),
+  // draw. The sidebar is an overlay now, so "closed" means slid fully
+  // off the right edge, not shrunk to zero width.
   await page.setViewportSize({ width: 844, height: 390 });
   await page.goto('/tools/draw-guess/');
   await expect(page.getByTestId('word-masked')).toBeVisible();
   await page.getByTestId('word-sidebar-close').click();
-  const sidebar = page.getByTestId('word-sidebar');
-  await expect
-    .poll(
-      async () => {
-        const b = await sidebar.boundingBox();
-        return b ? b.width : -1;
-      },
-      { timeout: 3000 },
-    )
-    .toBeLessThanOrEqual(2);
+  await expectSidebarOffscreen(page);
 
   await dragStroke(page, { fx: 0.2, fy: 0.3 }, { fx: 0.5, fy: 0.5 });
   expect(await paintedPixels(page)).toBeGreaterThan(20);
+
+  // Starting the round tried fullscreen (the real-phone behavior); a
+  // headless window in fullscreen cannot be resized, so leave it first
+  // — on a phone this test's "rotation" is the unlock-and-turn case.
+  await page.evaluate(async () => {
+    if (document.fullscreenElement) {
+      try {
+        await document.exitFullscreen();
+      } catch {
+        // not in fullscreen after all — nothing to leave
+      }
+    }
+  });
 
   // Rotate to portrait: strokes are replayed at the new size, not lost,
   // and the canvas takes the full portrait stage.
@@ -272,11 +319,10 @@ test('draw & guess: time-up banner is an overlay — canvas never moves', async 
   await page.goto('/tools/draw-guess/');
   await expect(page.getByTestId('word-masked')).toBeVisible();
 
-  // Shortest round, then start.
+  // Shortest round, then start (look at the word, then cover & draw).
   await page.getByRole('button', { name: '60秒' }).click();
   const canvasBefore = await canvasBox(page);
-  await page.getByTestId('start-draw-btn').click();
-  await expectSidebarOffscreen(page);
+  await lookThenStartDrawing(page);
 
   await page.clock.runFor(61_000);
   await expect(page.getByTestId('timeup-banner')).toBeVisible();
@@ -334,56 +380,128 @@ test('draw & guess: fullscreen button degrades silently and game stays playable'
   expect(pageErrors).toEqual([]);
 
   // Still fully playable afterwards.
-  await page.getByTestId('start-draw-btn').click();
-  await expectSidebarOffscreen(page);
+  await lookThenStartDrawing(page);
   await dragStroke(page, { fx: 0.2, fy: 0.3 }, { fx: 0.5, fy: 0.5 });
   expect(await paintedPixels(page)).toBeGreaterThan(50);
   expect(pageErrors).toEqual([]);
 });
 
-test('draw & guess: landscape — sidebar is a side workbench, canvas expands on close', async ({
+for (const vp of [
+  { width: 844, height: 390 },
+  { width: 932, height: 430 },
+]) {
+  test(`draw & guess: landscape ${vp.width}x${vp.height} — right rail, canvas owns the screen`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(vp);
+    await page.goto('/tools/draw-guess/');
+    await expect(page.getByTestId('word-masked')).toBeVisible();
+
+    // The sidebar starts open as an overlay: the canvas already has its
+    // final geometry underneath it.
+    const boxUnderSidebar = await canvasBox(page);
+
+    // Close the sidebar (= look done, start drawing). Canvas must not
+    // move or shrink by more than a pixel — the old layout squeezed it
+    // into a ~1/3-height strip over three rows of giant buttons.
+    await page.getByTestId('word-sidebar-close').click();
+    await expectSidebarOffscreen(page);
+    const box = await canvasBox(page);
+    expectSameBox(box, boxUnderSidebar);
+
+    // Headline metric: canvas height is at least 70% of the viewport
+    // (this design lands around 85%).
+    expect(box.height / vp.height).toBeGreaterThanOrEqual(0.7);
+    expect(box.y).toBeLessThan(60);
+
+    // The toolbar is a vertical rail on the right — same right edge as
+    // the screen, (nearly) full height, narrow — never a bottom strip.
+    const rail = await page.getByTestId('draw-toolbar').boundingBox();
+    if (!rail) throw new Error('toolbar has no bounding box');
+    expect(rail.x).toBeGreaterThanOrEqual(box.x + box.width - 1);
+    expect(rail.x + rail.width).toBeGreaterThanOrEqual(vp.width - 2);
+    expect(rail.width).toBeLessThan(200);
+    expect(rail.height).toBeGreaterThan(vp.height * 0.8);
+    // Nothing of the toolbar hangs below the canvas as a row: its tools
+    // reach the bottom of the screen inside the rail.
+    const clear = await page.getByTestId('clear-btn').boundingBox();
+    if (!clear) throw new Error('clear has no bounding box');
+    expect(clear.x).toBeGreaterThanOrEqual(rail.x - 1);
+
+    // A stroke hugs the top edge and still lands — no fixed chrome is
+    // eating the top of the board (the old "clipped at the top" feel).
+    await page.mouse.move(box.x + box.width * 0.3, box.y + box.height * 0.05);
+    await page.mouse.down();
+    await page.mouse.up();
+    expect(await darkPixelNear(page, 0.3, 0.05)).toBe(true);
+    await dragStroke(page, { fx: 0.2, fy: 0.3 }, { fx: 0.55, fy: 0.6 });
+    expect(await paintedPixels(page)).toBeGreaterThan(50);
+
+    // Floating verdict buttons end the round into the sidebar result.
+    await page.getByTestId('act-hit-btn').click();
+    await expect(page.getByTestId('reveal-word')).toBeVisible();
+    await expect(page.getByTestId('result-line')).toContainText('猜对啦');
+    await expect(page.getByTestId('tally-count')).toHaveText('1');
+    // The sidebar opening for the result still never resizes the canvas.
+    expectSameBox(await canvasBox(page), box);
+
+    // Next round returns to the masked pass phase; sidebar toggles keep
+    // the canvas geometry within a pixel either way.
+    await page.getByTestId('next-round-btn').click();
+    await expect(page.getByTestId('word-masked')).toBeVisible();
+    expectSameBox(await canvasBox(page), box);
+    await page.getByTestId('word-sidebar-handle').click();
+    await expectSidebarOffscreen(page);
+    expectSameBox(await canvasBox(page), box);
+    await page.getByTestId('word-sidebar-handle').click();
+    await expect(page.getByTestId('sidebar-peek-area')).toBeVisible();
+    expectSameBox(await canvasBox(page), box);
+
+    // No horizontal scrolling at phone sizes, ever.
+    const scrollWidth = await page.evaluate(
+      () => document.documentElement.scrollWidth,
+    );
+    expect(scrollWidth).toBeLessThanOrEqual(vp.width);
+  });
+}
+
+test('draw & guess: landscape — slim handle, sidebar overlays the rail', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 844, height: 390 });
   await page.goto('/tools/draw-guess/');
   await expect(page.getByTestId('word-masked')).toBeVisible();
-
-  // Sidebar open = workbench on the right; canvas owns the left and is
-  // not covered by it (no overlay in landscape).
-  const sidebar = page.getByTestId('word-sidebar');
-  const sideBox = await sidebar.boundingBox();
-  if (!sideBox) throw new Error('sidebar has no bounding box');
-  const openBox = await canvasBox(page);
-  expect(openBox.x).toBeLessThan(40);
-  expect(openBox.x + openBox.width).toBeLessThanOrEqual(sideBox.x + 1);
-  expect(sideBox.x + sideBox.width).toBeLessThanOrEqual(845);
-
-  // Drawable immediately, with the workbench open.
-  await dragStroke(page, { fx: 0.25, fy: 0.3 }, { fx: 0.55, fy: 0.55 });
-  expect(await paintedPixels(page)).toBeGreaterThan(20);
-
-  // Close the workbench: the canvas expands to (nearly) full width and
-  // the drawing survives the resize.
   await page.getByTestId('word-sidebar-close').click();
+  await expectSidebarOffscreen(page);
+
+  // The handle is slim (32px, down from 48) and parked at the rail's
+  // left edge, so it never sits on top of the rail's buttons.
+  const handle = await page
+    .getByTestId('word-sidebar-handle')
+    .boundingBox();
+  if (!handle) throw new Error('handle has no bounding box');
+  expect(handle.width).toBeLessThanOrEqual(34);
+  const rail = await page.getByTestId('draw-toolbar').boundingBox();
+  if (!rail) throw new Error('toolbar has no bounding box');
+  expect(handle.x + handle.width).toBeLessThanOrEqual(rail.x + 1);
+
+  // Opening the sidebar slides it OVER the rail (canvas untouched).
+  // Poll the slide-in: a raw boundingBox can catch the 200ms
+  // transition mid-flight.
+  const box = await canvasBox(page);
+  await page.getByTestId('word-sidebar-handle').click();
   await expect
     .poll(
       async () => {
-        const b = await sidebar.boundingBox();
-        return b ? b.width : -1;
+        const b = await page.getByTestId('word-sidebar').boundingBox();
+        return b ? b.x : -1;
       },
       { timeout: 3000 },
     )
-    .toBeLessThanOrEqual(2);
-  const closedBox = await canvasBox(page);
-  expect(closedBox.width).toBeGreaterThan(openBox.width + 200);
-  expect(await paintedPixels(page)).toBeGreaterThan(20);
-
-  // Coordinate mapping still exact after the expansion.
-  await page.mouse.move(
-    closedBox.x + closedBox.width / 2,
-    closedBox.y + closedBox.height / 2,
-  );
-  await page.mouse.down();
-  await page.mouse.up();
-  expect(await darkPixelNear(page, 0.5, 0.5)).toBe(true);
+    .toBeLessThanOrEqual(844 - 320 + 2);
+  const side = await page.getByTestId('word-sidebar').boundingBox();
+  if (!side) throw new Error('sidebar has no bounding box');
+  expect(side.x + side.width).toBeGreaterThanOrEqual(843);
+  expect(side.x).toBeLessThan(rail.x + rail.width);
+  expectSameBox(await canvasBox(page), box);
 });

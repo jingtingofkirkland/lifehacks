@@ -45,7 +45,15 @@ const BRUSHES: { id: string; label: string; frac: number; dot: number }[] = [
   { id: 'thick', label: '粗 Thick', frac: 0.03, dot: 26 },
 ];
 
-const DURATIONS = [60, 90, 120];
+const DURATIONS = [30, 60, 90, 120];
+
+/** Round flow (mirrors the local playtest version's phases):
+ *  pass — word masked in the sidebar, hand the phone to the drawer;
+ *  show — the drawer is looking at the word;
+ *  draw — sidebar closed, timer running, floating verdict buttons;
+ *  result — answer revealed in the sidebar, tally / next round. */
+type Phase = 'pass' | 'show' | 'draw' | 'result';
+type ResultKind = 'hit' | 'miss' | 'reveal';
 
 interface Stroke {
   color: string | null; // null = eraser
@@ -53,7 +61,7 @@ interface Stroke {
   points: { x: number; y: number }[];
 }
 
-function beep() {
+function beep(times = 2) {
   try {
     const Ctx =
       window.AudioContext ??
@@ -61,7 +69,7 @@ function beep() {
         .webkitAudioContext;
     if (!Ctx) return;
     const ctx = new Ctx();
-    [0, 0.22].forEach((offset) => {
+    Array.from({ length: times }, (_, i) => i * 0.22).forEach((offset) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.frequency.value = 880;
@@ -74,7 +82,7 @@ function beep() {
       osc.start(ctx.currentTime + offset);
       osc.stop(ctx.currentTime + offset + 0.2);
     });
-    window.setTimeout(() => void ctx.close(), 700);
+    window.setTimeout(() => void ctx.close(), 700 + times * 220);
   } catch {
     // Sound is a nicety; never break the game over it.
   }
@@ -86,12 +94,14 @@ function DrawCanvas({
   color,
   brushFrac,
   erasing,
+  enabled,
   resetSignal,
   onStrokeEnd,
 }: {
   color: string;
   brushFrac: number;
   erasing: boolean;
+  enabled: boolean;
   resetSignal: number;
   onStrokeEnd: (count: number) => void;
 }) {
@@ -100,6 +110,8 @@ function DrawCanvas({
   const strokesRef = useRef<Stroke[]>([]);
   const currentRef = useRef<Stroke | null>(null);
   const drawingRef = useRef(false);
+  const enabledRef = useRef(enabled);
+  enabledRef.current = enabled;
 
   const redraw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -143,9 +155,17 @@ function DrawCanvas({
       ctx.arc(pts[0].x, pts[0].y, ctx.lineWidth / 2, 0, Math.PI * 2);
       ctx.fill();
     } else {
+      // Smooth through midpoints (quadratic curves) — the local playtest
+      // version's strokes felt noticeably less jagged for this reason.
+      // Two-point segments (the incremental live paint) stay straight.
       ctx.beginPath();
       ctx.moveTo(pts[0].x, pts[0].y);
-      for (let i = 1; i < pts.length; i += 1) ctx.lineTo(pts[i].x, pts[i].y);
+      for (let i = 1; i < pts.length - 1; i += 1) {
+        const mx = (pts[i].x + pts[i + 1].x) / 2;
+        const my = (pts[i].y + pts[i + 1].y) / 2;
+        ctx.quadraticCurveTo(pts[i].x, pts[i].y, mx, my);
+      }
+      ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y);
       ctx.stroke();
     }
     ctx.restore();
@@ -210,6 +230,9 @@ function DrawCanvas({
   };
 
   const onPointerDown = (e: React.PointerEvent) => {
+    // The board only takes strokes during the draw phase — before that
+    // it sits behind the word sidebar as a pure preview surface.
+    if (!enabledRef.current) return;
     e.preventDefault();
     ensureReady();
     try {
@@ -327,18 +350,22 @@ const canvasAction = (action: 'undo' | 'clear') =>
 
 /* ═══════════════════════ Main game ═══════════════════════
    The stage is canvas + drawing tools only. Everything about the word —
-   peeking, skipping, revealing, settings, tally, the word bank — lives
-   in a right-hand sidebar that overlays the stage and never resizes it.
-   The sidebar starts open so the drawer can peek first; closing it (by
-   any route) starts the round timer. */
+   looking, skipping, revealing, settings, tally, the word bank — lives
+   in a right-hand sidebar that OVERLAYS the stage in both orientations
+   and never resizes it. The toolbar is a single node that CSS moves:
+   three rows under the canvas in portrait, a slim vertical rail on the
+   right in landscape, so the canvas owns the landscape height. The
+   sidebar starts open (phase "pass") so the drawer can look at the
+   word first; "记住了，遮住开画" closes it and starts the round. */
 
 export default function DrawGuess() {
   const [themeChoice, setThemeChoice] = useState<ThemeChoice>('all');
   const [lang, setLang] = useState<Lang>('zh');
   const [duration, setDuration] = useState(90);
   const [current, setCurrent] = useState<WordEntry | null>(null);
+  const [phase, setPhase] = useState<Phase>('pass');
+  const [resultKind, setResultKind] = useState<ResultKind>('reveal');
   const [peeking, setPeeking] = useState(false);
-  const [revealed, setRevealed] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [secondsLeft, setSecondsLeft] = useState(90);
   const [timerRunning, setTimerRunning] = useState(false);
@@ -350,12 +377,14 @@ export default function DrawGuess() {
   const [brush, setBrush] = useState(BRUSHES[1]);
   const [erasing, setErasing] = useState(false);
   const [strokeCount, setStrokeCount] = useState(0);
+  const [clearArmed, setClearArmed] = useState(false);
 
   const [customWords, setCustomWords] = useState<CustomWord[]>([]);
   const [removedIds, setRemovedIds] = useState<string[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [managerTheme, setManagerTheme] = useState<ThemeId>('animals');
   const [newWordText, setNewWordText] = useState('');
+  const [newWordEn, setNewWordEn] = useState('');
 
   const lastIdRef = useRef<string | null>(null);
   const startedRef = useRef(false);
@@ -494,12 +523,9 @@ export default function DrawGuess() {
       document.removeEventListener('visibilitychange', onVisibility);
   }, [isFullscreen, requestWakeLock]);
 
-  const toggleFullscreen = async () => {
+  const enterFullscreen = useCallback(async () => {
     try {
-      if (document.fullscreenElement) {
-        await document.exitFullscreen();
-        return;
-      }
+      if (document.fullscreenElement) return;
       const el = document.documentElement;
       if (typeof el.requestFullscreen !== 'function') return;
       await el.requestFullscreen();
@@ -518,6 +544,18 @@ export default function DrawGuess() {
     } catch {
       // Fullscreen rejected (e.g. iPhone Safari) — scroll lock carries on.
     }
+  }, []);
+
+  const toggleFullscreen = async () => {
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+        return;
+      }
+      await enterFullscreen();
+    } catch {
+      // Fullscreen rejected — scroll lock carries on.
+    }
   };
 
   const pool = useMemo(
@@ -531,7 +569,6 @@ export default function DrawGuess() {
     lastIdRef.current = next.id;
     setCurrent(next);
     setPeeking(false);
-    setRevealed(false);
   }, [pool]);
 
   // The first word is ready as soon as storage is hydrated, so the open
@@ -597,16 +634,32 @@ export default function DrawGuess() {
     setTimerRunning(true);
   };
 
-  // Closing the sidebar is the "start drawing" moment: the first close
-  // of a round starts its timer; reopening to peek or skip never
-  // restarts it. The big Start button additionally resumes a pause.
+  /* "遮住开画" — the draw phase entry point. The tap is the user
+     gesture fullscreen needs, so starting a round also tries to enter
+     fullscreen (which kills pull-to-refresh and lets us suggest
+     landscape), exactly like the local playtest version. Closing the
+     sidebar by any route before the round has started means the same
+     thing: the drawer is done looking, start the clock. */
+  const startDraw = () => {
+    setPeeking(false);
+    setSidebarOpen(false);
+    if (!current || phase === 'result') return;
+    setPhase('draw');
+    void enterFullscreen();
+    if (!roundStartedRef.current) {
+      beginRound();
+    } else if (!timerRunning && !timeUp) {
+      resumeTimer();
+    }
+  };
+
   const closeSidebar = (viaStart: boolean) => {
     setPeeking(false);
     setSidebarOpen(false);
-    if (!current || revealed || timeUp) return;
-    if (!roundStartedRef.current) {
-      beginRound();
-    } else if (viaStart && !timerRunning) {
+    if (!current || phase === 'result') return;
+    if (phase === 'pass' || phase === 'show') {
+      startDraw();
+    } else if (viaStart && !timerRunning && !timeUp) {
       resumeTimer();
     }
   };
@@ -627,29 +680,46 @@ export default function DrawGuess() {
     endAtRef.current = timerRunning ? Date.now() + duration * 1000 : null;
   };
 
-  // Skip: swap the word (pickWord excludes the skipped one), keep the
-  // canvas and the clock exactly as they are.
-  const skipWord = () => {
-    drawNewWord();
-  };
-
-  const revealAnswer = () => {
-    setPeeking(false);
+  const stopClock = () => {
     setTimerRunning(false);
     endAtRef.current = null;
-    setRevealed(true);
   };
 
-  const nextRound = () => {
-    setTimerRunning(false);
-    endAtRef.current = null;
+  /* Fresh word + clean board + back to "pass the phone". Used by both
+     Skip (available in every phase) and Next round. */
+  const freshWord = () => {
+    stopClock();
     setTimeUp(false);
     setSecondsLeft(duration);
     roundStartedRef.current = false;
     setRoundStarted(false);
     setRound((r) => r + 1); // clears the canvas via resetSignal
+    setPhase('pass');
+    setSidebarOpen(true);
     drawNewWord();
   };
+
+  const skipWord = () => freshWord();
+  const nextRound = () => freshWord();
+
+  const finishRound = (kind: ResultKind) => {
+    if (phase !== 'draw') return;
+    stopClock();
+    setResultKind(kind);
+    if (kind === 'hit') {
+      setTally((t) => t + 1);
+      beep(3);
+      try {
+        navigator.vibrate?.(120);
+      } catch {
+        // vibration is best-effort
+      }
+    }
+    setPhase('result');
+    setSidebarOpen(true);
+  };
+
+  const revealAnswer = () => finishRound('reveal');
 
   const shown = current ? wordText(current, lang) : '';
   const masked = current ? maskWord(shown) : '';
@@ -670,11 +740,29 @@ export default function DrawGuess() {
   const addCustomWord = () => {
     const text = newWordText.trim();
     if (!text) return;
-    const entry = makeCustomWord(managerTheme, text);
+    const entry = makeCustomWord(managerTheme, text, newWordEn);
     setCustomWords((prev) =>
       prev.some((c) => c.id === entry.id) ? prev : [...prev, entry],
     );
     setNewWordText('');
+    setNewWordEn('');
+  };
+
+  // Clear is two-tap (first tap arms it) — one stray kid tap must not
+  // wipe a drawing the whole family is guessing at.
+  useEffect(() => {
+    if (!clearArmed) return;
+    const t = window.setTimeout(() => setClearArmed(false), 2600);
+    return () => window.clearTimeout(t);
+  }, [clearArmed]);
+
+  const onClearClick = () => {
+    if (!clearArmed) {
+      setClearArmed(true);
+      return;
+    }
+    setClearArmed(false);
+    canvasAction('clear');
   };
 
   const bigBtn =
@@ -683,11 +771,22 @@ export default function DrawGuess() {
     'flex min-h-[48px] items-center justify-center rounded-full px-4 text-sm font-medium transition-colors';
   const toolBtn =
     'flex h-12 min-w-0 flex-1 items-center justify-center gap-1 rounded-2xl px-2 text-sm font-semibold transition-colors';
+  // In the landscape rail the same buttons stand upright in 3-up grid
+  // cells: icon over a tiny label, 44px tall, never a bottom row.
+  const railBtn =
+    'landscape:h-11 landscape:flex-none landscape:flex-col landscape:gap-0 landscape:px-0 landscape:text-[10px]';
   const idleBtn =
     'bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-100';
   const timerText = timeUp
     ? '⏰ 0:00'
     : `${roundStarted && !timerRunning ? '⏸' : '⏱'} ${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, '0')}`;
+  const handleClock = `${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, '0')}`;
+  const resultText =
+    resultKind === 'hit'
+      ? '🎉 猜对啦！Great guessing!'
+      : resultKind === 'miss'
+        ? '😅 没猜出来 — 就差一点！So close!'
+        : '👀 答案揭晓 · The answer';
 
   return (
     <section
@@ -695,60 +794,116 @@ export default function DrawGuess() {
       className="fixed inset-0 z-[60] flex overflow-hidden bg-gradient-to-b from-sky-50 via-background to-background dark:from-sky-950/40 dark:via-background dark:to-background"
       style={{ overscrollBehavior: 'none' }}
     >
-      <div className="mx-auto flex h-full w-full min-w-0 max-w-3xl flex-1 flex-col px-2 py-2 sm:px-4">
-        {/* Top bar: fixed height in every state — exit + minimal timer. */}
-        <div className="flex h-14 shrink-0 items-center gap-2">
-          <Link
-            href="/tools"
-            aria-label="Back to Tools 返回工具"
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-100 text-lg text-blue-900 transition-colors dark:bg-blue-950 dark:text-blue-100"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </Link>
-          <span className="min-w-0 flex-1 truncate text-base font-bold">
-            🎨 你画我猜{' '}
-            <span className="hidden text-sm font-medium text-muted-foreground sm:inline">
-              Draw &amp; Guess
+      <div
+        className="mx-auto flex h-full w-full min-w-0 max-w-3xl flex-1 flex-col landscape:max-w-6xl landscape:flex-row"
+        style={{
+          paddingTop: 'env(safe-area-inset-top)',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+          paddingLeft: 'env(safe-area-inset-left)',
+          paddingRight: 'env(safe-area-inset-right)',
+        }}
+      >
+        {/* Main column: slim top bar + the canvas. In landscape this is
+            the left side; the toolbar rail takes the right. */}
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col px-2 pt-2 landscape:pb-2">
+          {/* Top bar: fixed height in every state — exit + timer only.
+              Landscape shrinks it to the bone; the canvas is the point. */}
+          <div className="flex h-14 shrink-0 items-center gap-2 landscape:h-11">
+            <Link
+              href="/tools"
+              aria-label="Back to Tools 返回工具"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-100 text-lg text-blue-900 transition-colors dark:bg-blue-950 dark:text-blue-100 landscape:h-10 landscape:w-10"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </Link>
+            <span className="min-w-0 flex-1 truncate text-base font-bold">
+              🎨 你画我猜{' '}
+              <span className="hidden text-sm font-medium text-muted-foreground sm:inline">
+                Draw &amp; Guess
+              </span>
             </span>
-          </span>
-          <div
-            data-testid="timer-display"
-            className={`flex h-12 w-[104px] shrink-0 items-center justify-center rounded-2xl text-xl font-bold tabular-nums ${
-              timeUp || (roundStarted && secondsLeft <= 10)
-                ? 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300'
-                : 'bg-blue-600 text-white'
-            }`}
-          >
-            {timerText}
+            <div
+              data-testid="timer-display"
+              className={`flex h-12 w-[104px] shrink-0 items-center justify-center rounded-2xl text-xl font-bold tabular-nums landscape:h-10 landscape:w-[92px] landscape:text-lg ${
+                timeUp || (roundStarted && secondsLeft <= 10)
+                  ? 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300'
+                  : 'bg-blue-600 text-white'
+              }`}
+            >
+              {timerText}
+            </div>
+          </div>
+
+          {/* Canvas fills every remaining pixel. The time-up banner and
+              the verdict buttons are overlays inside this box, never in
+              the document flow, so they can never resize the board. */}
+          <div className="relative min-h-0 flex-1">
+            <DrawCanvas
+              color={color}
+              brushFrac={brush.frac}
+              erasing={erasing}
+              enabled={phase === 'draw'}
+              resetSignal={round}
+              onStrokeEnd={setStrokeCount}
+            />
+            {timeUp && (
+              <p
+                data-testid="timeup-banner"
+                className="pointer-events-none absolute left-1/2 top-3 z-10 w-max max-w-[92%] -translate-x-1/2 rounded-2xl bg-red-600 px-4 py-2 text-center text-sm font-semibold text-white shadow-lg"
+              >
+                ⏰ 时间到！Time&apos;s up — 打开右边词卡看答案
+              </p>
+            )}
+            {phase === 'draw' && !timeUp && (
+              <div className="absolute inset-x-3 bottom-3 z-10 flex gap-2.5">
+                <button
+                  type="button"
+                  data-testid="act-miss-btn"
+                  onClick={() => finishRound('miss')}
+                  className="flex min-h-[56px] flex-1 items-center justify-center rounded-2xl border-2 border-blue-200 bg-white/95 px-3 text-lg font-bold text-blue-900 shadow-lg transition-colors dark:border-blue-800 dark:bg-slate-900/95 dark:text-blue-100"
+                >
+                  😅 没猜出来
+                </button>
+                <button
+                  type="button"
+                  data-testid="act-hit-btn"
+                  onClick={() => finishRound('hit')}
+                  className="flex min-h-[56px] flex-1 items-center justify-center rounded-2xl bg-emerald-600 px-3 text-lg font-bold text-white shadow-lg transition-colors hover:bg-emerald-500"
+                >
+                  🎉 猜对啦！
+                </button>
+              </div>
+            )}
+            {phase === 'draw' && timeUp && (
+              <div className="absolute inset-x-3 bottom-3 z-10 flex">
+                <button
+                  type="button"
+                  data-testid="timeup-reveal-btn"
+                  onClick={revealAnswer}
+                  className="flex min-h-[56px] flex-1 items-center justify-center rounded-2xl bg-blue-600 px-3 text-lg font-bold text-white shadow-lg transition-colors hover:bg-blue-500"
+                >
+                  👀 看答案 See the answer
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Canvas fills every remaining pixel. The time-up banner is an
-            overlay inside this box, never in the document flow. */}
-        <div className="relative min-h-0 flex-1">
-          <DrawCanvas
-            color={color}
-            brushFrac={brush.frac}
-            erasing={erasing}
-            resetSignal={round}
-            onStrokeEnd={setStrokeCount}
-          />
-          {timeUp && (
-            <p
-              data-testid="timeup-banner"
-              className="pointer-events-none absolute left-1/2 top-3 z-10 w-max max-w-[92%] -translate-x-1/2 rounded-2xl bg-red-600 px-4 py-2 text-center text-sm font-semibold text-white shadow-lg"
-            >
-              ⏰ 时间到！Time&apos;s up — 打开右边词卡看答案
-            </p>
-          )}
-        </div>
-
-        {/* Bottom toolbar: three fixed-height rows that never wrap, so
-            the canvas above them can never be pushed around. */}
-        <div className="shrink-0 space-y-2 pt-2">
-          <div className="flex h-14 items-center gap-1.5" role="group" aria-label="Colors 颜色">
+        {/* Toolbar — ONE node, two homes. Portrait: three rows under the
+            canvas (unchanged). Landscape: a slim vertical rail on the
+            right (3-up compact grids), so the canvas keeps the height
+            the rows used to eat. */}
+        <div
+          data-testid="draw-toolbar"
+          className="flex shrink-0 flex-col gap-2 px-2 pb-2 pt-2 landscape:w-[148px] landscape:gap-2.5 landscape:overflow-y-auto landscape:px-2.5 landscape:py-3"
+        >
+          <div
+            className="flex h-14 items-center gap-1.5 landscape:grid landscape:h-auto landscape:grid-cols-3 landscape:gap-1.5"
+            role="group"
+            aria-label="Colors 颜色"
+          >
             {COLORS.map((c) => (
               <button
                 key={c.hex}
@@ -759,7 +914,7 @@ export default function DrawGuess() {
                   setColor(c.hex);
                   setErasing(false);
                 }}
-                className={`h-12 min-w-0 flex-1 rounded-xl border-2 ${
+                className={`h-12 min-w-0 flex-1 rounded-xl border-2 landscape:h-11 landscape:w-full landscape:flex-none ${
                   !erasing && color === c.hex
                     ? 'border-blue-600 ring-2 ring-blue-500 ring-offset-1 ring-offset-white dark:ring-offset-slate-900'
                     : 'border-black/10'
@@ -768,63 +923,75 @@ export default function DrawGuess() {
               />
             ))}
           </div>
-          <div className="flex h-14 items-center gap-2">
+          <div className="flex h-14 items-center gap-2 landscape:grid landscape:h-auto landscape:grid-cols-3 landscape:gap-1.5">
             <button
               type="button"
               data-testid="eraser-btn"
               aria-pressed={erasing}
               onClick={() => setErasing(true)}
-              className={`${toolBtn} ${erasing ? 'bg-blue-600 text-white' : idleBtn}`}
+              className={`${toolBtn} ${railBtn} ${erasing ? 'bg-blue-600 text-white' : idleBtn}`}
             >
-              🩹 橡皮
+              <span aria-hidden="true">🩹</span>
+              <span>橡皮</span>
             </button>
             <button
               type="button"
               data-testid="undo-btn"
               disabled={strokeCount === 0}
               onClick={() => canvasAction('undo')}
-              className={`${toolBtn} ${idleBtn} disabled:opacity-40`}
+              className={`${toolBtn} ${railBtn} ${idleBtn} disabled:opacity-40`}
             >
-              ↩️ 撤销
+              <span aria-hidden="true">↩️</span>
+              <span>撤销</span>
             </button>
             <button
               type="button"
               data-testid="clear-btn"
               disabled={strokeCount === 0}
-              onClick={() => canvasAction('clear')}
-              className={`${toolBtn} ${idleBtn} disabled:opacity-40`}
+              onClick={onClearClick}
+              className={`${toolBtn} ${railBtn} disabled:opacity-40 ${
+                clearArmed ? 'bg-red-600 text-white' : idleBtn
+              }`}
             >
-              🗑 清空
+              <span aria-hidden="true">🗑</span>
+              <span>{clearArmed ? '确认?' : '清空'}</span>
             </button>
           </div>
-          <div className="flex h-14 items-center gap-2" role="group" aria-label="Brush size 笔粗">
+          <div
+            className="flex h-14 items-center gap-2 landscape:grid landscape:h-auto landscape:grid-cols-3 landscape:gap-1.5"
+            role="group"
+            aria-label="Brush size 笔粗"
+          >
             {BRUSHES.map((b) => (
               <button
                 key={b.id}
                 type="button"
                 aria-pressed={brush.id === b.id}
                 onClick={() => setBrush(b)}
-                className={`${toolBtn} ${brush.id === b.id ? 'bg-blue-600 text-white' : idleBtn}`}
+                className={`${toolBtn} ${railBtn} ${brush.id === b.id ? 'bg-blue-600 text-white' : idleBtn}`}
               >
-                <span
-                  className="inline-block shrink-0 rounded-full bg-current"
-                  style={{ width: b.dot, height: b.dot }}
-                />
-                {b.label}
+                <span className="inline-block shrink-0 rounded-full bg-current landscape:scale-[0.6]" style={{ width: b.dot, height: b.dot }} />
+                <span className="max-w-full truncate landscape:hidden">{b.label}</span>
+                <span className="hidden max-w-full truncate landscape:inline">
+                  {b.label.split(' ')[0]}
+                </span>
               </button>
             ))}
           </div>
         </div>
       </div>
 
-      {/* ─────────── Right sidebar: everything about the word ─────────── */}
+      {/* ─────────── Right sidebar: everything about the word ───────────
+          An overlay in BOTH orientations now: it slides in over the
+          stage (and over the landscape rail) and never changes the
+          canvas geometry by a single pixel. */}
       {sidebarOpen && (
         <button
           type="button"
           data-testid="word-sidebar-scrim"
           aria-label="关闭侧边栏 Close panel"
           onClick={() => closeSidebar(false)}
-          className="absolute inset-0 z-20 h-full w-full cursor-default bg-slate-900/30 landscape:hidden"
+          className="absolute inset-0 z-20 h-full w-full cursor-default bg-slate-900/30"
         />
       )}
       <aside
@@ -833,10 +1000,10 @@ export default function DrawGuess() {
         role="region"
         aria-label="词卡与设置 Word card and settings"
         aria-hidden={!sidebarOpen}
-        className={`absolute inset-y-0 right-0 z-30 flex w-[320px] max-w-[88vw] flex-col bg-white shadow-2xl transition-all duration-200 ease-out dark:bg-slate-900 landscape:relative landscape:inset-auto landscape:z-auto landscape:h-full landscape:max-w-none landscape:border-l-2 landscape:border-blue-100 landscape:shadow-none dark:landscape:border-blue-900 ${
+        className={`absolute inset-y-0 right-0 z-30 flex w-[320px] max-w-[88vw] flex-col bg-white shadow-2xl transition-transform duration-200 ease-out dark:bg-slate-900 ${
           sidebarOpen
-            ? 'translate-x-0 landscape:w-[320px]'
-            : 'pointer-events-none translate-x-[105%] landscape:w-0 landscape:translate-x-0 landscape:overflow-hidden landscape:border-l-0'
+            ? 'translate-x-0'
+            : 'pointer-events-none translate-x-[105%]'
         }`}
       >
         <div className="flex shrink-0 items-start justify-between gap-2 px-4 pb-1 pt-4">
@@ -861,23 +1028,63 @@ export default function DrawGuess() {
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain px-4 pb-6 pt-2">
-          {/* Word card: masked by dots, hold to peek, release re-masks. */}
+        {/* Fullscreen: big, yellow, pinned at the top of the panel —
+            the local playtest version's most-tapped button lives here. */}
+        <div className="shrink-0 px-4 pt-2">
+          <button
+            type="button"
+            data-testid="fullscreen-btn"
+            onClick={() => void toggleFullscreen()}
+            className="flex min-h-[56px] w-full items-center justify-center gap-2 rounded-2xl bg-amber-400 px-4 text-lg font-bold text-slate-900 shadow transition-colors hover:bg-amber-300"
+          >
+            {isFullscreen
+              ? '🚪 退出全屏 Exit fullscreen'
+              : '🖥 点这里全屏玩 Fullscreen'}
+          </button>
+          <p className="mt-1.5 text-center text-xs text-muted-foreground">
+            全屏后横着拿手机：画布更大，也不会下拉刷新。
+          </p>
+        </div>
+
+        <div className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain px-4 pb-6 pt-3">
+          {/* Word card + phase actions. The word is only ever rendered
+              as text while it is meant to be seen (phase "show", a live
+              hold-to-peek, or the result) — masked phases keep plaintext
+              out of the DOM entirely. */}
           <section aria-label="Your word 你的词">
             {current ? (
-              revealed ? (
+              phase === 'result' ? (
                 <div
                   data-testid="reveal-word"
                   className="rounded-3xl bg-blue-50 px-4 py-6 text-center dark:bg-blue-950/40"
                 >
-                  <p className="text-xs text-muted-foreground">
+                  <p
+                    data-testid="result-line"
+                    className="text-base font-bold text-blue-900 dark:text-blue-100"
+                  >
+                    {resultText}
+                  </p>
+                  <p className="mt-2 text-xs text-muted-foreground">
                     答案是 · The word was
                   </p>
                   <span data-testid="word-text" className="mt-1 block text-4xl font-bold">
                     {shown}
                   </span>
-                  <span className="mt-1 block text-base text-muted-foreground">
+                  <span data-testid="word-text-alt" className="mt-1 block text-base text-muted-foreground">
                     {lang === 'zh' ? current.en : current.zh}
+                  </span>
+                </div>
+              ) : phase === 'show' ? (
+                <div className="flex min-h-[150px] flex-col items-center justify-center rounded-3xl border-2 border-blue-300 bg-blue-50 px-4 text-center dark:border-blue-800 dark:bg-blue-950/40">
+                  <span data-testid="word-text" className="text-4xl font-bold">
+                    {shown}
+                  </span>
+                  <span data-testid="word-text-alt" className="mt-1 text-base text-muted-foreground">
+                    {lang === 'zh' ? current.en : current.zh}
+                  </span>
+                  <span className="mt-3 text-sm text-muted-foreground">
+                    记住它！点下面「遮住开画」就开始 · Memorize it, then
+                    cover &amp; draw
                   </span>
                 </div>
               ) : (
@@ -887,16 +1094,24 @@ export default function DrawGuess() {
                   className="flex min-h-[150px] touch-none select-none flex-col items-center justify-center rounded-3xl border-2 border-dashed border-blue-300 bg-blue-50 px-4 text-center dark:border-blue-800 dark:bg-blue-950/40"
                 >
                   {peeking ? (
-                    <span data-testid="word-text" className="text-4xl font-bold">
-                      {shown}
-                    </span>
+                    <>
+                      <span data-testid="word-text" className="text-4xl font-bold">
+                        {shown}
+                      </span>
+                      <span
+                        data-testid="word-text-alt"
+                        className="mt-1 text-base text-muted-foreground"
+                      >
+                        {lang === 'zh' ? current.en : current.zh}
+                      </span>
+                    </>
                   ) : (
                     <>
                       <span data-testid="word-masked" className="text-3xl tracking-widest">
                         {masked}
                       </span>
                       <span className="mt-3 text-sm text-muted-foreground">
-                        按住这里看词 · Press &amp; hold to peek
+                        按住这里偷看 · Press &amp; hold to peek
                       </span>
                     </>
                   )}
@@ -909,28 +1124,19 @@ export default function DrawGuess() {
               </p>
             )}
 
-            {current && (
-              <button
-                type="button"
-                data-testid="fullscreen-btn"
-                onClick={() => void toggleFullscreen()}
-                className={`${bigBtn} mt-3 w-full bg-slate-800 py-3 text-lg text-white hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600`}
-              >
-                {isFullscreen
-                  ? '🚪 退出全屏 Exit fullscreen'
-                  : '🖥 全屏开始（横屏更好画）'}
-              </button>
-            )}
-
-            {current && !revealed && (
+            {current && phase === 'pass' && (
               <div className="mt-3 space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  把手机递给画画的人，其他人先转过身 👀 Pass the phone to
+                  the drawer — everyone else, no peeking!
+                </p>
                 <button
                   type="button"
-                  data-testid="start-draw-btn"
-                  onClick={() => closeSidebar(true)}
+                  data-testid="show-word-btn"
+                  onClick={() => setPhase('show')}
                   className={`${bigBtn} w-full bg-blue-600 py-3 text-lg text-white hover:bg-blue-700`}
                 >
-                  ✏️ {roundStarted ? '继续画 Keep drawing' : '开始画 Start drawing'}
+                  👀 看词 See the word
                 </button>
                 <button
                   type="button"
@@ -939,6 +1145,38 @@ export default function DrawGuess() {
                   className={`${bigBtn} w-full border-2 border-amber-300 bg-amber-50 py-3 text-lg text-amber-900 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-100`}
                 >
                   ⏭ 跳过 / 下一个词 Skip
+                </button>
+              </div>
+            )}
+            {current && phase === 'show' && (
+              <div className="mt-3 space-y-2">
+                <button
+                  type="button"
+                  data-testid="start-draw-btn"
+                  onClick={startDraw}
+                  className={`${bigBtn} w-full bg-blue-600 py-3 text-lg text-white hover:bg-blue-700`}
+                >
+                  ✏️ 记住了，遮住开画 Start drawing
+                </button>
+                <button
+                  type="button"
+                  data-testid="skip-word-btn"
+                  onClick={skipWord}
+                  className={`${bigBtn} w-full border-2 border-amber-300 bg-amber-50 py-3 text-lg text-amber-900 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-100`}
+                >
+                  ⏭ 跳过 / 下一个词 Skip
+                </button>
+              </div>
+            )}
+            {current && phase === 'draw' && (
+              <div className="mt-3 space-y-2">
+                <button
+                  type="button"
+                  data-testid="start-draw-btn"
+                  onClick={() => closeSidebar(true)}
+                  className={`${bigBtn} w-full bg-blue-600 py-3 text-lg text-white hover:bg-blue-700`}
+                >
+                  ✏️ 继续画 Keep drawing
                 </button>
                 <div className="flex gap-2">
                   <button
@@ -967,9 +1205,17 @@ export default function DrawGuess() {
                     👀 揭晓
                   </button>
                 </div>
+                <button
+                  type="button"
+                  data-testid="skip-word-btn"
+                  onClick={skipWord}
+                  className={`${bigBtn} w-full border-2 border-amber-300 bg-amber-50 py-3 text-lg text-amber-900 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-950/40 dark:text-amber-100`}
+                >
+                  ⏭ 跳过 / 下一个词 Skip
+                </button>
               </div>
             )}
-            {current && revealed && (
+            {current && phase === 'result' && (
               <div className="mt-3 space-y-2">
                 <button
                   type="button"
@@ -991,13 +1237,14 @@ export default function DrawGuess() {
             )}
           </section>
 
-          {/* Tally */}
+          {/* Round + tally */}
           <section
             aria-label="Tally 记分"
             className="flex items-center gap-3 rounded-2xl bg-blue-50 px-4 py-3 text-sm dark:bg-blue-950/40"
           >
             <span>
-              ⭐ 记分 Tally: <strong data-testid="tally-count">{tally}</strong>
+              🎯 第 <strong>{round + 1}</strong> 轮 · ⭐ 记分 Tally:{' '}
+              <strong data-testid="tally-count">{tally}</strong>
             </span>
             <button
               type="button"
@@ -1091,7 +1338,8 @@ export default function DrawGuess() {
             <h2 className="text-lg font-bold">📚 词库 Word Bank</h2>
             <p className="mt-1 text-xs text-muted-foreground">
               加自己的词、删不想画的词，都会存在这台手机上，下次打开还在。
-              Custom words are saved on this phone and join the draw right away.
+              英文可填可不填，填了揭晓时会中英一起显示。 Custom words are
+              saved on this phone and join the draw right away.
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               {WORD_BANK.map((t) => (
@@ -1106,25 +1354,37 @@ export default function DrawGuess() {
               ))}
             </div>
 
-            <div className="mt-3 flex gap-2">
+            <div className="mt-3 space-y-2">
+              <div className="flex gap-2">
+                <input
+                  value={newWordText}
+                  onChange={(e) => setNewWordText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') addCustomWord();
+                  }}
+                  placeholder={`加一个词到「${themeById(managerTheme).zh}」…`}
+                  aria-label="New word 新词"
+                  className="min-h-[52px] min-w-0 flex-1 rounded-2xl border border-blue-200 bg-background px-4 text-base dark:border-blue-900"
+                />
+                <button
+                  type="button"
+                  data-testid="add-word-btn"
+                  onClick={addCustomWord}
+                  className={`${bigBtn} bg-blue-600 text-white hover:bg-blue-700`}
+                >
+                  ＋ 加词
+                </button>
+              </div>
               <input
-                value={newWordText}
-                onChange={(e) => setNewWordText(e.target.value)}
+                value={newWordEn}
+                onChange={(e) => setNewWordEn(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') addCustomWord();
                 }}
-                placeholder={`加一个词到「${themeById(managerTheme).zh}」…`}
-                aria-label="New word 新词"
-                className="min-h-[52px] min-w-0 flex-1 rounded-2xl border border-blue-200 bg-background px-4 text-base dark:border-blue-900"
+                placeholder="英文（可不填）English (optional)"
+                aria-label="New word English 英文（可不填）"
+                className="min-h-[48px] w-full rounded-2xl border border-blue-200 bg-background px-4 text-base dark:border-blue-900"
               />
-              <button
-                type="button"
-                data-testid="add-word-btn"
-                onClick={addCustomWord}
-                className={`${bigBtn} bg-blue-600 text-white hover:bg-blue-700`}
-              >
-                ＋ 加词
-              </button>
             </div>
 
             <div className="mt-3 flex flex-wrap gap-2">
@@ -1151,7 +1411,11 @@ export default function DrawGuess() {
                   key={c.id}
                   className="inline-flex min-h-[40px] items-center gap-1 rounded-full bg-emerald-50 py-1 pl-3 pr-1 text-sm dark:bg-emerald-950/40"
                 >
-                  {c.text} <span className="text-xs text-emerald-600">自加</span>
+                  {c.text}
+                  {c.en ? (
+                    <span className="text-muted-foreground">· {c.en}</span>
+                  ) : null}{' '}
+                  <span className="text-xs text-emerald-600">自加</span>
                   <button
                     type="button"
                     aria-label={`删除 ${c.text}`}
@@ -1195,8 +1459,9 @@ export default function DrawGuess() {
         </div>
       </aside>
 
-      {/* Sidebar handle: always on the right edge, follows the panel, and
-          never carries the word itself. */}
+      {/* Sidebar handle: always on the right edge of the canvas (in
+          landscape it parks at the rail's left edge), follows the panel,
+          shows the running clock mid-round, and never carries the word. */}
       <button
         type="button"
         data-testid="word-sidebar-handle"
@@ -1204,12 +1469,17 @@ export default function DrawGuess() {
         aria-controls="word-sidebar"
         aria-label="词卡与设置 Word and settings"
         onClick={() => (sidebarOpen ? closeSidebar(false) : setSidebarOpen(true))}
-        style={{ right: sidebarOpen ? 'min(320px, 88vw)' : 0 }}
-        className="absolute top-[38%] z-30 flex min-h-[72px] w-12 flex-col items-center justify-center gap-1 rounded-l-2xl bg-blue-600 py-3 text-white shadow-lg transition-[right] duration-200 ease-out"
+        style={sidebarOpen ? { right: 'min(320px, 88vw)' } : undefined}
+        className="absolute right-0 top-[38%] z-30 flex min-h-[72px] w-8 flex-col items-center justify-center gap-1 rounded-l-2xl bg-blue-600 py-3 text-white shadow-lg transition-[right] duration-200 ease-out landscape:right-[148px]"
       >
-        <span className="text-lg leading-none">🔤</span>
-        <span className="text-sm font-bold leading-none">词</span>
-        <span className="text-[10px] font-medium leading-none">word</span>
+        <span className="text-base leading-none">🔤</span>
+        <span className="text-xs font-bold leading-none">词</span>
+        <span className="text-[8px] font-medium leading-none">word</span>
+        {roundStarted && !sidebarOpen && (
+          <span className="text-[10px] font-bold tabular-nums leading-none">
+            {timeUp ? '⏰' : handleClock}
+          </span>
+        )}
       </button>
     </section>
   );

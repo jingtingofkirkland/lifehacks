@@ -27,11 +27,18 @@ export interface Theme {
   words: WordEntry[];
 }
 
-/** A family-added word: one text, used for both languages. */
+/**
+ * A family-added word: the main text plus an optional English gloss, so a
+ * custom word shows bilingually on the reveal just like a built-in pair
+ * (the local playtest version's word form asked for exactly this). Words
+ * saved before the gloss existed simply have no `en` and fall back to
+ * showing the same text for both languages.
+ */
 export interface CustomWord {
   id: string;
   theme: ThemeId;
   text: string;
+  en?: string;
 }
 
 const w = (theme: ThemeId, en: string, zh: string): WordEntry => ({
@@ -246,7 +253,8 @@ export function mergePool(
       if (!removed.has(entry.id)) pool.push(entry);
     }
     for (const c of custom) {
-      if (c.theme === theme.id) pool.push({ id: c.id, en: c.text, zh: c.text });
+      if (c.theme === theme.id)
+        pool.push({ id: c.id, en: c.en ?? c.text, zh: c.text });
     }
   }
   return pool;
@@ -315,11 +323,14 @@ export function parseCustomWords(raw: string | null): CustomWord[] {
         (item as CustomWord).text.trim() !== '' &&
         THEME_ID_SET.has((item as CustomWord).theme)
       ) {
-        out.push({
+        const entry: CustomWord = {
           id: (item as CustomWord).id,
           theme: (item as CustomWord).theme,
           text: (item as CustomWord).text,
-        });
+        };
+        const en = (item as CustomWord).en;
+        if (typeof en === 'string' && en.trim() !== '') entry.en = en.trim();
+        out.push(entry);
       }
     }
     return out;
@@ -345,11 +356,18 @@ export function parseTally(raw: string | null): number {
   return Number.isFinite(n) && n > 0 ? n : 0;
 }
 
-export function makeCustomWord(theme: ThemeId, text: string): CustomWord {
+export function makeCustomWord(
+  theme: ThemeId,
+  text: string,
+  en?: string,
+): CustomWord {
   const trimmed = text.trim();
-  return {
+  const entry: CustomWord = {
     id: `custom:${theme}:${trimmed.toLowerCase()}`,
     theme,
     text: trimmed,
   };
+  const gloss = en?.trim();
+  if (gloss) entry.en = gloss;
+  return entry;
 }
