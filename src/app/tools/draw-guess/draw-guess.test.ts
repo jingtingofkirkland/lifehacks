@@ -98,6 +98,29 @@ describe('localStorage parsers (tolerant of junk)', () => {
     expect(CUSTOM_WORDS_KEY).toContain('drawGuess');
   });
 
+  it('keeps an optional English gloss on custom words, bilingually in the pool', () => {
+    const withGloss = makeCustomWord('animals', ' 滑板 ', ' skateboard ');
+    expect(withGloss).toEqual({
+      id: 'custom:animals:滑板',
+      theme: 'animals',
+      text: '滑板',
+      en: 'skateboard',
+    });
+    expect(parseCustomWords(JSON.stringify([withGloss]))).toEqual([withGloss]);
+    const pool = mergePool('animals', [withGloss], []);
+    const entry = pool.find((e) => e.id === withGloss.id);
+    expect(entry).toEqual({ id: withGloss.id, zh: '滑板', en: 'skateboard' });
+    // No gloss (older saves): the word still joins, same text both ways,
+    // and a junk gloss is dropped instead of breaking the word.
+    const bare = makeCustomWord('animals', '仓鼠');
+    expect(bare.en).toBeUndefined();
+    expect(
+      parseCustomWords(
+        '[{"id":"custom:animals:x","theme":"animals","text":"x","en":5}]',
+      ),
+    ).toEqual([{ id: 'custom:animals:x', theme: 'animals', text: 'x' }]);
+  });
+
   it('parses removed ids and tally defensively', () => {
     expect(parseRemovedIds('["animals:dog", 3, null]')).toEqual(['animals:dog']);
     expect(parseRemovedIds('{oops')).toEqual([]);
