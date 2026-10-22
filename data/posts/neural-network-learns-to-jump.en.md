@@ -155,6 +155,25 @@ How does research get past this boundary? One line each:
 
 That last one is the other great family of game AI — the search-based game-playing line this site explores separately (minimax, alpha-beta pruning, and eventually a Chinese-chess engine). Learned policies and explicit planning are two different answers to "how does a machine decide what to do," and the strongest systems, AlphaGo being the famous example, are deliberate combinations of the two.
 
+## Could one more input let it switch targets by itself?
+
+A natural follow-up: the fifth input already reports "am I on the ground?" — what if an input reported **"which stair am I standing on"** instead? Could the network then switch targets on its own, with no pointer fed by the environment?
+
+It depends on which of two very different things the new input says:
+
+- **"Your target is stair N"** is a *command*. The environment is still flipping the card; the network is still just obeying. Nothing has been internalized — this is the current pointer wearing a different hat.
+- **"You are standing on stair N"** is a *fact* — a sensor reading about the world, not an instruction. This one genuinely changes the deal. The network can now learn a conditional policy: *on stair 0, the good jump goes left; on stair 1, right; on stair 2, right again.* The subgoal switching moves inside the weights.
+
+So yes, it can be done. Now the honest price, because there is always a price:
+
+**The route knowledge now lives in the weights — which means the network has memorized this one map.** "On stair 1, jump right" is a fact about *this* terrain. Move the stairs (the 🎲 exam) and the memorized rule fires confidently in the wrong geometry. The current pointer version never stores the route at all: it reads relative geometry fresh every frame, which is exactly why it tolerates moved stairs. Autonomy and generality are a trade, and this input buys the first by spending the second.
+
+**And one layer remains unsolved anyway.** The fitness function still pays +10 per stair climbed, in order — the route is written into the *reward*, even if it is removed from the inputs. The figure would still be led by shaped rewards, not finding its own way. Remove those milestone payments and pay only for the summit, and the deceptive wall optimum from the shaping section walks straight back in. Genuinely general wayfinding needs more than one extra input: perception of *all* the stairs' positions, training across randomized terrains so no single map can be memorized, and memory or planning on top. That is a different machine, several research sections up the ladder.
+
+A technical footnote, because it bites implementers: mid-flight, the figure is standing on *no* stair, so a "which stair am I on" input needs a convention for airborne moments (say, "the last stair touched") — and the moment you define it that way, you have quietly smuggled in memory again. The cleaner design keeps the grounded input *and* adds a stair-index input alongside it, rather than replacing one with the other.
+
+> A related misconception worth one paragraph: "maybe it fails to converge because the weights aren't precise enough." In a network this small, representational precision is not the bottleneck — one large weight multiplied by a stair-index input flips behavior like a switch, and the precision that requires is coarse. The genetic algorithm's real precision limit is its **search noise floor**: constant random mutation makes it excellent at finding "good enough" and poor at polishing the last few percent. That is why, when you narrow the platforms toward the extreme, the summit *rate* collapses first — what runs out is search refinement, not the brain's capacity to express the answer.
+
 ## Experiments to try
 
 - **Mutation rate 40% vs. 2%.** At 40% the population learns fast and keeps "unlearning" — watch the summit rate jitter. At 2% it is stable but slow: crossover shuffles existing genes and almost nothing new appears.
