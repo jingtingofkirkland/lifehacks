@@ -88,6 +88,44 @@ function beep(times = 2) {
   }
 }
 
+/**
+ * Swap-feedback chime: two quick rising tones for "new word ready",
+ * one low, longer tone when the pool is empty — distinguishable with
+ * your eyes closed, which is the whole point of the feedback.
+ */
+function swapChime(ok: boolean) {
+  try {
+    const Ctx =
+      window.AudioContext ??
+      (window as unknown as { webkitAudioContext?: typeof AudioContext })
+        .webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const notes: { freq: number; at: number; dur: number }[] = ok
+      ? [
+          { freq: 880, at: 0, dur: 0.1 },
+          { freq: 1318, at: 0.09, dur: 0.16 },
+        ]
+      : [{ freq: 220, at: 0, dur: 0.3 }];
+    for (const n of notes) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.frequency.value = n.freq;
+      gain.gain.setValueAtTime(0.18, ctx.currentTime + n.at);
+      gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        ctx.currentTime + n.at + n.dur,
+      );
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(ctx.currentTime + n.at);
+      osc.stop(ctx.currentTime + n.at + n.dur + 0.02);
+    }
+    window.setTimeout(() => void ctx.close(), 800);
+  } catch {
+    // Sound is a nicety; never break the game over it.
+  }
+}
+
 /* ═══════════════════════ Drawing canvas ═══════════════════════ */
 
 function DrawCanvas({
@@ -362,6 +400,15 @@ export default function DrawGuess() {
   const [themeChoice, setThemeChoice] = useState<ThemeChoice>('all');
   const [lang, setLang] = useState<Lang>('zh');
   const [duration, setDuration] = useState(90);
+  // Unlimited rounds: a separate mode, not a giant duration — the
+  // clock counts up from zero and can never run out. `clockUnlimited`
+  // is the mode the LIVE round locked in at beginRound; `unlimited`
+  // is the chip selection, which only takes effect next round.
+  const [unlimited, setUnlimited] = useState(false);
+  const [clockUnlimited, setClockUnlimited] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+  const [swapFx, setSwapFx] = useState<'ok' | 'empty' | null>(null);
+  const [backHint, setBackHint] = useState(false);
   const [current, setCurrent] = useState<WordEntry | null>(null);
   const [phase, setPhase] = useState<Phase>('pass');
   const [resultKind, setResultKind] = useState<ResultKind>('reveal');
@@ -390,6 +437,19 @@ export default function DrawGuess() {
   const startedRef = useRef(false);
   const endAtRef = useRef<number | null>(null);
   const roundStartedRef = useRef(false);
+  const clockUnlimitedRef = useRef(false);
+  const elapsedBaseRef = useRef(0);
+  const countStartRef = useRef<number | null>(null);
+  const elapsedRef = useRef(0);
+  elapsedRef.current = elapsed;
+  const swapFxTimerRef = useRef<number | null>(null);
+  // Back-button guard (live round only): beginRound pushes one
+  // sentinel history entry; the popstate effect below decides what a
+  // back press means while the sentinel is up.
+  const guardLiveRef = useRef(false);
+  const guardSentinelRef = useRef(false);
+  const guardArmedRef = useRef(false);
+  const guardArmTimerRef = useRef<number | null>(null);
 
   /* ── localStorage: load once, then persist on change ── */
   useEffect(() => {
@@ -589,6 +649,22 @@ export default function DrawGuess() {
   /* ── timer ── */
   useEffect(() => {
     if (!timerRunning) return;
+    if (clockUnlimitedRef.current) {
+      // Unlimited: count UP from the folded base. There is no endAt
+      // and no time-up branch — the round ends only when somebody
+      // taps 猜对啦 / 没猜出来 / 看答案.
+      if (countStartRef.current === null) {
+        countStartRef.current = Date.now();
+      }
+      const tickUp = window.setInterval(() => {
+        if (countStartRef.current === null) return;
+        setElapsed(
+          elapsedBaseRef.current +
+            Math.floor((Date.now() - countStartRef.current) / 1000),
+        );
+      }, 250);
+      return () => window.clearInterval(tickUp);
+    }
     if (endAtRef.current === null) {
       endAtRef.current = Date.now() + secondsLeft * 1000;
     }
@@ -623,29 +699,51 @@ export default function DrawGuess() {
     }
     roundStartedRef.current = true;
     setRoundStarted(true);
-    setSecondsLeft(duration);
     setTimeUp(false);
-    endAtRef.current = Date.now() + duration * 1000;
+    // The clock mode locks in for this round: touching the duration
+    // chips mid-round only takes effect from the NEXT round.
+    clockUnlimitedRef.current = unlimited;
+    setClockUnlimited(unlimited);
+    if (unlimited) {
+      setElapsed(0);
+      elapsedBaseRef.current = 0;
+      countStartRef.current = Date.now();
+      endAtRef.current = null;
+    } else {
+      setSecondsLeft(duration);
+      endAtRef.current = Date.now() + duration * 1000;
+    }
     setTimerRunning(true);
+    // A live round arms the back-button guard: one sentinel history
+    // entry now stands between this round and an accidental exit.
+    guardLiveRef.current = true;
+    if (!guardSentinelRef.current) {
+      guardSentinelRef.current = true;
+      window.history.pushState({ drawGuessGuard: true }, '');
+    }
   };
 
   const resumeTimer = () => {
-    endAtRef.current = Date.now() + secondsLeft * 1000;
+    if (clockUnlimitedRef.current) {
+      countStartRef.current = Date.now();
+    } else {
+      endAtRef.current = Date.now() + secondsLeft * 1000;
+    }
     setTimerRunning(true);
   };
 
-  /* "遮住开画" — the draw phase entry point. The tap is the user
-     gesture fullscreen needs, so starting a round also tries to enter
-     fullscreen (which kills pull-to-refresh and lets us suggest
-     landscape), exactly like the local playtest version. Closing the
-     sidebar by any route before the round has started means the same
-     thing: the drawer is done looking, start the clock. */
+  /* "遮住开画" — the draw phase entry point. It deliberately does
+     NOT enter fullscreen: fullscreen is the fullscreen button's job
+     and nothing else's (user correction 2026-10-21 — an earlier
+     merged behavior auto-fullscreened here and surprised people).
+     Closing the sidebar by any route before the round has started
+     means the same thing: the drawer is done looking, start the
+     clock. */
   const startDraw = () => {
     setPeeking(false);
     setSidebarOpen(false);
     if (!current || phase === 'result') return;
     setPhase('draw');
-    void enterFullscreen();
     if (!roundStartedRef.current) {
       beginRound();
     } else if (!timerRunning && !timeUp) {
@@ -667,6 +765,12 @@ export default function DrawGuess() {
   const toggleTimer = () => {
     if (timeUp) return;
     if (timerRunning) {
+      if (clockUnlimitedRef.current) {
+        // Fold the running count-up segment into the base so a resume
+        // continues from exactly this elapsed time.
+        elapsedBaseRef.current = elapsedRef.current;
+        countStartRef.current = null;
+      }
       endAtRef.current = null;
       setTimerRunning(false);
     } else if (roundStartedRef.current) {
@@ -675,28 +779,139 @@ export default function DrawGuess() {
   };
 
   const resetTimer = () => {
+    if (clockUnlimitedRef.current) {
+      setElapsed(0);
+      elapsedBaseRef.current = 0;
+      if (timerRunning) countStartRef.current = Date.now();
+      return;
+    }
     setSecondsLeft(duration);
     setTimeUp(false);
     endAtRef.current = timerRunning ? Date.now() + duration * 1000 : null;
   };
 
+  /* Duration chips (the prominent ⏱ section under the word card).
+     Picking a chip never touches a live round's clock — beginRound
+     locked the mode in; the pick shows up from the next round, which
+     is what the caption under the chips says. Pre-round, the pending
+     display follows the pick immediately so people see what they
+     chose. */
+  const pickDuration = (s: number) => {
+    setUnlimited(false);
+    setDuration(s);
+    if (!roundStartedRef.current) {
+      setSecondsLeft(s);
+      setTimeUp(false);
+    }
+  };
+
+  const pickUnlimited = () => {
+    setUnlimited(true);
+    if (!roundStartedRef.current) {
+      setElapsed(0);
+      setTimeUp(false);
+    }
+  };
+
   const stopClock = () => {
     setTimerRunning(false);
     endAtRef.current = null;
+    countStartRef.current = null;
   };
 
-  /* Fresh word + clean board + back to "pass the phone". Used by both
-     Skip (available in every phase) and Next round. */
+  /* Back-button guard teardown: the round is over, so the sentinel
+     comes off the stack (one silent step back over it — the popstate
+     listener sees the guard is off and lets it pass) and back behaves
+     normally again. Nobody stays trapped between rounds. */
+  const endGuard = () => {
+    guardLiveRef.current = false;
+    guardArmedRef.current = false;
+    setBackHint(false);
+    if (guardArmTimerRef.current) {
+      window.clearTimeout(guardArmTimerRef.current);
+      guardArmTimerRef.current = null;
+    }
+    if (guardSentinelRef.current) {
+      guardSentinelRef.current = false;
+      window.history.back();
+    }
+  };
+
+  useEffect(() => {
+    const onPopState = () => {
+      // Whatever sat on top of the stack is gone after any pop.
+      guardSentinelRef.current = false;
+      if (!guardLiveRef.current) return;
+      if (document.fullscreenElement) {
+        // Back in fullscreen just leaves fullscreen; the round and
+        // the guard both stay right where they were.
+        try {
+          void document.exitFullscreen();
+        } catch {
+          // Already out — nothing to leave.
+        }
+        guardSentinelRef.current = true;
+        window.history.pushState({ drawGuessGuard: true }, '');
+        return;
+      }
+      if (!guardArmedRef.current) {
+        // First back press mid-round: warn, re-arm the sentinel, and
+        // open a short window in which a second press really leaves.
+        guardArmedRef.current = true;
+        setBackHint(true);
+        guardSentinelRef.current = true;
+        window.history.pushState({ drawGuessGuard: true }, '');
+        guardArmTimerRef.current = window.setTimeout(() => {
+          guardArmedRef.current = false;
+          setBackHint(false);
+        }, 2600);
+        return;
+      }
+      // Second press inside the window: really leave. The sentinel is
+      // already popped; one more step back exits the game page.
+      guardLiveRef.current = false;
+      guardArmedRef.current = false;
+      setBackHint(false);
+      window.history.back();
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  /* Fresh word + clean board + clock back to a full, not-yet-started
+     round: Skip and Next round both mean "a new round", never "same
+     board, new word" (user call 2026-10-21). The swap also confirms
+     itself with eyes closed — buzz + chime + a big animated overlay
+     that names NO word — because the drawer must never have to peek
+     just to check the tap landed. An empty pool gets a clearly
+     different buzz / tone / overlay instead. */
   const freshWord = () => {
+    endGuard();
     stopClock();
     setTimeUp(false);
     setSecondsLeft(duration);
+    setElapsed(0);
+    elapsedBaseRef.current = 0;
+    clockUnlimitedRef.current = unlimited;
+    setClockUnlimited(unlimited);
     roundStartedRef.current = false;
     setRoundStarted(false);
     setRound((r) => r + 1); // clears the canvas via resetSignal
     setPhase('pass');
     setSidebarOpen(true);
     drawNewWord();
+    const ok = pool.length > 0;
+    if (swapFxTimerRef.current) {
+      window.clearTimeout(swapFxTimerRef.current);
+    }
+    setSwapFx(ok ? 'ok' : 'empty');
+    swapFxTimerRef.current = window.setTimeout(() => setSwapFx(null), 1400);
+    swapChime(ok);
+    try {
+      navigator.vibrate?.(ok ? 60 : [90, 60, 90]);
+    } catch {
+      // Vibration is best-effort.
+    }
   };
 
   const skipWord = () => freshWord();
@@ -704,6 +919,7 @@ export default function DrawGuess() {
 
   const finishRound = (kind: ResultKind) => {
     if (phase !== 'draw') return;
+    endGuard();
     stopClock();
     setResultKind(kind);
     if (kind === 'hit') {
@@ -777,10 +993,23 @@ export default function DrawGuess() {
     'landscape:h-11 landscape:flex-none landscape:flex-col landscape:gap-0 landscape:px-0 landscape:text-[10px]';
   const idleBtn =
     'bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-100';
+  const fmtClock = (total: number) =>
+    `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+  // What the clock shows: a live round shows the mode it locked in;
+  // between rounds it mirrors the chip selection for the next round.
+  const showUnlimited = roundStarted ? clockUnlimited : unlimited;
   const timerText = timeUp
     ? '⏰ 0:00'
-    : `${roundStarted && !timerRunning ? '⏸' : '⏱'} ${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, '0')}`;
-  const handleClock = `${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, '0')}`;
+    : showUnlimited
+      ? roundStarted
+        ? `${timerRunning ? '⏱' : '⏸'} ${fmtClock(elapsed)}`
+        : '∞ 不限时'
+      : `${roundStarted && !timerRunning ? '⏸' : '⏱'} ${fmtClock(secondsLeft)}`;
+  const handleClock = showUnlimited
+    ? roundStarted
+      ? fmtClock(elapsed)
+      : '∞'
+    : fmtClock(secondsLeft);
   const resultText =
     resultKind === 'hit'
       ? '🎉 猜对啦！Great guessing!'
@@ -824,10 +1053,27 @@ export default function DrawGuess() {
                 Draw &amp; Guess
               </span>
             </span>
+            {/* The ONE fullscreen control: always on the stage, in
+                both states — a big amber entry when windowed, and a
+                big amber EXIT while fullscreen (when the sidebar is
+                usually closed and unreachable). Nothing else in the
+                game may request fullscreen. */}
+            <button
+              type="button"
+              data-testid="fullscreen-btn"
+              onClick={() => void toggleFullscreen()}
+              aria-pressed={isFullscreen}
+              className="flex h-12 shrink-0 items-center justify-center gap-1.5 rounded-2xl bg-amber-400 px-3 text-sm font-bold text-slate-900 shadow transition-colors hover:bg-amber-300 landscape:h-10"
+            >
+              {isFullscreen ? '🚪 退出全屏' : '🖥 全屏'}
+              <span className="hidden md:inline">
+                {isFullscreen ? 'Exit' : 'Fullscreen'}
+              </span>
+            </button>
             <div
               data-testid="timer-display"
               className={`flex h-12 w-[104px] shrink-0 items-center justify-center rounded-2xl text-xl font-bold tabular-nums landscape:h-10 landscape:w-[92px] landscape:text-lg ${
-                timeUp || (roundStarted && secondsLeft <= 10)
+                timeUp || (!showUnlimited && roundStarted && secondsLeft <= 10)
                   ? 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300'
                   : 'bg-blue-600 text-white'
               }`}
@@ -1028,25 +1274,7 @@ export default function DrawGuess() {
           </button>
         </div>
 
-        {/* Fullscreen: big, yellow, pinned at the top of the panel —
-            the local playtest version's most-tapped button lives here. */}
-        <div className="shrink-0 px-4 pt-2">
-          <button
-            type="button"
-            data-testid="fullscreen-btn"
-            onClick={() => void toggleFullscreen()}
-            className="flex min-h-[56px] w-full items-center justify-center gap-2 rounded-2xl bg-amber-400 px-4 text-lg font-bold text-slate-900 shadow transition-colors hover:bg-amber-300"
-          >
-            {isFullscreen
-              ? '🚪 退出全屏 Exit fullscreen'
-              : '🖥 点这里全屏玩 Fullscreen'}
-          </button>
-          <p className="mt-1.5 text-center text-xs text-muted-foreground">
-            全屏后横着拿手机：画布更大，也不会下拉刷新。
-          </p>
-        </div>
-
-        <div className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain px-4 pb-6 pt-3">
+        <div className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain px-4 pb-6 pt-4">
           {/* Word card + phase actions. The word is only ever rendered
               as text while it is meant to be seen (phase "show", a live
               hold-to-peek, or the result) — masked phases keep plaintext
@@ -1237,6 +1465,44 @@ export default function DrawGuess() {
             )}
           </section>
 
+          {/* 每轮时间 — promoted out of Settings to right under the
+              word card: families could not find it buried down there
+              ("找不到 = 没有"). Big chips, the current pick lit, and
+              the semantics printed under the row: a pick never
+              touches a live round — it applies from the next round. */}
+          <section
+            aria-label="Round time 每轮时间"
+            data-testid="duration-selector"
+            className="rounded-2xl bg-blue-50 px-4 py-3 dark:bg-blue-950/40"
+          >
+            <p className="text-sm font-semibold">⏱ 每轮时间 Round time</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {DURATIONS.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  data-testid={`duration-btn-${s}`}
+                  onClick={() => pickDuration(s)}
+                  className={`${chip} ${!unlimited && duration === s ? 'bg-blue-600 text-white' : idleBtn}`}
+                >
+                  {s}秒
+                </button>
+              ))}
+              <button
+                type="button"
+                data-testid="duration-btn-unlimited"
+                onClick={pickUnlimited}
+                className={`${chip} ${unlimited ? 'bg-blue-600 text-white' : idleBtn}`}
+              >
+                ∞ 不限时
+              </button>
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              下一轮生效 · Applies from the next round — this round keeps
+              its clock
+            </p>
+          </section>
+
           {/* Round + tally */}
           <section
             aria-label="Tally 记分"
@@ -1304,32 +1570,6 @@ export default function DrawGuess() {
                   English
                 </button>
               </div>
-            </div>
-            <div>
-              <p className="mb-2 text-sm font-semibold">每轮时间 Round time</p>
-              <div className="flex gap-2">
-                {DURATIONS.map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => {
-                      setDuration(s);
-                      if (!roundStartedRef.current) {
-                        setSecondsLeft(s);
-                        setTimeUp(false);
-                      }
-                    }}
-                    className={`${chip} ${duration === s ? 'bg-blue-600 text-white' : idleBtn}`}
-                  >
-                    {s}秒
-                  </button>
-                ))}
-              </div>
-              {roundStarted && (
-                <p className="mt-2 text-xs text-muted-foreground">
-                  主题和时长下一轮生效 · Theme &amp; time apply next round
-                </p>
-              )}
             </div>
           </section>
 
@@ -1481,6 +1721,47 @@ export default function DrawGuess() {
           </span>
         )}
       </button>
+
+      {/* Swap feedback: a big, brief, animated overlay that confirms
+          the word changed WITHOUT naming any word (the sound + buzz
+          in freshWord are its eyes-closed twins). Pure overlay — it
+          never enters the layout flow or resizes anything. */}
+      {swapFx && (
+        <div
+          data-testid="swap-feedback"
+          aria-live="polite"
+          className="pointer-events-none absolute inset-0 z-[80] flex items-center justify-center"
+        >
+          <div
+            className={`animate-dg-pop flex flex-col items-center gap-1 rounded-3xl px-8 py-6 text-white shadow-2xl ${
+              swapFx === 'ok' ? 'bg-emerald-600' : 'bg-amber-500'
+            }`}
+          >
+            <span className="text-5xl leading-none">
+              {swapFx === 'ok' ? '✓' : '⚠️'}
+            </span>
+            <span className="text-xl font-bold">
+              {swapFx === 'ok' ? '已换新词' : '词库空了'}
+            </span>
+            <span className="text-sm opacity-90">
+              {swapFx === 'ok'
+                ? 'New word ready'
+                : 'Add or restore words in the word bank'}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Back-guard hint: the first mid-round back press landed here
+          instead of leaving — say what happens on the second one. */}
+      {backHint && (
+        <p
+          data-testid="back-guard-hint"
+          className="pointer-events-none absolute left-1/2 top-16 z-[70] w-max max-w-[92%] -translate-x-1/2 rounded-2xl bg-slate-900/90 px-4 py-2 text-center text-sm font-semibold text-white shadow-lg"
+        >
+          ⚠️ 再按一次返回离开本局 · Press back again to leave this game
+        </p>
+      )}
     </section>
   );
 }
