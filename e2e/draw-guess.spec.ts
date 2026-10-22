@@ -285,9 +285,9 @@ test('draw & guess: rotation across orientations keeps the drawing and stays dra
   await dragStroke(page, { fx: 0.2, fy: 0.3 }, { fx: 0.5, fy: 0.5 });
   expect(await paintedPixels(page)).toBeGreaterThan(20);
 
-  // Starting the round tried fullscreen (the real-phone behavior); a
-  // headless window in fullscreen cannot be resized, so leave it first
-  // — on a phone this test's "rotation" is the unlock-and-turn case.
+  // Rounds no longer auto-fullscreen (only the fullscreen button may
+  // request it), so normally there is nothing to leave here; the exit
+  // stays as a harmless guard in case a prior step entered it.
   await page.evaluate(async () => {
     if (document.fullscreenElement) {
       try {
@@ -370,17 +370,29 @@ test('draw & guess: fullscreen button degrades silently and game stays playable'
   await page.goto('/tools/draw-guess/');
   await expect(page.getByTestId('word-masked')).toBeVisible();
 
-  // The big fullscreen button is right by the word card. Headless Chrome
-  // may grant or reject fullscreen/orientation-lock — either way the
-  // click must not throw, alert, or break the game.
+  // The fullscreen toggle lives on the stage top bar now (both
+  // states). The sidebar starts open OVER the stage, so begin the
+  // round first — that is also the phone reality: fullscreen is a
+  // stage action, tapped while drawing. Headless Chrome may grant
+  // or reject fullscreen/orientation-lock — either way the click
+  // must not throw, alert, or break the game.
+  await lookThenStartDrawing(page);
   const fsBtn = page.getByTestId('fullscreen-btn');
   await expect(fsBtn).toBeVisible();
   await fsBtn.click();
   await page.waitForTimeout(600);
   expect(pageErrors).toEqual([]);
+  await page.evaluate(async () => {
+    if (document.fullscreenElement) {
+      try {
+        await document.exitFullscreen();
+      } catch {
+        // not in fullscreen after all — nothing to leave
+      }
+    }
+  });
 
   // Still fully playable afterwards.
-  await lookThenStartDrawing(page);
   await dragStroke(page, { fx: 0.2, fy: 0.3 }, { fx: 0.5, fy: 0.5 });
   expect(await paintedPixels(page)).toBeGreaterThan(50);
   expect(pageErrors).toEqual([]);
@@ -504,4 +516,245 @@ test('draw & guess: landscape — slim handle, sidebar overlays the rail', async
   expect(side.x + side.width).toBeGreaterThanOrEqual(843);
   expect(side.x).toBeLessThan(rail.x + rail.width);
   expectSameBox(await canvasBox(page), box);
+});
+
+test('draw & guess: skip confirms eyes-closed and starts a truly fresh round', async ({
+  page,
+}) => {
+  // Count vibrate calls from before the page loads: the swap feedback
+  // must buzz (success pattern), and never throw where unsupported.
+  await page.addInitScript(() => {
+    const w = window as unknown as { __vibrateCalls: unknown[] };
+    w.__vibrateCalls = [];
+    const orig = navigator.vibrate?.bind(navigator);
+    Object.defineProperty(navigator, 'vibrate', {
+      configurable: true,
+      value: (pattern: unknown) => {
+        w.__vibrateCalls.push(pattern);
+        try {
+          return orig ? orig(pattern as VibratePattern) : true;
+        } catch {
+          return true;
+        }
+      },
+    });
+  });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/tools/draw-guess/');
+  await expect(page.getByTestId('word-masked')).toBeVisible();
+
+  const shownBefore = await holdToReadWord(page);
+  const secretTokens = shownBefore.split(/\s+/).filter((t) => t.length > 1);
+
+  // Skip in the pass phase: big overlay + buzz, and the overlay text
+  // is static copy only — it must not leak the old (or new) word.
+  await page.getByTestId('skip-word-btn').click();
+  const fx = page.getByTestId('swap-feedback');
+  await expect(fx).toBeVisible();
+  const fxText = await fx.innerText();
+  expect(fxText).toContain('已换新词');
+  for (const token of secretTokens) {
+    expect(fxText).not.toContain(token);
+  }
+  const vibrateCalls = await page.evaluate(
+    () => (window as unknown as { __vibrateCalls: unknown[] }).__vibrateCalls.length,
+  );
+  expect(vibrateCalls).toBeGreaterThanOrEqual(1);
+  // The word is masked again for the new pass — skipping never leaves
+  // a readable word on screen.
+  await expect(page.getByTestId('word-masked')).toBeVisible();
+
+  // Mid-round skip = a NEW round: board wiped (pixels + undo history)
+  // and the clock back to a full, un-started round.
+  await lookThenStartDrawing(page);
+  await dragStroke(page, { fx: 0.3, fy: 0.4 }, { fx: 0.7, fy: 0.6 });
+  await dragStroke(page, { fx: 0.25, fy: 0.7 }, { fx: 0.6, fy: 0.85 });
+  expect(await paintedPixels(page)).toBeGreaterThan(0);
+
+  await page.getByTestId('word-sidebar-handle').click();
+  await page.getByTestId('skip-word-btn').click();
+  await expect(page.getByTestId('swap-feedback')).toBeVisible();
+  expect(await paintedPixels(page)).toBe(0);
+  await expect(page.getByTestId('undo-btn')).toBeDisabled();
+  await expect(page.getByTestId('timer-display')).toContainText('1:30');
+});
+
+test('draw & guess: round-time chips sit up front and apply from the next round', async ({
+  page,
+}) => {
+  await page.clock.install();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/tools/draw-guess/');
+
+  // First thing in the open sidebar: the ⏱ section with all five
+  // chips — no digging through Settings to change the round length.
+  const selector = page.getByTestId('duration-selector');
+  await expect(selector).toBeVisible();
+  for (const id of [
+    'duration-btn-30',
+    'duration-btn-60',
+    'duration-btn-90',
+    'duration-btn-120',
+    'duration-btn-unlimited',
+  ]) {
+    await expect(page.getByTestId(id)).toBeVisible();
+  }
+  await expect(selector).toContainText('下一轮生效');
+
+  // Start a default 90s round, then change the pick mid-round: the
+  // live clock must NOT jump — 35s in, still no time-up…
+  await lookThenStartDrawing(page);
+  await expect(page.getByTestId('timer-display')).toContainText('1:30');
+  await page.getByTestId('word-sidebar-handle').click();
+  await page.getByTestId('duration-btn-30').click();
+  await page.getByTestId('start-draw-btn').click(); // 继续画 closes the panel
+  await page.clock.runFor(35_000);
+  await expect(page.getByTestId('timeup-banner')).toBeHidden();
+  // …but the original 90s budget still ends the round on schedule.
+  await page.clock.runFor(60_000);
+  await expect(page.getByTestId('timeup-banner')).toBeVisible();
+
+  // Next round picks up the 30s chip.
+  await page.getByTestId('timeup-reveal-btn').click();
+  await page.getByTestId('next-round-btn').click();
+  await lookThenStartDrawing(page);
+  await expect(page.getByTestId('timer-display')).toContainText('0:30');
+  await page.clock.runFor(31_000);
+  await expect(page.getByTestId('timeup-banner')).toBeVisible();
+});
+
+test('draw & guess: unlimited rounds count up and never time out', async ({
+  page,
+}) => {
+  await page.clock.install();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/tools/draw-guess/');
+
+  await page.getByTestId('duration-btn-unlimited').click();
+  // The pending clock mirrors the pick before the round starts.
+  await expect(page.getByTestId('timer-display')).toContainText('不限时');
+
+  await lookThenStartDrawing(page);
+  await expect(page.getByTestId('timer-display')).toContainText('0:00');
+  // Five full minutes pass: no time-up, no dead state — the count-up
+  // just keeps counting and the board stays drawable.
+  await page.clock.runFor(300_000);
+  await expect(page.getByTestId('timeup-banner')).toBeHidden();
+  await expect(page.getByTestId('timer-display')).toContainText('5:00');
+  await dragStroke(page, { fx: 0.3, fy: 0.4 }, { fx: 0.7, fy: 0.6 });
+  expect(await paintedPixels(page)).toBeGreaterThan(0);
+
+  // The round ends by hand, like the mode promises.
+  await page.getByTestId('act-hit-btn').click();
+  await expect(page.getByTestId('reveal-word')).toBeVisible();
+  await expect(page.getByTestId('tally-count')).toHaveText('1');
+
+  // The unlimited pick sticks for the next round too.
+  await page.getByTestId('next-round-btn').click();
+  await expect(page.getByTestId('timer-display')).toContainText('不限时');
+});
+
+test('draw & guess: fullscreen is button-only, two-state, and starting never enters it', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/tools/draw-guess/');
+  const fsBtn = page.getByTestId('fullscreen-btn');
+  await expect(fsBtn).toBeVisible();
+  await expect(fsBtn).toContainText('全屏');
+  await expect(fsBtn).not.toContainText('退出');
+
+  // Starting a round must NOT enter fullscreen on its own.
+  await lookThenStartDrawing(page);
+  await page.waitForTimeout(300);
+  expect(
+    await page.evaluate(() => document.fullscreenElement),
+  ).toBeNull();
+
+  // The button toggles, and its label tracks the state.
+  await fsBtn.click();
+  await expect
+    .poll(() => page.evaluate(() => document.fullscreenElement !== null))
+    .toBe(true);
+  await expect(fsBtn).toContainText('退出全屏');
+  await fsBtn.click();
+  await expect
+    .poll(() => page.evaluate(() => document.fullscreenElement === null))
+    .toBe(true);
+  await expect(fsBtn).toContainText('全屏');
+  await expect(fsBtn).not.toContainText('退出');
+});
+
+test('draw & guess: back button is guarded mid-round, normal otherwise', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.goto('/tools/draw-guess/');
+
+  // No round running: back leaves immediately, like any page.
+  await page.goBack();
+  await expect(page).toHaveURL(/localhost:3100\/$/);
+
+  // Mid-round: the first back press is intercepted (stay + hint)…
+  await page.goto('/tools/draw-guess/');
+  await lookThenStartDrawing(page);
+  await page.goBack();
+  await expect(page).toHaveURL(/\/tools\/draw-guess\/$/);
+  await expect(page.getByTestId('back-guard-hint')).toBeVisible();
+  // …and the second one really leaves.
+  await page.goBack();
+  await expect(page).toHaveURL(/localhost:3100\/$/);
+});
+
+test('draw & guess: back in fullscreen exits fullscreen first, round survives', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await page.goto('/tools/draw-guess/');
+  await lookThenStartDrawing(page);
+  await page.getByTestId('fullscreen-btn').click();
+  await expect
+    .poll(() => page.evaluate(() => document.fullscreenElement !== null))
+    .toBe(true);
+
+  await page.goBack();
+  // Fullscreen is gone, but we are still in the game — the back press
+  // was spent on leaving fullscreen, not on leaving the round.
+  await expect
+    .poll(() => page.evaluate(() => document.fullscreenElement === null))
+    .toBe(true);
+  await expect(page).toHaveURL(/\/tools\/draw-guess\/$/);
+  await expect(page.getByTestId('draw-canvas')).toBeVisible();
+});
+
+test('draw & guess: the sidebar ✕ close button only closes — no fullscreen, round starts', async ({
+  page,
+}) => {
+  // The exact path the user hit (2026-10-21): read the word in the
+  // sidebar, tap the sidebar's ✕ (关闭） — that tap means "hide the
+  // panel and start drawing", and must NEVER slip into fullscreen.
+  // Fullscreen has exactly one door: the fullscreen button. The ✕
+  // and the edge handle are the same gesture: toggle the panel (a
+  // close before the round starts also starts the clock, as before).
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/tools/draw-guess/');
+  await expect(page.getByTestId('word-masked')).toBeVisible();
+
+  await page.getByTestId('show-word-btn').click();
+  await expect(page.getByTestId('word-text')).toBeVisible();
+  await page.getByTestId('word-sidebar-close').click();
+  await page.waitForTimeout(400);
+  expect(await page.evaluate(() => document.fullscreenElement)).toBeNull();
+
+  // …and the round really did start: board drawable, clock counting.
+  await dragStroke(page, { fx: 0.3, fy: 0.4 }, { fx: 0.7, fy: 0.6 });
+  expect(await paintedPixels(page)).toBeGreaterThan(0);
+  await expect
+    .poll(async () =>
+      (await page.getByTestId('timer-display').textContent()) ?? '',
+    )
+    .not.toContain('1:30');
+  await expect(page.getByTestId('act-hit-btn')).toBeVisible();
 });

@@ -29,17 +29,57 @@ describe('built-in word bank', () => {
     const ids = WORD_BANK.flatMap((t) => t.words.map((entry) => entry.id));
     expect(new Set(ids).size).toBe(ids.length);
   });
+
+  it('keeps difficulty at medium: first-glance freebies out, think-a-bit words in', () => {
+    const ids = new Set(WORD_BANK.flatMap((t) => t.words.map((e) => e.id)));
+    for (const gone of [
+      'animals:dog',
+      'animals:cat',
+      'animals:bee',
+      'food:apple',
+      'school:sun',
+      'school:moon',
+      'everyday:car',
+      'everyday:house',
+      'actions:eat',
+      'actions:run',
+    ]) {
+      expect(ids.has(gone), `${gone} should be gone`).toBe(false);
+    }
+    for (const kept of [
+      'everyday:fire-truck',
+      'everyday:refrigerator',
+      'school:microscope',
+      'school:waterfall',
+      'school:slide',
+      'school:forest',
+      'school:astronaut',
+      'actions:play-piano',
+      'actions:play-soccer',
+      'animals:goldfish',
+    ]) {
+      expect(ids.has(kept), `${kept} should be in`).toBe(true);
+    }
+  });
+
+  it('ignores removed ids that no longer exist in the bank', () => {
+    // A family removed 狗 while it was still in the bank; after the
+    // medium-difficulty refresh that id is simply gone — the stale
+    // entry must stay a harmless no-op, never an error or a phantom.
+    const pool = mergePool('animals', [], ['animals:dog']);
+    expect(pool).toHaveLength(28);
+  });
 });
 
 describe('mergePool (built-in + custom - removed)', () => {
   const custom: CustomWord[] = [makeCustomWord('animals', ' axolotl ')];
-  const removed = ['animals:dog'];
+  const removed = ['animals:elephant'];
 
   it('includes custom words and excludes removed built-ins', () => {
     const pool = mergePool('animals', custom, removed);
     expect(pool.some((entry) => entry.id === 'custom:animals:axolotl')).toBe(true);
-    expect(pool.some((entry) => entry.id === 'animals:dog')).toBe(false);
-    expect(pool.some((entry) => entry.id === 'animals:cat')).toBe(true);
+    expect(pool.some((entry) => entry.id === 'animals:elephant')).toBe(false);
+    expect(pool.some((entry) => entry.id === 'animals:tiger')).toBe(true);
   });
 
   it('"all" spans every theme', () => {
@@ -50,7 +90,7 @@ describe('mergePool (built-in + custom - removed)', () => {
 
   it('themeWords splits builtin/custom for the manager UI', () => {
     const { builtin, custom: themeCustom } = themeWords('animals', custom, removed);
-    expect(builtin.some((entry) => entry.id === 'animals:dog')).toBe(false);
+    expect(builtin.some((entry) => entry.id === 'animals:elephant')).toBe(false);
     expect(themeCustom).toHaveLength(1);
   });
 });
@@ -122,7 +162,7 @@ describe('localStorage parsers (tolerant of junk)', () => {
   });
 
   it('parses removed ids and tally defensively', () => {
-    expect(parseRemovedIds('["animals:dog", 3, null]')).toEqual(['animals:dog']);
+    expect(parseRemovedIds('["animals:elephant", 3, null]')).toEqual(['animals:elephant']);
     expect(parseRemovedIds('{oops')).toEqual([]);
     expect(parseTally('7')).toBe(7);
     expect(parseTally('-2')).toBe(0);

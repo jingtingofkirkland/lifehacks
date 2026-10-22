@@ -102,6 +102,17 @@
   50% { opacity: 1; transform: scale(1.5); }
 }
 
+/* Draw & Guess swap-feedback pop (scale-in confirmation overlay) */
+@keyframes dg-pop {
+  0% { opacity: 0; transform: scale(0.7); }
+  60% { opacity: 1; transform: scale(1.06); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.animate-dg-pop {
+  animation: dg-pop 0.3s ease-out;
+}
+
 .animate-twinkle {
   animation: twinkle 3s ease-in-out infinite;
 }
