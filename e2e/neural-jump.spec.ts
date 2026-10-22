@@ -78,12 +78,24 @@ test.describe('neural network learns to jump article page', () => {
       }),
     ).toBeVisible();
     await expect(page.getByText(/no gradient exists to descend/i)).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /one output, three jobs/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /shaping without traps/i }),
+    ).toBeVisible();
 
     await page.getByRole('button', { name: '中文' }).click();
     await expect(
       page.getByRole('heading', { name: /为什么不用反向传播/ }),
     ).toBeVisible();
     await expect(page.getByText(/没有梯度，就无从下降/)).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /一个输出，身兼三职/ }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /塑形不挖坑/ }),
+    ).toBeVisible();
   });
 
   test('/tech/ list card links straight to the article page', async ({

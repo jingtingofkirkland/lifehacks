@@ -38,6 +38,18 @@ The total number of learnable parameters is **7 × hidden + 1**: 6 with no hidde
 
 Because the inputs are relative — "the next step is this far left and this high" — the network cannot memorize a route. What it can learn is a **feedback policy**: a reaction rule that reads the current situation and answers with a jump. That is what makes the 🎲 moved-stairs exam passable at all, and it is also the limit of the generalization: change the gravity, or move the stairs outside the distribution it trained in, and the policy breaks. It learned to respond, not physics.
 
+## One output, three jobs: direction, trigger, and force
+
+A single number seems too little to steer a jump with — until you notice it is doing three jobs at once. The output neuron's value (after tanh, so always between −1 and 1) is read three different ways:
+
+- **Sign = direction.** Negative pushes left, positive pushes right.
+- **Threshold = the jump trigger.** Only when |output| > 0.15 does the figure leave the ground at all; a small output means "not yet," which gives the network a way to *wait* — for example until it has walked or slid into a better spot.
+- **Magnitude = horizontal force.** The horizontal velocity is output × 260 px/s, so 0.2 is a cautious hop sideways and 0.95 is a full-commit launch.
+
+What the network does **not** control is height: the vertical launch speed is a fixed 640 px/s written into the physics, identical for every jump. So the entire learnable skill is *when to jump, which way to lean, and how hard* — jump height is a law of this world, not a decision. That is a deliberate simplification, and it doubles as the capability boundary discussed above: because vertical speed never varies, the ≈137 px ceiling is a property of the world, and the network's job is purely to spend its fixed jump well.
+
+> A bug worth confessing, because a reader of the live demo caught it: an early build of this very toy triggered jumps only when the output was **greater than** +0.15. The sign was silently eaten — the figure could only ever jump right, and since stair 1 is to the left, the population plateaued forever. The fix was one character of thinking: trigger on the **absolute value**, let the sign do its job. If your own version "never learns," check the trigger before you blame the algorithm.
+
 ## The fitness function: the real teacher
 
 A genetic algorithm is only as smart as the score you hand it. Each figure runs one life (at most 8 seconds; a run also ends early after 2.5 s without improvement) and is scored:
@@ -50,6 +62,20 @@ A genetic algorithm is only as smart as the score you hand it. Each figure runs 
 - **−0.05 per jump** is a tiny tax on flailing: among two figures that climb equally well, the calmer jumper wins.
 
 The theoretical ceiling is just under 69 (3 × 10 + 9 + 30, minus a few jump taxes) — when the orange best-fitness curve flattens near there, it has not stalled; it has arrived.
+
+## Shaping without traps: why standing still is not a local optimum
+
+Now a sharp question about that fitness function. Stair 1 is to the **left**, away from the finish. Doesn't the approach-progress term punish the correct first move — and shouldn't evolution settle for the lazy local optimum of just standing still?
+
+It would, if the score were defined naively. Three design choices prevent it:
+
+1. **The target pointer is the *next* stair, not the finish.** Both network inputs (distance, height difference) and the progress term point at the next unclimbed stair; only when the figure lands on it does the pointer advance. From the figure's point of view there is no "away from the finish" — jumping left toward stair 1 *is* walking toward its target. The environment decomposes the route into subgoals, and the agent only ever has to solve one hop at a time.
+2. **Progress is a ratchet.** The score uses `bestProg` — the closest the figure *ever* got to its current target during its life, which only increases. Jump toward the stair, overshoot, fall back: the earned progress is not handed back. Exploration toward the target can never be a net loss.
+3. **Milestones outrank shaping.** The approach term caps out below +9, while landing on a stair pays +10 and the summit +30. This ordering is a general rule of reward shaping: the shaping gradient may guide, but real achievements must always be worth more than the maximum guidance bonus — otherwise agents learn to farm the guidance instead of doing the task.
+
+With those in place, standing still is simply a bad strategy: it keeps only its spawn-point progress (roughly 6 points, no milestone, minus nothing — and nothing more, ever), and by generation 2 or 3 any individual that hops a little closer to stair 1 beats it and takes its breeding slots. Standing still is not a local optimum; it is just an early loser.
+
+The counterfactual shows what the shaping is protecting against. Score only the distance to the *finish* and the geometry turns hostile: the best reachable position is the wall directly below the finish platform, every correct move (left, toward stair 1) initially *increases* the measured distance and gets punished, and the population piles up under the finish, polishing a strategy that can never score a single stair. Most "my agent learned to do nothing" stories in reinforcement learning are exactly this bug — a score function whose local gradient points away from the global solution. Subgoal pointers, ratchets, and milestone-dominant rewards are how you design your way out of it.
 
 ## The optimizer: a genetic algorithm, step by step
 
