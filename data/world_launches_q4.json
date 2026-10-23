@@ -141,5 +141,27 @@
       "country": "China",
       "info": "Galactic Energy"
     }
+  },
+  {
+    "flight": 14,
+    "time": "23 October 07:11",
+    "rocket": "Electron",
+    "mission": "We're Not Hawking Around",
+    "site": "Mahia LC-1A",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
+  },
+  {
+    "flight": 15,
+    "time": "23 Oct 10:15",
+    "rocket": "Long March 6A",
+    "mission": "6A-Y?",
+    "site": "Taiyuan LC-9A",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
