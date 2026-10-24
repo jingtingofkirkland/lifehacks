@@ -270,6 +270,38 @@ test('draw & guess: stroke lands on open → close → draw, center maps correct
   expect(await paintedPixels(page)).toBeGreaterThan(10);
 });
 
+test('draw & guess: more than 60 strokes — the earliest strokes stay', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 900, height: 1280 });
+  await page.goto('/tools/draw-guess/');
+  await expect(page.getByTestId('word-masked')).toBeVisible();
+
+  // Unlimited round: drawing 70+ strokes takes a while and the clock
+  // must not end the round mid-test.
+  await page.getByTestId('duration-btn-unlimited').click();
+  await page.getByTestId('word-sidebar-close').click();
+  await expectSidebarOffscreen(page);
+
+  // Stroke 1: a dot at a distinctive spot, far from the filler grid.
+  const box = await canvasBox(page);
+  await page.mouse.move(box.x + box.width * 0.12, box.y + box.height * 0.12);
+  await page.mouse.down();
+  await page.mouse.up();
+  expect(await darkPixelNear(page, 0.12, 0.12)).toBe(true);
+
+  // 70 more short strokes — 71 total, past the old 60-stroke cap.
+  // endStroke repaints from the stroke list after every commit, so a
+  // capped list would already have erased stroke 1 by now.
+  for (let i = 0; i < 70; i++) {
+    const fx = 0.3 + (i % 10) * 0.05;
+    const fy = 0.3 + Math.floor(i / 10) * 0.07;
+    await dragStroke(page, { fx, fy }, { fx: fx + 0.02, fy: fy + 0.02 });
+  }
+
+  expect(await darkPixelNear(page, 0.12, 0.12)).toBe(true);
+});
+
 test('draw & guess: rotation across orientations keeps the drawing and stays drawable', async ({
   page,
 }) => {

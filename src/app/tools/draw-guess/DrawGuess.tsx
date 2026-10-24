@@ -320,7 +320,7 @@ function DrawCanvas({
     if (!drawingRef.current) return;
     drawingRef.current = false;
     if (currentRef.current && currentRef.current.points.length > 0) {
-      strokesRef.current = [...strokesRef.current.slice(-59), currentRef.current];
+      strokesRef.current = [...strokesRef.current.slice(-999), currentRef.current];
       onStrokeEnd(strokesRef.current.length);
       // Repaint unconditionally: if a resize wiped the bitmap mid-stroke
       // the incremental painting is gone, and only this redraw shows
