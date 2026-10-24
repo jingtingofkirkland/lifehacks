@@ -2704,5 +2704,27 @@
       "country": "United States",
       "info": "Rocket Lab"
     }
+  },
+  {
+    "flight": 247,
+    "time": "23 October 19:25",
+    "rocket": "Long March 4B",
+    "mission": "4B-Y59",
+    "site": "Jiuquan Site 94",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 248,
+    "time": "23 October 22:51",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 15-15",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
