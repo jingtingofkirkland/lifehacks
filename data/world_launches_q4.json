@@ -207,5 +207,16 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 20,
+    "time": "30 October 18:21",
+    "rocket": "GSLV Mk II",
+    "mission": "F-18",
+    "site": "Satish Dhawan SLP",
+    "org": {
+      "country": "India",
+      "info": "ISRO"
+    }
   }
 ]
