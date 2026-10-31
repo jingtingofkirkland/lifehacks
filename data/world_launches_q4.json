@@ -212,11 +212,22 @@
     "flight": 20,
     "time": "30 October 18:21",
     "rocket": "GSLV Mk II",
-    "mission": "F-18",
+    "mission": "GSLV F18",
     "site": "Satish Dhawan SLP",
     "org": {
       "country": "India",
       "info": "ISRO"
+    }
+  },
+  {
+    "flight": 21,
+    "time": "31 October 04:04:34",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "Starlink Group 15-18",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
     }
   }
 ]
