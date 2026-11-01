@@ -133,7 +133,13 @@ export default function RootLayout({
 
             var landedUtm = captureUtm();
             fbq('track', 'PageView', withUtm());
-            if (landedUtm) {
+            // AdLanding reverted to PageView-like logic (2026-11-01):
+            // fire on every first load of the ad landing pages, not only
+            // on UTM landings. The UTM gate starved the optimization event
+            // (an ad link without UTM never fired it). Only pages the ads
+            // actually run to are listed here.
+            var AD_LANDING_PAGES = ['tools/education'];
+            if (AD_LANDING_PAGES.indexOf(getPageName()) !== -1) {
               fbq('trackCustom', 'AdLanding', withUtm(landedUtm));
             }
 
