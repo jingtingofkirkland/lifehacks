@@ -2770,5 +2770,27 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 253,
+    "time": "2 November 16:41 ",
+    "rocket": "Electron",
+    "mission": "The Sea God Surveys",
+    "site": "Mahia LC-1",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
+  },
+  {
+    "flight": 254,
+    "time": "3 November 00:15 ",
+    "rocket": "Kinetica 2",
+    "mission": "",
+    "site": "Jiuquan Site 140",
+    "org": {
+      "country": "China",
+      "info": "CAS Space"
+    }
   }
 ]
