@@ -98,7 +98,7 @@ export default function RootLayout({
             fbq('init', '337570375319394');
 
             function getPageName() {
-              var path = window.location.pathname.replace(/^\\/|\\/$/, '');
+              var path = window.location.pathname.replace(/^\\/|\\/$/g, '');
               return path || 'home';
             }
 
