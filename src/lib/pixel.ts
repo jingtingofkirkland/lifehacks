@@ -59,6 +59,43 @@ export function trackEvent(
 }
 
 /**
+ * Pages whose first full open fires the AdLanding custom event.
+ *
+ * layout.tsx inlines this list (JSON.stringify) and
+ * PIXEL_PAGE_NAME_SNIPPET into the root layout's pixel script, so the
+ * shipped script runs exactly the code unit-tested here. Never re-declare
+ * getPageName or AD_LANDING_PAGES inside layout.tsx by hand.
+ */
+export const AD_LANDING_PAGES = ['tools/education'];
+
+/**
+ * Plain-JS page-name helper for the root layout's pixel script.
+ *
+ * The script tag in layout.tsx cannot import modules, so this function
+ * ships as an interpolated string (same pattern as PIXEL_TRACK_SNIPPET
+ * for the game blobs). Keep it free of backticks and ${} sequences, or
+ * it will break the surrounding template literal.
+ *
+ * Regression (2026-11-04): this regex once lacked the /g flag, so only
+ * the leading slash was stripped: '/tools/education/' came out as
+ * 'tools/education/', never matched AD_LANDING_PAGES, and silently
+ * killed the AdLanding event for three days. The tests execute this
+ * exact string against the production URLs, so a recurrence fails CI
+ * instead of failing silently in production.
+ */
+export const PIXEL_PAGE_NAME_SNIPPET = `
+function getPageName() {
+  try {
+    if (typeof window === 'undefined' || typeof window.location === 'undefined') return 'home';
+    var path = window.location.pathname.replace(/^\\/|\\/$/g, '');
+    return path || 'home';
+  } catch (e) {
+    return 'home';
+  }
+}
+`;
+
+/**
  * Plain-JS twin of trackEvent for the self-contained game blobs
  * (tool-content.ts), whose injected scripts cannot import modules at runtime.
  * Interpolated into MATH_TOOL_JS at build time, so keep it free of backticks
