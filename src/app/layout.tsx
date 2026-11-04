@@ -8,6 +8,7 @@ import { FeedbackButton } from '@/components/FeedbackButton';
 import { MessengerBubble } from '@/components/MessengerBubble';
 import { EngagementTracker } from '@/components/EngagementTracker';
 import { siteConfig } from '@/config/site';
+import { AD_LANDING_PAGES, PIXEL_PAGE_NAME_SNIPPET } from '@/lib/pixel';
 
 // Self-hosted fonts (next/font/local) instead of next/font/google:
 // Builds must not depend on fetching Google Fonts at build time — a
@@ -97,10 +98,7 @@ export default function RootLayout({
             'https://connect.facebook.net/en_US/fbevents.js');
             fbq('init', '337570375319394');
 
-            function getPageName() {
-              var path = window.location.pathname.replace(/^\\/|\\/$/g, '');
-              return path || 'home';
-            }
+            ${PIXEL_PAGE_NAME_SNIPPET}
 
             // Capture UTM params from landing URL (last-touch, session-scoped)
             var UTM_KEYS = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
@@ -138,7 +136,7 @@ export default function RootLayout({
             // on UTM landings. The UTM gate starved the optimization event
             // (an ad link without UTM never fired it). Only pages the ads
             // actually run to are listed here.
-            var AD_LANDING_PAGES = ['tools/education'];
+            var AD_LANDING_PAGES = ${JSON.stringify(AD_LANDING_PAGES)};
             if (AD_LANDING_PAGES.indexOf(getPageName()) !== -1) {
               fbq('trackCustom', 'AdLanding', withUtm(landedUtm));
             }
