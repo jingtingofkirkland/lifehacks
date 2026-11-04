@@ -11,6 +11,8 @@
  */
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
+  AD_LANDING_PAGES,
+  PIXEL_PAGE_NAME_SNIPPET,
   PIXEL_TRACK_SNIPPET,
   PRODUCTION_HOSTNAME,
   isPixelEnabled,
@@ -24,6 +26,24 @@ function setHostname(hostname: string) {
     writable: true,
     value: { hostname },
   });
+}
+
+/**
+ * Execute the exact getPageName string that layout.tsx inlines into the
+ * pixel script, with window.location mocked to a production URL. This
+ * runs the shipped code, not a copy of it.
+ */
+function runSnippetPageName(pathname: string): string {
+  Object.defineProperty(window, 'location', {
+    configurable: true,
+    writable: true,
+    value: { hostname: PRODUCTION_HOSTNAME, pathname },
+  });
+  const run = new Function(
+    'window',
+    `${PIXEL_PAGE_NAME_SNIPPET}; return getPageName();`,
+  ) as unknown as (w: unknown) => string;
+  return run(window);
 }
 
 describe('isPixelEnabled', () => {
@@ -120,5 +140,50 @@ describe('PIXEL_TRACK_SNIPPET', () => {
     expect(PIXEL_TRACK_SNIPPET).toContain(
       "window.location.hostname === 'lifehacks.zeey-app.net'",
     );
+  });
+});
+
+describe('PIXEL_PAGE_NAME_SNIPPET (the AdLanding page matcher shipped in layout)', () => {
+  it.each([
+    // Regression (2026-11-04): the production URL ends with a slash.
+    ['/tools/education/', 'tools/education'],
+    ['/tools/education', 'tools/education'],
+    ['/', 'home'],
+    ['', 'home'],
+    ['/tools/kangaroo/', 'tools/kangaroo'],
+    ['/tools/kangaroo/readiness/', 'tools/kangaroo/readiness'],
+  ])('maps %s to %s', (pathname, expected) => {
+    expect(runSnippetPageName(pathname)).toBe(expected);
+  });
+
+  it('carries the /g flag so both slashes are stripped', () => {
+    expect(PIXEL_PAGE_NAME_SNIPPET).toContain('replace(/^\\/|\\/$/g');
+  });
+
+  it('is safe to interpolate into the layout.tsx template literal', () => {
+    expect(PIXEL_PAGE_NAME_SNIPPET).not.toContain('`');
+    expect(PIXEL_PAGE_NAME_SNIPPET).not.toContain('${');
+  });
+});
+
+describe('AdLanding page matching (snippet + list, as layout composes them)', () => {
+  function firesOn(pathname: string): boolean {
+    const page = runSnippetPageName(pathname);
+    return AD_LANDING_PAGES.indexOf(page) !== -1;
+  }
+
+  it('only lists the education page', () => {
+    expect(AD_LANDING_PAGES).toEqual(['tools/education']);
+  });
+
+  it.each([
+    ['/tools/education/', true],
+    ['/tools/education', true],
+    ['/', false],
+    ['/tools/kangaroo/', false],
+    ['/tools/education/extra', false],
+    ['/tools/education2/', false],
+  ])('%s fires AdLanding: %s', (pathname, expected) => {
+    expect(firesOn(pathname)).toBe(expected);
   });
 });
