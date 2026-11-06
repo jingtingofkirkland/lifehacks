@@ -2792,5 +2792,16 @@
       "country": "China",
       "info": "CAS Space"
     }
+  },
+  {
+    "flight": 255,
+    "time": "5 November 15:58",
+    "rocket": "Long March 2C",
+    "mission": "",
+    "site": "Xichang LC-3",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
