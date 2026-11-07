@@ -2803,5 +2803,27 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 256,
+    "time": "6 November 23:37",
+    "rocket": "Ceres-2",
+    "mission": "",
+    "site": "Jiuquan Site 95A",
+    "org": {
+      "country": "China",
+      "info": "Galactic Energy"
+    }
+  },
+  {
+    "flight": 257,
+    "time": "7 November 00:48:42",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]

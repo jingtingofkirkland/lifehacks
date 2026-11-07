@@ -1257,5 +1257,17 @@
     "mass": "15525",
     "orbit": "LEO",
     "landing": "ASDS"
+  },
+  {
+    "flight": 704,
+    "time": "November 7, 2026 00:48",
+    "rocket": "B1095‑8",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "USSF-432 (\"R-4\") (~23 Starshield satellites)",
+    "mass": "16224",
+    "orbit": "LEO",
+    "landing": "ASDS",
+    "massEstimated": true,
+    "massEstimateBasis": "orbit+landing:LEO+ASDS"
   }
 ]
