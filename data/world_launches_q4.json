@@ -284,5 +284,27 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 27,
+    "time": "7 November 13:22 ",
+    "rocket": "Soyuz 2.1b / Fregat-M",
+    "mission": "",
+    "site": "Plesetsk Cosmodrome Site 43/3",
+    "org": {
+      "country": "Russia",
+      "info": "RVSN RF"
+    }
+  },
+  {
+    "flight": 28,
+    "time": "8 November 20:24",
+    "rocket": "Long March 12",
+    "mission": "",
+    "site": "Wenchang LC-2",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
