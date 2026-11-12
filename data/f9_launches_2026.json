@@ -1269,5 +1269,17 @@
     "landing": "ASDS",
     "massEstimated": true,
     "massEstimateBasis": "orbit+landing:LEO+ASDS"
+  },
+  {
+    "flight": 705,
+    "time": "November 12, 2026 04:36",
+    "rocket": "B1103‑7",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "USSF-627 (\"R-5\") (~23 Starshield satellites)",
+    "mass": "16224",
+    "orbit": "LEO",
+    "landing": "ASDS",
+    "massEstimated": true,
+    "massEstimateBasis": "orbit+landing:LEO+ASDS"
   }
 ]

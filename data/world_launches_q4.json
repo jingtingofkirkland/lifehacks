@@ -317,5 +317,16 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 30,
+    "time": "12 November 04:36:30",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]
