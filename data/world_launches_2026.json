@@ -2847,5 +2847,16 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 260,
+    "time": "11 November 11:41",
+    "rocket": "Long March 2D",
+    "mission": "",
+    "site": "Jiuquan Site-94",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
