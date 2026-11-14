@@ -328,5 +328,38 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 31,
+    "time": "13 November 22:47:36 ",
+    "rocket": "Starship",
+    "mission": "Starlink Group 31-2",
+    "site": "Starbase Pad 2",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 32,
+    "time": "14 November 01:16",
+    "rocket": "Soyuz-2.1a / Fregat-M",
+    "mission": "",
+    "site": "Vostochny Site 1S",
+    "org": {
+      "country": "Russia",
+      "info": "Roscosmos"
+    }
+  },
+  {
+    "flight": 33,
+    "time": "14 November 05:30",
+    "rocket": "Electron",
+    "mission": "The Mountain God Rises",
+    "site": "Mahia LC-1",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
   }
 ]
