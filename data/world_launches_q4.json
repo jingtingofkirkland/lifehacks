@@ -372,5 +372,16 @@
       "country": "United States",
       "info": "ULA"
     }
+  },
+  {
+    "flight": 35,
+    "time": "18 November 22:50",
+    "rocket": "Long March 2D",
+    "mission": "",
+    "site": "Taiyuan LC-9",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
