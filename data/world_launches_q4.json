@@ -383,5 +383,16 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 36,
+    "time": "20 November 11:59 ",
+    "rocket": "Long March 8A",
+    "mission": "Y13",
+    "site": "Wenchang LC-1",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
