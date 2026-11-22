@@ -405,5 +405,16 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 38,
+    "time": "22 November 12:23",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
   }
 ]

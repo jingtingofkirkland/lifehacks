@@ -1293,5 +1293,17 @@
     "landing": "ASDS",
     "massEstimated": true,
     "massEstimateBasis": "orbit+landing:LEO+ASDS"
+  },
+  {
+    "flight": 707,
+    "time": "November 22, 2026 12:23",
+    "rocket": "B1097‑14",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "NROL-136",
+    "mass": "6875",
+    "orbit": "LEO",
+    "landing": "RTLS",
+    "massEstimated": true,
+    "massEstimateBasis": "orbit+landing:LEO+RTLS"
   }
 ]
