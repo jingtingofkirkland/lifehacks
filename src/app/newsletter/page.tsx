@@ -111,6 +111,26 @@ export default function NewsletterPage() {
         </Link>
       </div>
 
+      {/* Lead magnet: the 5-week cohort bundle (IDEA-20261122-02) */}
+      <div className="rounded-2xl border border-orange-300/80 dark:border-orange-700/50 bg-gradient-to-br from-orange-100/80 to-amber-50/70 dark:from-orange-950/50 dark:to-amber-950/30 p-6 mb-10">
+        <p className="font-bold text-lg mb-1">
+          🦘 New: the 5-week cohort bundle, free to print
+        </p>
+        <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+          The first five weeks of our Kangaroo companion run in one
+          printable pack — 15 Kangaroo-style problems (think backwards,
+          logic, weighing, counting, shapes), with hints and a full answer
+          key. Subscribe and the next weeks land in your inbox every
+          Friday, all the way to contest day.
+        </p>
+        <Link
+          href="/kangaroo-2027/cohort/bundle/"
+          className="text-sm font-semibold text-orange-700 dark:text-orange-300 hover:underline"
+        >
+          Get the bundle — print it now →
+        </Link>
+      </div>
+
       <h2 className="text-xl font-bold mb-4">What&apos;s inside</h2>
       <ul className="grid gap-4 sm:grid-cols-3 mb-8">
         {WHATS_INSIDE.map((item) => (
