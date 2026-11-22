@@ -171,6 +171,23 @@ export default function KangarooCohortPage() {
         ))}
       </div>
 
+      <section className="rounded-2xl border border-orange-300/80 dark:border-orange-700/50 bg-gradient-to-br from-orange-100/80 to-amber-50/70 dark:from-orange-950/50 dark:to-amber-950/30 p-5 mb-10">
+        <p className="font-semibold mb-1">
+          🦘 Just joining? Start with the 5-week bundle
+        </p>
+        <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+          Weeks 1–5 in one printable pack — 15 Kangaroo-style problems
+          with hints and an answer key. Print it, work through a week at
+          a time, and you are caught up.
+        </p>
+        <Link
+          href="/kangaroo-2027/cohort/bundle/"
+          className="text-sm font-semibold text-orange-700 dark:text-orange-300 hover:underline"
+        >
+          Get the 5-week bundle — print it now →
+        </Link>
+      </section>
+
       <h2 className="text-xl font-bold mb-4">Dates the cohort is paced by</h2>
       <ul className="grid gap-4 sm:grid-cols-2 mb-10">
         {KEY_DATES.map((item) => (
