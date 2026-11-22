@@ -5,6 +5,7 @@
  * checkable answers must match independent arithmetic, so a typo in the
  * data fails CI instead of shipping a wrong answer key to families.
  */
+import { describe, expect, it } from 'vitest';
 import { BUNDLE_PROBLEM_COUNT, BUNDLE_WEEKS } from './bundle';
 
 describe('cohort bundle data', () => {
