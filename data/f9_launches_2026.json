@@ -1305,5 +1305,17 @@
     "landing": "RTLS",
     "massEstimated": true,
     "massEstimateBasis": "orbit+landing:LEO+RTLS"
+  },
+  {
+    "flight": 708,
+    "time": "November 24, 2026 16:08",
+    "rocket": "B1081‑29",
+    "site": "Vandenberg, SLC‑4E",
+    "mission": "USSF-266 (TH-3)",
+    "mass": "14650",
+    "orbit": "Polar LEO",
+    "landing": "ASDS",
+    "massEstimated": true,
+    "massEstimateBasis": "landing:ASDS"
   }
 ]

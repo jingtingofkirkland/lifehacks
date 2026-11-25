@@ -416,5 +416,49 @@
       "country": "United States",
       "info": "SpaceX"
     }
+  },
+  {
+    "flight": 39,
+    "time": "24 November 10:17:46",
+    "rocket": "Soyuz-2.1b",
+    "mission": "",
+    "site": "Baikonur Site 31/6",
+    "org": {
+      "country": "Russia",
+      "info": "Roscosmos"
+    }
+  },
+  {
+    "flight": 40,
+    "time": "24 November 11:14",
+    "rocket": "Ariane 64",
+    "mission": "LE-04",
+    "site": "Kourou ELA-4",
+    "org": {
+      "country": "France",
+      "info": "Arianespace"
+    }
+  },
+  {
+    "flight": 41,
+    "time": "24 November 16:08",
+    "rocket": "Falcon 9 Block 5",
+    "mission": "",
+    "site": "Vandenberg SLC-4E",
+    "org": {
+      "country": "United States",
+      "info": "SpaceX"
+    }
+  },
+  {
+    "flight": 42,
+    "time": "25 November 00:18 ",
+    "rocket": "Long March 2F",
+    "mission": "",
+    "site": "Jiuquan Site 91 (SLS-1)",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
   }
 ]
