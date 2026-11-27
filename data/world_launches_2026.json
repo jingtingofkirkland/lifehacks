@@ -3001,5 +3001,27 @@
       "country": "China",
       "info": "CASC"
     }
+  },
+  {
+    "flight": 274,
+    "time": "26 November 09:38",
+    "rocket": "Long March 2D",
+    "mission": "",
+    "site": "Xichang LC-3",
+    "org": {
+      "country": "China",
+      "info": "CASC"
+    }
+  },
+  {
+    "flight": 275,
+    "time": "27 November 00:05 ",
+    "rocket": "Electron",
+    "mission": "Night Owl Never Sleeps",
+    "site": "Mahia LC-1B",
+    "org": {
+      "country": "United States",
+      "info": "Rocket Lab"
+    }
   }
 ]
