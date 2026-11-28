@@ -3015,13 +3015,24 @@
   },
   {
     "flight": 275,
-    "time": "27 November 00:05 ",
+    "time": "27 November 00:15 ",
     "rocket": "Electron",
     "mission": "Night Owl Never Sleeps",
     "site": "Mahia LC-1B",
     "org": {
       "country": "United States",
       "info": "Rocket Lab"
+    }
+  },
+  {
+    "flight": 276,
+    "time": "27 November 13:00",
+    "rocket": "Long March 6A",
+    "mission": "",
+    "site": "Taiyuan LC-9A",
+    "org": {
+      "country": "China",
+      "info": "CASC"
     }
   }
 ]
